@@ -1,0 +1,23 @@
+\contentsline {chapter}{致谢}{I}{chapter*.1}%
+\contentsline {chapter}{摘要}{III}{chapter*.2}%
+\contentsline {chapter}{Abstract}{V}{chapter*.3}%
+\contentsline {chapter}{序言}{VII}{chapter*.4}%
+\contentsline {chapter}{表格清单}{IX}{chapter*.5}%
+\contentsline {chapter}{插图清单}{XI}{chapter*.6}%
+\contentsline {chapter}{\numberline {1\hspace {0.3em}}基于自跳跃常微分方程网络的连续时间跳变系统建模}{XV}{chapter.1}%
+\contentsline {section}{\numberline {1.1}前置工作及问题形式化描述}{XVI}{section.1.1}%
+\contentsline {section}{\numberline {1.2}基于层次ODE-Net模型的复杂系统稳定及非稳定输出混合预测}{XVII}{section.1.2}%
+\contentsline {section}{\numberline {1.3}自跳跃常微分方程网络}{XIX}{section.1.3}%
+\contentsline {subsection}{\numberline {1.3.1}状态定义}{XIX}{subsection.1.3.1}%
+\contentsline {subsection}{\numberline {1.3.2}基于时间预测器的阶段自转移}{XX}{subsection.1.3.2}%
+\contentsline {section}{\numberline {1.4}基于编码器解码器结构的微分方程网络初值估计与序列预测}{XXI}{section.1.4}%
+\contentsline {section}{\numberline {1.5}模型训练}{XXII}{section.1.5}%
+\contentsline {section}{\numberline {1.6}周期性制冷系统预测仿真及系统优化}{XXIV}{section.1.6}%
+\contentsline {subsection}{\numberline {1.6.1}制冷系统简介}{XXV}{subsection.1.6.1}%
+\contentsline {subsection}{\numberline {1.6.2}数据预处理：离散序列插及阶段标注}{XXVI}{subsection.1.6.2}%
+\contentsline {subsection}{\numberline {1.6.3}模型训练}{XXVII}{subsection.1.6.3}%
+\contentsline {subsection}{\numberline {1.6.4}应用研究1: 运行变量仿真}{XXVIII}{subsection.1.6.4}%
+\contentsline {subsection}{\numberline {1.6.5}应用研究2: 制冷系统进气口温度设定点优化}{XXXI}{subsection.1.6.5}%
+\contentsline {section}{\numberline {1.7}本章小结}{XXXIII}{section.1.7}%
+\contentsline {chapter}{参考文献}{XXXVI}{section.1.7}%
+\contentsfinish 

@@ -1,0 +1,99 @@
+\documentclass[doctor]{USTBThesis}
+
+% \usepackage{multirow}
+% \usepackage[inner=0.75in,outer=0.65in,top=0.75in,bottom=0.75in]{geometry}
+% \usepackage{mathpazo}
+\begin{document}
+
+\CTEXsetup[number={\arabic{chapter}}]{chapter}
+\CTEXsetup[name={,}]{chapter}
+\CTEXsetup[nameformat={\zihao{-3} \bfseries }]{chapter}
+\CTEXsetup[titleformat={\zihao{-3} \bfseries }]{chapter}
+\floatname{algorithm}{算法}
+
+\newcommand{\tabref}[1]{表\ref{#1}}
+\newcommand{\equref}[1]{式(\ref{#1})}
+\newcommand{\secref}[1]{第\ref{#1}节}
+\renewcommand{\algref}[1]{算法\ref{#1}}
+
+%论文信息
+\include{ThesisInfo}
+
+%论文封面
+\include{ThesisCover}
+
+\pagenumbering{Roman}
+\setcounter{page}{1}
+
+\fancypagestyle{plain}{
+  \pagestyle{fancy}
+}
+\fancyhead{}
+\fancyhead[CO]{\zihao{5}北京科技大学博士中期报告}
+\fancyhead[CE]{\zihao{5} \ThesisTitleCN}
+
+%致谢
+\include{MyThanks}
+
+%摘要
+\include{MyAbstract}
+
+%序
+\include{MyPreface}
+
+%目录
+\tableofcontents
+
+%表格目录，如果不使用请注释掉
+\renewcommand{\listtablename}{\centering 表格清单}
+\addcontentsline{toc}{chapter}{表格清单}
+\listoftables
+
+%图像目录，如果不使用请注释掉
+\renewcommand{\listfigurename}{\centering 插图清单}
+\addcontentsline{toc}{chapter}{插图清单}
+\listoffigures
+
+\pagestyle{fancy}
+\fancyhead{}
+\fancyhead[CO]{\zihao{5}北京科技大学\degreecn 学位论文}
+\fancyhead[CE]{\zihao{5} \ThesisTitleCN}
+
+% 第一章
+% \include{chapter1}
+
+%第二章
+% \include{chapter2}
+
+% % %第三章
+% \include{chapter3}
+
+% %第四章
+\include{chapter4}
+
+%第五章
+% \include{chapter5}
+
+% % 第六章
+% \include{chapter6}
+
+% 总结
+% \include{conclusion}
+
+\addcontentsline{toc}{chapter}{参考文献}  %在目录中添加“参考文献”的标记
+\bibliographystyle{gbt7714-2005}
+\bibliography{ref}
+
+%附录（如不需要请注释掉）
+% \include{appendix}
+
+%作者简历及在学研究成果
+% \include{biography}
+
+%独创性说明和关于论文使用授权的说明
+% \include{statement}
+
+%学位论文数据集
+% \include{dataset}
+
+\end{document}

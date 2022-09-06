@@ -1,0 +1,26 @@
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {1-1}{\ignorespaces H-ODEnet结构图示\relax }}{XVIII}{figure.caption.8}%
+\contentsline {figure}{\numberline {1-2}{\ignorespaces AJ-ODEnet 模型结构\relax }}{XIX}{figure.caption.9}%
+\contentsline {figure}{\numberline {1-3}{\ignorespaces 基于AJ-ODEnet的编码器-解码器预测框架\relax }}{XXI}{figure.caption.10}%
+\contentsline {figure}{\numberline {1-4}{\ignorespaces 时间预测器的损失函数定义\relax }}{XXIV}{figure.caption.11}%
+\contentsline {figure}{\numberline {1-5}{\ignorespaces 工业制冷系统整体结构及热交换过程\relax }}{XXV}{figure.caption.12}%
+\contentsline {figure}{\numberline {1-6}{\ignorespaces 在平均负载不同的四个数据集中，阶段\textit {启动}和\textit {关闭}阶段的持续时间分布箱线图 \relax }}{XXVI}{figure.caption.13}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {阶段-\textit {关闭}}}}{XXVI}{figure.caption.13}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {阶段-\textit {开机}}}}{XXVI}{figure.caption.13}%
+\contentsline {figure}{\numberline {1-7}{\ignorespaces 制冷系统运行原理概述\relax }}{XXVII}{figure.caption.15}%
+\contentsline {figure}{\numberline {1-8}{\ignorespaces 不同模型预测进气口温度，制冷量，制冷机功率的效果对比\relax }}{XXIX}{figure.caption.17}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Original data}}}{XXIX}{figure.caption.17}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {One Neural ODE}}}{XXIX}{figure.caption.17}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {AJ with ODE-RNN cells}}}{XXIX}{figure.caption.17}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {AJ with H-ODE cells}}}{XXIX}{figure.caption.17}%
+\contentsline {figure}{\numberline {1-9}{\ignorespaces 预测不同时间长度的功耗的MAPE的变化\relax }}{XXXI}{figure.caption.19}%
+\contentsline {figure}{\numberline {1-10}{\ignorespaces 在不同温度下限设定值下的进气口温度的仿真值\relax }}{XXXIII}{figure.caption.20}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {$12^{\circ }C$}}}{XXXIII}{figure.caption.20}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {$14^{\circ }C$}}}{XXXIII}{figure.caption.20}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {$16^{\circ }C$}}}{XXXIII}{figure.caption.20}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {$18^{\circ }C$}}}{XXXIII}{figure.caption.20}%
+\contentsline {figure}{\numberline {1-11}{\ignorespaces 在不同热负载下改变温度设定下限值对功耗、COP、PUE的影响\relax }}{XXXV}{figure.caption.22}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {制冷能耗}}}{XXXV}{figure.caption.22}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {PUE}}}{XXXV}{figure.caption.22}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {COP}}}{XXXV}{figure.caption.22}%
+\contentsfinish 
