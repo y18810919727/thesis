@@ -556,7 +556,7 @@ Seduce平台是用于电源和温度管理的物联网平台，该系统以1hz�
 \label{fig:inrow_3dArchitecture} 
 \end{figure*}
 
-制冷系统作为常见的工业设施，是一种典型的周期性多阶段系统，其运行过程为部分可观测的2输入3输出（Multi-Input Multi-Output, MIMO）系统。
+制冷系统作为常见的工业设施，是一种典型的周期性多阶段系统，其运行过程为部分可观测的2输入3输出系统。
 % In this modeling case study, cooling system is a typical periodic multi-stage system of an industrial infrastructure, it can be regarded as a partially observed MIMO (Multiple-Input Multiple-Output) system. 
 直观地，热负载（熔炼设备的运行总功率($x_1(t)$)）的升高会导致制冷系统进气口温度($y_3(t)$)升高。
 另外，由于制冷系统和室外环境之间存在热交换，系统所处环境的温度($x_2(t)$)也会影响制冷系统的工作情况。
@@ -829,17 +829,18 @@ Neural ODE的相对时间消耗为1.0。对比结果如表\ref{tab:Compare power
 % The results indicate that, in terms of the open loop estimation, the proposed framework can eliminate the impact of initial point and obtain satisfying accuracy for energy consumption simulation with a predictive range longer than half an hour. 
 \begin{table}[t]
     \centering
-    \caption{
+    % \caption{
     % of H-ODEnet and 
     % Power estimation error comparison between One-ODE and H-ODE ,The total length of each test set is 120 minutes. Select the sequence every 30 minutes, calculate the power consumption of the truth value and the predicted value, and then calculate the MAPE. Truth power consumption$P_{truth}=(p_1,p_2,p_3,p_4)$,Predicted power consumption$P_{pred}=(\hat{p_1},\hat{p_2},\hat{p_3},\hat{p_4})$
-    The comparison of energy consumption prediction and the relative computational efficiency}
-    \resizebox{\linewidth}{!}{
+    % The comparison of energy consumption prediction and the relative computational efficiency}
+    \caption{不同模型累积能耗预测精度和推理时间的对比}
+    \resizebox{0.9\linewidth}{!}{
     \begin{tabular}{lccccc} 
     \toprule
-                                & \multicolumn{4}{l}{\textbf{\textbf{Average heat load of dataset}}} & \multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}Relative \\Time\end{tabular}}  \\
+                                & \multicolumn{4}{l}{\textbf{\textbf{各数据集中的热负载}}} & \multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}相对 \\时间\end{tabular}}  \\
     \multicolumn{1}{c}{}        & 1.7k          & 3.8k          & 4.2k          & 6.3k               &                                                                           \\ 
     \hline
-    AJ-ODENet(ours) & \textbf{4.20} & \textbf{1.51} & \textbf{3.46} & \textbf{2.53}      & 3.2                                                                        \\
+    \textbf{AJ-ODENet}(本文模型) & \textbf{4.20} & \textbf{1.51} & \textbf{3.46} & \textbf{2.53}      & 3.2                                                                        \\
     One Neural ODE              & 6.18          & 19.99         & 6.24          & 3.39               & 1.0                                                                         \\
     Jump with CDE\cite{kidger2020neural} cells         & 8.25         & 2.73          & 6.62         & 3.87              & 3.8                                                                        \\
     Jump with ODE-RNN cells     & 38.26         & 9.94          & 10.58         & 31.90              & 3.4                                                                        \\

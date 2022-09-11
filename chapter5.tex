@@ -211,6 +211,8 @@ LatentODE\cite{Rubanova2019}、 ODE2VAE\cite{Yildiz2019} 和 LatentSDE\cite{Li20
 % In some real industrial systems, the collection data 
 \begin{table}[t]
 \centering
+\caption{本章提出方法与现有系统建模方法的对比}
+\label{tab:comparison}
 \begin{tabular}{c|ccc}
 \toprule 
  模型         & 随机性                                 & 非均匀采样                   & 在线预测                           \\ \hline 
@@ -223,8 +225,6 @@ Latent SDE     &  {\Checkmark}                          &  {\Checkmark}         
 \textbf{ODE-RSSM}       &  {\Checkmark}                          &  {\Checkmark}                          &  {\Checkmark}                        \\
 \bottomrule
 \end{tabular}
-\caption{不同系统建模方法对比}
-\label{tab:comparison}
 \end{table}
 
 \section{前置知识}
@@ -257,7 +257,7 @@ p_{\theta}\left(\b{y}_i \mid \b{z}_i, \b{h}_i\right) \times \\
 % In equation \eqref{equ:discrete_rssm}, the evolution of $\b z_{1:N}$ and $\b h_{1:N}$ approximates the state transitions under the input signal $\b u_{1:N}$ in the identified model.
 
 确定性转移函数$\widetilde{p}_{\theta}(\b h_{i}|\cdot)$为一delta分布，由一个确定性的循环神经网络进行建模。
-随机隐状态$p_{theta}\left(\b {z}_{t} \mid \b {h}_{t}\right)$和解码网络$p_{theta}\left(\b {y}_{i} \mid \bold {h}_{i},\b {z}_{i}\right)$的条件分布均为参数化的高斯分布。
+随机隐状态$p_{\theta}\left(\b {z}_{t} \mid \b {h}_{t}\right)$和解码网络$p_{theta}\left(\b {y}_{i} \mid \bold {h}_{i},\b {z}_{i}\right)$的条件分布均为参数化的高斯分布。
 在式\eqref{equ:discrete_rssm}中，$\b z_{1:N}$和$\b h_{1:N}$的变化用于识别给定输入信号$\b u_{1:N}$下，模型的内部状态转换过程。
 % The evolution of the stochastic latent state $\b z_t$ and deterministic hidden state $\b h_t$ represent the transitions in the identified model with the input signal $\b u_t$.  
 % Generally, the parameters $\theta$ are learned by jointly introducing approximate posterior encoder $q_{\phi}\left(\boldsymbol{z}_{i} \mid \boldsymbol{y}_{i}, \boldsymbol{h}_{i}\right)$ and maximizing evidence lower bound (ELBO):
@@ -478,7 +478,7 @@ p\left(\boldsymbol{h}_{t_{i}} \mid \boldsymbol{s}_{t_{i-1}}, \boldsymbol{u}_{t_{
 % Although we can merge the batched time points and sort the union set in parallel, it is also time-consuming for solving the ODE-net with the constructed time points sequence in practice.
 % Although we can merge the batched time points and sort the union set in parallel, it is also time-consuming for solving the ODE-net with the constructed time points sequence in practice.
 % In practical terms it is also time-consuming for solving the ODE-net with the constructed time points sequence.
-实际应用中，在构造的时间点序列并集上求解ode网络是非常耗时的。
+实际应用中，在构造的时间点序列并集上求解ODE网络是非常耗时的。
 
 % The practical time consumption of solving the ODE-net with the constructed time points sequence
 % Because the length $N$ is large in system modelling problem, the size of the union set that depends on the number of distinct items in $N-1$ time differences is also large. 
@@ -527,7 +527,8 @@ p\left(\boldsymbol{h}_{t_{i}} \mid \boldsymbol{s}_{t_{i-1}}, \boldsymbol{u}_{t_{
 \newtheorem{theorem}{\indent 定理}
 % \newtheorem{proposition}{\indent Proposition}
 \begin{theorem}
-\textbf{任意定积分的积分区间的线性变换}
+\textbf{任意定积分积分区间的线性变换等价性}
+
 \label{therom:interval_trans}
 % With an initial state $\b R(0) = \b{{H}}_{\b{T}}$, the solution of the auxiliary ODE \eqref{equ:construct_ode} at $\tau=1$ is equal to $\b{{H}}_{\b{T'}}$, the batched solution of the original ODE.
 % With a specific initial state $\b R(0) = \b{{H}}_{\b{T}}$, the solution of the auxiliary ODE \eqref{equ:construct_ode} at $\tau=1$ is equal to the concatenated solutions of the original $B$ ODEs.
@@ -596,7 +597,7 @@ p\left(\boldsymbol{h}_{t_{i}} \mid \boldsymbol{s}_{t_{i-1}}, \boldsymbol{u}_{t_{
 
 % \newtheorem{proposition}{\indent Proposition}
 % \begin{proposition}
-% \textbf{Interval Transformation for Ordinary Differential Equation:}
+% \mathbf{Interval Transformation for Ordinary Differential Equation:}
 % \label{proposition:interval_trans}
 % % With an initial state $\b R(0) = \b{{H}}_{\b{T}}$, the solution of the auxiliary ODE \eqref{equ:construct_ode} at $\tau=1$ is equal to $\b{{H}}_{\b{T'}}$, the batched solution of the original ODE.
 % With a specific initial state $\b R(0) = \b{{H}}_{\b{T}}$, the solution of the auxiliary ODE \eqref{equ:construct_ode} at $\tau=1$ is equal to the concatenated solutions of the original $B$ ODEs.
@@ -695,7 +696,7 @@ p\left(\boldsymbol{h}_{t_{i}} \mid \boldsymbol{s}_{t_{i-1}}, \boldsymbol{u}_{t_{
 另外，在训练时，生成模型的隐变量输入始终为近似后验分布的采样。而多步预测时，其隐变量输入大多数情况下来源于上一步的预测分布。
 % The gradient flow in back propagation merely optimizes the generative model in one-step prediction.
 % The distinction between the posterior and prior breaks the train-test i.i.d assumption on the inputs of generative model, which may lead to poor accuracy in multi-step predictions\cite{venkatraman2015improving}. 
-近似后验分布和预测先验分布之间的差异打破了生成模型输入在训练集和测试集上的同分布假设，这可能导致多步预测的准确性较差\cite{venkatraman2015改进}。
+近似后验分布和预测先验分布之间的差异打破了生成模型输入在训练集和测试集上的同分布假设，这可能导致多步预测的准确性较差\cite{venkatraman2015}。
 % This drawback is more serious in the complicated systems with long-time delay and partially observed space.
 对于存在长时延或观测空间不完备的复杂系统，这一问题将更加明显。
 % 这一缺陷在时滞较长、观测空间不全的复杂系统中更为严重。
@@ -859,7 +860,7 @@ $\b{\hat{s}}_{t_{i+1}:t_{i+D-1}}$为在基于祖先采样方法得到的序列�
 % \end{equation}
 
 % In Equ\eqref{equ:RK}, the operations of dot product and estimating derivative via ODE-net $f_\theta$ are both parallelizable.
-% The complete algorithm \textbf{Latent overshooting based on parallel ancestor sampling} is shown in Alg.\ref{alg:parallel_overshooting}.
+% The complete algorithm \mathbf{Latent overshooting based on parallel ancestor sampling} is shown in Alg.\ref{alg:parallel_overshooting}.
 %  To improve the long-term prediction, we introduce latent overshooting method in ODE-RSSM and provide an parallel acceleration technique to reduce the time complexity of estimating KL divergence.
 % To improve long-term predictions of generative process, we introduce a efficient latent overshooting method in training stage.
 % By substituting fixed-order RK solver for adaptive ode-solver when solving batched hidden states with misaligned time steps, 
@@ -867,8 +868,8 @@ $\b{\hat{s}}_{t_{i+1}:t_{i+D-1}}$为在基于祖先采样方法得到的序列�
 % \begin{algorithm}
 % \caption{2333}\label{233}
 % \begin{algorithmic}[1]
-% \Statex \textbf{Input:} 233
-% \Statex \textbf{Output:} 23333
+% \Statex \mathbf{Input:} 233
+% \Statex \mathbf{Output:} 23333
 % \State 2233
 % \end{algorithmic}
 % \end{algorithm}
@@ -877,9 +878,9 @@ $\b{\hat{s}}_{t_{i+1}:t_{i+D-1}}$为在基于祖先采样方法得到的序列�
 % % \caption{Latent overshooting based on parallel ancestor sampling}
 % \caption{Batched ancestor sampling for estimating KL-D}
 % \begin{algorithmic}[1]
-% \Statex \textbf{Input: } The generative networks (an ODE-net $f_\theta$ and a GRU), the encoder for posterior inferring, sequential inputs $\b u_{t_1:t_N}$ and sequential outputs $\b y_{t_1:t_N}$
-% % \Statex \textbf{Output:} $\text{KL-D}(q_{\phi}(\b z_{t_1:t_N})||p_{\theta}(\b z_{t_1:t_N}|\b u_{t_1:t_N}))$ 
-% \Statex \textbf{Output:} $\text{KL-D}$ 
+% \Statex \mathbf{Input: } The generative networks (an ODE-net $f_\theta$ and a GRU), the encoder for posterior inferring, sequential inputs $\b u_{t_1:t_N}$ and sequential outputs $\b y_{t_1:t_N}$
+% % \Statex \mathbf{Output:} $\text{KL-D}(q_{\phi}(\b z_{t_1:t_N})||p_{\theta}(\b z_{t_1:t_N}|\b u_{t_1:t_N}))$ 
+% \Statex \mathbf{Output:} $\text{KL-D}$ 
 % % \State Solving $\b{{h}}_{t_1:t_N}$ according to \eqref{equ:gru} and \eqref{equ:ode}, 
 % % \State inferring the posterior distribution $q_{\phi}$ and sampling $ \b{z}_{t_1:t_N}\sim q_{\phi}(\b z_{t_1:t_N}|\b h_{t_1:t_N}, \b y_{t_1:t_N})$. 
 % % \State Sampling $\b{z}_{t_1:t_N}$ and $\b{{h}}_{t_1:t_N}$ from the approximate posterior distribution $q_{\phi}(\b z_{t_1:t_N}|\b h_{t_1:t_N}, \b y_{t_1:t_N})$ and the generative process \eqref{equ:gru} and \eqref{equ:ode}, . 
@@ -921,7 +922,7 @@ $\b{\hat{s}}_{t_{i+1}:t_{i+D-1}}$为在基于祖先采样方法得到的序列�
 \caption{非均匀采样下的多步KL散度求解算法}
 \label{alg:parallel_overshooting}
 \textbf{输入}: 生成网络 (包含ODE-Net $f_\theta$ 和 GRU模块), 后验编码模块, 序列输入 $\b u_{t_1:t_N}$ 以及 序列输出 $\b y_{t_1:t_N}$\\
-% \textbf{Parameter}: Optional list of parameters\\
+% \mathbf{Parameter}: Optional list of parameters\\
 \textbf{输出}: $\text{KL-D}$ 
 \begin{algorithmic}[1] %[1] enables line numbers
 \State 根据式~\eqref{equ:gru}、\eqref{equ:ode}及\eqref{equ:posterior_z}迭代采样$\b{z}_{t_1:t_N}$, $\b{{h}}_{t_1:t_N}$ 并推理近似后验分布$q_{\phi}(\b z_{t_1:t_N}|\b h_{t_1:t_N}, \b y_{t_1:t_N})$。
@@ -978,7 +979,7 @@ ODE-RSSM能否从非均匀采样数据中学习到有效的泛化，以支持采
 \end{itemize}
 
 
-\subsection{Datasets}
+\subsection{数据集}
 % The descriptions of three datasets are listed as follows:
 % For conducting the experiments, we use three input/output datasets, including:
 本节采用的实验数据集共有三个，具体包括：
@@ -1036,29 +1037,29 @@ ODE-RSSM能否从非均匀采样数据中学习到有效的泛化，以支持采
 
 \label{tab:dataset}
 \end{table}
-%  \textbf{Winding Dataset} 
+%  \mathbf{Winding Dataset} 
 % We use the Test Setup of an Industrial Winding Process (Winding) dataset, which a sequence of  2500 evenly sampled measurements of a winding equipment. The test device involves 3 reels, including unwinding reel , traction reel and rewinding reel. The input of this dataset is the combination of the 3 reels' angular speeds and the 2 setpoint current of the motors for the different type of reels. The output of this dataset is the combination of the 2 measurements of the web's tension in between the reels. 
 % The data was first introduced by Bastogne et al.(1997) In our experiment we used the first 60\% of the input sequence for training while 20\% for verification, and the last 20\% for testing. 
 
-% \textbf{Narendra-Li Benchmark from} 
+% \mathbf{Narendra-Li Benchmark from} 
 % We use the data from the Narendra-Li benchmark (Narendra-Li). The benchmark is designed as a highly nonlinear but non-physical, fictional system with on input and one output. It has been considered in numerous discrete-time identification examples. In the case of this artificial dataset we generate 60000 samples for our experiment, making up sequences of length 2000.
 % The system was originally discussed by Narendra and Li (1996) with additional measurement noise from Stenman(1999). In our experiment we used 50000 samples for training while 5000 samples for verification, and 5000 samples for testing.
 
-% \textbf{Paste Thickening Pressure Dataset} 
+% \mathbf{Paste Thickening Pressure Dataset} 
 % For our experiments, we ues the dataset which was collected from th e paste thickener manufactured by the FLSsidth from the NFC Africa Mining PLC, Zambian Copperbelt Province. In the test equipment involves two paste thickeners, both of them are used to concentrate copper tailings to produce paste in the  backfilling station. Paste thickeners have seven monitoring sensors and we use five of them to compose nine variable by linear transformation. The input of this dataset is a combination of the mud's concentration and flow. The output of this dataset is the pressure of the mud in the devices. 
 % The measured data are sampled evenly with two-minute intervals from May 2018 to February 2019.In our experiment we used the first 60\% of the input sequence for training while 20\% for verification, and the last 20\% for testing.
 
 \subsection{实验设定}
 % For model training, hyperparameter selection, and model evaluation, 
-Each dataset is split to three parts for training (the foremost 60\%), validation (the middle 20\%), and test (the last 20\%).
+% Each dataset is split to three parts for training (the foremost 60\%), validation (the middle 20\%), and test (the last 20\%).
 对于每个数据集，将其分成三个部分，分别用于训练(前60\%)、验证(中间20\%)和测试(最后的20\%)。
 % Each split part is further sliced to sequential data batches, 
-We further move a sliding window on each split part to generate data batches,
-each of which is a tensor with the shape $B \times N\times K$, where $B$ is the batch size, $N$ denotes the length of the sequence, and $K$ is the sum of the dimensions of both system inputs and system outputs.
+% We further move a sliding window on each split part to generate data batches,
+% each of which is a tensor with the shape $B \times N\times K$, where $B$ is the batch size, $N$ denotes the length of the sequence, and $K$ is the sum of the dimensions of both system inputs and system outputs.
 对于训练集，引入一个固定大小的滑动窗口用于生成批量的训练数据。
 生成的每一批数据均为大小为$B \ * N\ * K$的张量，其中$B$是批大小，$N$表示序列的长度，$K=\text{dim}_{in}+\text{dim}_{out}$是系统输入和系统输出的维数之和。
 
-In the training phase, the sequence with length $N$ is totally fed to the model and the ELBO defined in \eqref{equ:loss_multi} is maximized.
+% In the training phase, the sequence with length $N$ is totally fed to the model and the ELBO defined in \eqref{equ:loss_multi} is maximized.
 在训练阶段，如式\eqref{equ:loss_multi}所示，将长度为$N$的序列完全输入到模型中，并优化模型参数以最大化ELBO。
 % In the training phase, we feed to the sequence with length $L$ to the model and train the model according to the loss function defined in \eqref{equ:loss_multi}.
 在模型验证和测试阶段，我们将每个长为N的序列分为两部分:编码序列(长度为$M$)和生成序列(长度为$L$)。
@@ -1122,7 +1123,7 @@ In the training phase, the sequence with length $N$ is totally fed to the model 
 并对所有轨迹计算RRSE和RMSE的均值。
 % The root mean squared error(RMSE) and the root relative squared error(RRSE)~\cite{Demeester2019} are measured on the mean.
 % The prediction error is measured on the mean and the ground-truth.
-对于带有确定性隐状态转移的连续时间模型——ODE-RNN和Time aware RNN，将其输出投影层的输出替换为某一高斯分布均值和标准差，类似于式\eqref{equ:output_layer}的形式。
+对于带有确定性隐状态转移的连续时间模型——ODE-RNN和Time-Aware RNN，将其输出投影层的输出替换为某一高斯分布均值和标准差，类似于式\eqref{equ:output_layer}的形式。
 % For the both continuous-time models, ODE-RNN and the Time-Aware RNN, we introduce two RNN modules as encoder and decoder to separately infer the deterministic latent states and predict outputs.
 % To evaluate the discrete-time models on unevenly sampled dataset, we incorporate the time difference $t_{i+1}-t_i$ as an extra input variable into the system inputs $\ut$.
 为了评估离散时间模型在非均匀采样数据上的识别效果，我们在离散时间模型的输入变量$\ut$中额外添加了时间差分 $t_{i+1}-t_i$。
@@ -1135,6 +1136,8 @@ In the training phase, the sequence with length $N$ is totally fed to the model 
 \subsection{相比于离散时间模型，ODE-RSSM建模非均匀采样系统的效果探究}
 \begin{table*}[htb]
 \centering
+\caption{CSTR}
+\label{tab:cstr}
 \begin{tabular}{l|ll|ll|ll|ll|ll} 
 \toprule
 \multicolumn{1}{c|}{} & \multicolumn{2}{c|}{25\%(uneven)} & \multicolumn{2}{c|}{25\%(even)} & \multicolumn{2}{c|}{50\%(uneven)} & \multicolumn{2}{c|}{50\%(even)} & \multicolumn{2}{c}{100\%}  \\
@@ -1155,8 +1158,6 @@ ODE-RSSM              & 0.3079 & 0.2087                   & \textbf{0.1376} & \t
 ODE-RSSM-O            & {0.2807} & {0.1913} & 0.1411 & 0.1003                 & \textbf{0.1336} & \textbf{0.0956}  & \textbf{0.0654} & \textbf{0.0477} & \textbf{0.0659} & \textbf{0.0474}           \\
 \bottomrule
 \end{tabular}
-\caption{CSTR}
-\label{tab:cstr}
 \end{table*}
 % \usepackage{booktabs}
 
@@ -1175,7 +1176,7 @@ RSSM                  & 0.5667 & 0.5593                   & 0.4155 & 0.4234     
 RSSM-O                & 0.5366 & 0.5313                   & 0.4124 & 0.4202                 & 0.5236 & 0.523                    & 0.4098 & 0.415                  & 0.3911 & 0.3876            \\ 
 \hline
 ODE-RNN               & 0.4136	&   0.4083                   & 0.4007	&   0.4071                 & 0.4141	&   0.4118                   & 0.369	&   0.3733                 & 0.3288	&   0.3245            \\
-% ODE-RNN               & 0.5018 & 0.4953                   & \textbf{0.402}  & \textbf{0.4079}                 & \textbf{0.3947} & \textbf{0.3908}                   & 0.3852 & 0.3891                 & 0.3808 & 0.3751            \\
+% ODE-RNN               & 0.5018 & 0.4953                   & \mathbf{0.402}  & \mathbf{0.4079}                 & \mathbf{0.3947} & \mathbf{0.3908}                   & 0.3852 & 0.3891                 & 0.3808 & 0.3751            \\
 Time-Aware            & 0.6009	&   0.5961                   & 0.4653	&   0.4748                 & 0.4615	&   0.4613                    & 0.431	&   0.4369                 & 0.4017	&   0.398            \\ 
 \hline
 ODE-RSSM              & 0.511  & 0.5042                   & 0.4529 & 0.4638                 & 0.4459 & 0.4442                   & 0.3899 & 0.3946                 & 0.3732 & 0.3688            \\
@@ -1279,7 +1280,7 @@ ODE-RSSM-O & \textbf{1.3678}  & \textbf{0.0504}                  & 1.2947  & \te
 根据以上结果可以得出结论，相比于直接在输入量中添加时间的差分作为额外的输入变量，基于微分方程网络的系统辨识模型能够有效地学习系统状态在连续时域下的演化，进而有效地处理不规则时间步长。
 
 % \subsection{RQ2: ODE-RSSM vs. Continuous-time deterministic models in stochastic systems}
-\subsection{相比于带有确定性状态演化的连续时间模型，ODE-RSSM建模随机系统的优势探究?}
+\subsection{相比于带有确定性状态演化的连续时间模型，ODE-RSSM建模随机系统的优势探究}
 
 % Because the winding and thickening datasets are collected from the systems which are partially observed and full of stochasticity, they are more suitable for evaluating the models in identifying stochastic systems.
 % As shown in Table.~\ref{tab:winding} and \ref{tab:thickening}, the ODE-RSSM model embed with stochastic components slightly outperform the two CT deterministic model, ODE-RNN and Time-Aware RNN.
@@ -1362,7 +1363,7 @@ ODE-RSSM本质上可以视为ODE-RNN模型的变种，它将瞬时状态更新�
 根据表~\ref{tab:changing_sampling_ratio}所示的结果可以发现，将测试集的采样率从25\%提高到50\%会使得预测误差明显下降。
 % The results shown in Table.~\ref{tab:changing_sampling_ratio} demonstrate that raising the sampling ratio of the test dataset from 25\% to 50\% leads to a decline of prediction error .
 % We also find that the decline of ODE-RSSM(25\%) is marked and the prediction error is even lower than the ODE-RSSM(50\%).
-We even find that ODE-RSSM(25\%) outperforms the ODE-RSSM(50\%) when the sampling ratio of the test dataset is $50\%$.
+% We even find that ODE-RSSM(25\%) outperforms the ODE-RSSM(50\%) when the sampling ratio of the test dataset is $50\%$.
 我们甚至发现当测试集的采样比率为$50\%$时，ODE-RSSM(25\%)的预测误差甚至低于ODE-RSSM(50\%)。
 % For the ODE-RSSM(25\%), the model have to learn from sparse sequential data and then predict the outputs with smaller intervals with the raised the sampling ratio in test dataset
 对于这样的结果，一种可能的原因是：当提高测试集的下采样比例时，使用ODE-RSSM(25\%)进行预测的本质是从稀疏的序列数据中学习，然后以更小的时间间隔预测输出，这一过程等价于预测和插值的组合。
@@ -1380,10 +1381,14 @@ ODE-RSSM(25\%)比ODE-RSSM(50\%)性能更好的另一个原因是低采样率减�
 由于高下采样比会增加相邻采样点之间的整体间隔，因此测试时求解ODE-Net的时间积分范围会超过训练集中时间范围的总体分布。
 % Because reducing the sampling ratio increases the overall distance between adjacent sampling points, the time ranges for solving ODE-Net greatly exceed the overall distribution of time intervals in training.
 在这种外推预测下，ODE-RSSM的性能难以得到保证，但其预测精度仍然优于离散时间模型RSSM。
-The performance of ODE-RSSM is not guaranteed in such extrapolated predictions, but it is still better than discrete-time one, RSSM.
+% The performance of ODE-RSSM is not guaranteed in such extrapolated predictions, but it is still better than discrete-time one, RSSM.
 
 \begin{table*}[htb]
 \centering
+\caption{
+测试集采样比例与训练集比例采样比例不同时，模型预测性能对比
+}
+\label{tab:changing_sampling_ratio}
 \resizebox{1.00\textwidth}{12mm}{
 % \resizebox{\textwidth}{
 \begin{tabular}{c|cccc|cccc|cccc} 
@@ -1396,12 +1401,7 @@ RSSM(50\%)             & 0.6149 & (\textbf{0.149})         & 0.6069 & (\textbf{0
 ODE-RSSM(25\%)         & 0.4934 & (0)             & 0.4878 & (0)              & 0.3976 & (\textbf{-0.0958})       & 0.3962 & (\textbf{-0.0916})        & 0.3861 & (\textbf{-0.1073})       & 0.3837 & (\textbf{-0.1041})        \\
 ODE-RSSM(50\%)         & 0.5754 & (0.1545)        & 0.5696 & (0.1498)         & 0.4209 & (0)             & 0.4198 & (0)              & 0.3794 & (-0.0415)       & 0.3771 & (-0.0427)        \\
 \bottomrule
-\end{tabular}
-}
-\caption{
-The results of evaluating ODE-RSSM and RSSM when the sampling ratio is different from the ratio in training dataset.
-}
-\label{tab:changing_sampling_ratio}
+\end{tabular}}
 \end{table*}
 
 
@@ -1458,7 +1458,7 @@ rk4作为固定阶求解器时，任意两个相邻时间点之间对导数$f_\t
 
 图~\ref{fig:D_time}说明了当距离$D$线性增加时，解多步KL散度的时间消耗。
 
-The blue line represents the sampled states are reused in estimating KL-D, corresponding to the Eq.~\eqref{equ:reuse}.
+% The blue line represents the sampled states are reused in estimating KL-D, corresponding to the Eq.~\eqref{equ:reuse}.
 蓝线表示如~\eqref{equ:reuse}所示在估计KL-D中重用采样出的隐状态。
 如前文理论分析，通过重复使用中间采样潜伏状态，时间消耗讲随$D$近似线性增加。
 相比之下，式~\eqref{equ:kld}所示的原始求解多步KL散度的方法所需时间是$D$的平方量级，如橙色线标记。
@@ -1623,42 +1623,43 @@ The blue line represents the sampled states are reused in estimating KL-D, corre
 % \begin{center} {\centering \vbox{\centerline{\psfig{width=0.45\textwidth,figure=1.eps}}
 % \vskip2mm }} \end{center} 
 
-\section{Discussion}
+\section{讨论}
 \label{sec:discussion}
 % The ODE-RSSM model encodes the evenly spaced streaming data to a continuous-time hidden state in latent space.
 ODE-RSSM模型能够对不均匀流式序列数据进行编码，并在隐空间中生成连续时间的隐状态。
 % When the new monitored system inputs and outputs are fed, the GRU module updates the deterministic hidden state and infer new stochastic latent state.
 % Otherwise, the ODE-net predicts the evolution the $\b{h}_t$ and indirectly determines the distribution of $\b{z}_t$.
 在同时给定新的输入输出数据时，ODE-RSSM采用GRU模块更新确定性隐状态，同时推理随机的隐变量，以此起到序列在线编码的作用。在仅有输入点时，模型能够使用ODE-Net预测$\b{h}_t$的变化并以此估计随机变量$\b{z}_t$的先验分布。
-本节将围绕ODE-RSSM具备的在线编码、在线预测的能力，探讨该模型在系统预测以外的潜在应用。
+% ODE-RSSM具备的在线编码、在线预测能力使得该模型在除系统预测以外的潜在应用。
+ODE-RSSM具备的在线编码、在线预测能力能够有效应用于除系统预测以外的问题及场景中。
 % On the basis of such property, this section will discuss the available applications of ODE-RSSM except for system prediction.
 
- \textbf{模型预测控制} 
-在模型预测控制中(Model Prediction Control, MPC)，ODE-RSSM可以作为优化过程所需的预测模型或仿真模型，
+ \textbf{模型预测控制}：在模型预测控制中(Model Prediction Control, MPC)，ODE-RSSM可以作为优化过程所需的预测模型或仿真模型，
 模型能够预测给定输入对系统序列输出的影响。ODE-RSSM支持状态循环更新的特性使其在处理增量数据时计算成本小，且优化序列长度范围灵活可变，在实际工业应用中具有很好的适用性。
 
 \textbf{异常检测:} 
-
 ODE-RSSM本质上为变分自编码器模型，利用其编码器和解码器模块能够估计给定序列数据的条件边缘似然。该似然能够作为监测数据是否存在异常的指标\cite{Xu2018}。
 
 本节，我们分析了ODE-RSSM存在的限制以及不足，并以此延伸展望了未来可能的研究方向：
+
 \textbf{异步观测}
 ODE-RSSM假设所有通道的采样时间点是同步的。而在实际的工业系统中，不同传感器的数据采集是独立的，因此不同监测项的采集频率和采集时刻可能是不同的。
 为了适用于此类异步观测数据，需要在模型中引入在线的数据连续化插值\cite{Che2018}技术。
 
-% \textbf{Asynchronous observations} 
+% \mathbf{Asynchronous observations} 
 % ODE-RSSM assumes the sampling time points of all channels are simultaneous. While different sensors may be observed at different frequencies in real industrial systems. 
 % It is worthwhile to incorporate online data imputation techniques\cite{Che2018} into the proposed framework.
 
-\textbf{时间演化过程中的随机性建模} 
-% ODE-RSSM is intrinsically a discrete-time model, which only infers the stochastic latent variables at discrete-time steps. 
+
+\textbf{时间演化过程中的随机性建模}：% ODE-RSSM is intrinsically a discrete-time model, which only infers the stochastic latent variables at discrete-time steps. 
 % The ODE-Net in CT domain only models the deterministic continuous-time evolution between adjacent observed time points.
 % In future, we look into complete continuous-time models with stochasticity, such as Stochastic Differential Equation Network(SDE), to model the continuous-time stochastic transitions of complicated system.
+
 因为ODE-RSSM仅预测或推理出离散时间步下的随机隐变量分布，因此该模型本质上仍是一个离散时间模型。
 ODE-Net仅建模了相邻观测时间点之间确定性隐状态在连续时间域上的确定性演化，而无法建模状态演化过程中的存在随机性，如维纳过程等连续时间随机过程。
 未来，本人将尝试引入具有随机性的连续时间模型作为ODE-NET的替代，如随机微分方程网络(Stochastic Differential Equation Neural Network SDE-Net)，用于建模复杂系统中存在的连续时间随机性。
 
-\section{Conclusion}
+\section{本章小结}
 \label{sec:conclusion}
 % The conclusion goes here.
 % This paper focuses on identifying input/outputs system with stochasticity and long-delay from unevenly spaced observations.

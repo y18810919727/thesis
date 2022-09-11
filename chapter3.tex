@@ -53,13 +53,17 @@ b)\ 基于平稳系统和非平稳系统概念，本章设计了两种导数模�
 c)\ 利用来源于某真实铜矿场中膏体浓密机的历史运行数据验证了本章提出方法的有效性。结果表明，该模型在预测具有非线性和高时滞特性的浓密机系统时具有较好性能。此外，本章节还进行了部分消融研究，以评估模型中每个模块的有效性。
 
 本章节内容组织如下：
-~\ref{sec:formulate}节主要介绍了预测问题的形式化表述。
-~\ref{sec:model}节介绍了本章所述的连续时间深度预测模型。
-% ~\ref{sec:derivative}节具体介绍了面向短期预测和长期预测的两种导数模块定义方法。
+~\ref{sec:formulate}节主要介绍了复杂输入输出系统预测问题的形式化表述并给出基于状态空间模型的表示方法。
+% ~\ref{sec:model}节介绍了本章所述的连续时间深度预测模型。
+~\ref{sec:model}节主要介绍了基于ODE-net的输入输出系统预测模型，并分别介绍其序列编码器、导数模块以及状态解码器三大部分，同时给出了基于伴随状态的模型训练方法。
+另外，该节分别面向短期预测和长期预测两种情况，介绍了两种导数模块定义方法。
+% 同时给出了面向短期预测和长期预测的两种导数模块定义方法。
+最后提出了用于连续化系统输入序列的并行插值方法。
+% ~\ref{sec:derivative}节具体
 % ~\ref{sec:interpolation}节具体介绍了用于连续化系统输入序列的并行插值方法。
 % ~\ref{{sec:train}介绍了用于连续化系统输入序列的并行插值方法
 % We next present the CT deep sequential model in Section~\ref{sec:CTDSM}. 
-\ref{sec:case}节介绍了将本章所述方法用于膏体浓密机系统预测问题的实验结果。
+\ref{sec:case}节为实验章节，介绍了将本章所述方法用于膏体浓密机系统预测问题的实验结果。
 \ref{sec:conc}节对本章工作进行了总结，并讨论了未来的研究方向。
 
 \section{问题形式化表述}
@@ -106,11 +110,10 @@ $\boldsymbol Y_p^{N_y}=[\boldsymbol y(-N_y),\boldsymbol y(-N_y+1),\dots, \boldsy
 为了在预测模型中构造一个合理有效的模块$D$，一种简单有效的解决方案是采用单步自回归的离散时间状态空间模型 \cite{4019326}:
 % From the perspective of discrete-time setting, a thickening system with long time delay and incomplete observations can be formulated by a state space model~\cite{4019326} which introduces hidden state $\boldsymbol h(t)$:
 \begin{equation}
-\label{equ:discrete_state_space}
-\boldsymbol{h}(k)=d\big(\boldsymbol{h}(k-1), \boldsymbol{x}(k-1)\big),
-\end{equation}
-\begin{equation}
-\boldsymbol{y}(k)=g(\boldsymbol{h}(k)),
+    \begin{aligned}
+\boldsymbol{h}(k)&=d\big(\boldsymbol{h}(k-1), \boldsymbol{x}(k-1)\big)\\
+\boldsymbol{y}(k)&=g(\boldsymbol{h}(k)),
+    \end{aligned}
 \end{equation}
 其中隐状态$\boldsymbol{h}(k)$将系统的历史轨迹编码为紧密、定长的向量。
 系统控制输入的影响可以看作是对系统当前隐状态的单步非线性变换。

@@ -26,8 +26,12 @@
 
 
 %主要字体设置
-\setCJKmainfont{SimSun}
+% \setCJKmainfont{SimSun}
+\setCJKmainfont[AutoFakeBold = {5.17}]{SimSun}
+% \setCJKmainfont{SimSun}[BoldFont=FZCuSong-B09S]
 \setCJKfamilyfont{kt}[AutoFakeBold = {2.17}]{KaiTi}  
+% \newCJKfontfamily\songbf{FZCuSong-B09S}[BoldFont=FZCuSong-B09S]
+
 \newcommand{\kaiti}{\CJKfamily{kt}}
 
 \RequirePackage[pdfstartview=FitH, CJKbookmarks=true, bookmarksnumbered=true,bookmarksopen=true, colorlinks=false, colorlinks=black,pdfborder=100, citecolor=black ]{hyperref}		% 书签设置
