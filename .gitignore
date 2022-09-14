@@ -9,3 +9,5 @@
 *.log
 *.gz
 *.latexmk
+*.out
+*.fdb_latexmk
