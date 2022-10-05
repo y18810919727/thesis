@@ -66,7 +66,7 @@ c)\ 利用来源于某真实铜矿场中膏体浓密机的历史运行数据验�
 \ref{sec:case}节为实验章节，介绍了将本章所述方法用于膏体浓密机系统预测问题的实验结果。
 \ref{sec:conc}节对本章工作进行了总结，并讨论了未来的研究方向。
 
-\section{问题形式化表述}
+\section{问题形式化描述}
 \label{sec:formulate}
 在复杂工业系统中，系统输出量定义为$\b y(k) \in \mathbb{R}^n$,
 其中$k$为采样时间指标。将影响系统输出量的系统控制输入量定义为$\b x(k)\in \mathbb{R}^m$。
@@ -128,7 +128,7 @@ $\boldsymbol Y_p^{N_y}=[\boldsymbol y(-N_y),\boldsymbol y(-N_y+1),\dots, \boldsy
 在此处，离散下标$k$被替换为连续时间下标$t$以表示$\boldsymbol{h}(t)$的变化为连续时间过程。
 对于复杂系统的预测模型可以进一步表示为式\eqref{equ:discrete_seq2seq} 和式 \eqref{equ:derivative_model}。
 本章节的目标是利用收集得到的系统运行轨迹数据，对 上述模型中的各个参数化模块进行学习，包括序列编码器$\mathcal{F}(\cdot)$、连续时间导数模块$d(\cdot,\cdot)$和状态解码器$g(\cdot)$。
-\section{基于ODE-net模型的多输入输出系统预测模型}
+\section{基于ODE-Net的多输入输出系统预测模型设计}
 \label{sec:model}
 本章采用集成的深度神经网络以参数化拟合公式~\eqref{equ:discrete_seq2seq}和~\eqref{equ:derivative_model}.
 图~\ref{fig:model_structure}展示了网络中包含的各个组件及其连接。
@@ -241,11 +241,7 @@ L\left(\boldsymbol{h}\left(t_{k}\right)\right)&=L\left(\boldsymbol{h}\left(t_{0}
 一般的状态空间模型多使用普通的矩阵变换以构建编码空间到系统输出空间的映射。本文中，由于公式
 ~ \eqref{equ:non_stationary}中的累加形式使输入$\b h(t)$的范围是非确定性的，而实际系统的输出空间是有界的，因此选择带有$\tanh$非线性归一化的解码器以限制解码器输出在合理的范围内。
 
-由于模型中的编码、解码以及ODE求解过程都是可微的，本章采用标准的反向传播算法训练完整模型，损失函数定义定义为标准的均方误差损失函数:
-\begin{equation}
-\label{equ:mse_loss}
-\mathcal{O}\left(\hat{\boldsymbol Y}^M, \boldsymbol{Y}^M\right)=\frac{1}{M} \sum_{i=1}^{M}\left|\boldsymbol y_{i}-\hat{\boldsymbol y}_{i}\right|^2.
-\end{equation}
+
 
 \subsection{面向不同预测时长需求的常微分方程导数模块定义}
 \label{sec:derivative}
@@ -308,7 +304,7 @@ d\left(\boldsymbol{h}(t), \boldsymbol{x}(t), \theta_{d}\right)=\frac{1}{\mu _t}(
 对于平稳系统，我们主要将其用于长期预测。由于GRU具有较强的携带长时间信息的能力，所以我们使用GRU网络来构造导数模块。
 对于非平稳系统中，主要将其用于短期预测。由于隐状态导数的连续累积，隐状态的变化类似于维纳过程，将会在无约束的范围内不断扩散。
 而GRU、LSTM等网络均假设模型输入应限定在有界范围内。因此，本文在非稳定系统中利用MLP模块学习给定$\b h(t)$和$\b x(t)$下$\dot{\b h}(t)$的一阶导数。
-\subsection{离散输入序列的可微并行插值方法}
+\section{离散输入序列的可微并行插值方法及模型训练}
 \label{sec:interpolation}
 在等式\eqref{equ:non_stationary}和\eqref{equ:stationary}中，$\dot{\b h}(t)$的计算依赖于外部输入$\b x(t)$，而训练数据中的外部输入序列$\boldsymbol X_f^M$是离散的。ODE-net的计算需要在连续时间范围内给定任意时刻的系统外部输入值$\boldsymbol x(t)$。
 因此，在网络执行前向传播前，需要将离散的外部输入序列转换到连续时间域中。
@@ -346,6 +342,11 @@ x_{k+n}^{1} & \cdots & x_{k+n}^{m}
 \left[\b x^1(t),\b x^2(t),\cdots,\b x^m(t)\right]= \Bigg(\left[ 1, \frac{tM}{T},\cdots, (\frac{tM}{T})^n\right]\boldsymbol{A}\Bigg). 
 \end{equation}
 在一般的深度学习框架中，上述矩阵乘法和求逆矩操作可以高效地并行实现。
+由于上述并行插值过程以及模型中的编码、解码以及常微分方程求解过程都是可微的，本章采用标准的反向传播算法训练完整模型，损失函数定义为标准的均方误差损失函数:
+\begin{equation}
+\label{equ:mse_loss}
+\mathcal{O}\left(\hat{\boldsymbol Y}^M, \boldsymbol{Y}^M\right)=\frac{1}{M} \sum_{i=1}^{M}\left|\boldsymbol y_{i}-\hat{\boldsymbol y}_{i}\right|^2.
+\end{equation}
 % For uneven case, the interval time for sampled data is not constant.
 % An obvious way is employing any interpolation method to pad the original data and produce a sequence with even time separation before training.
 % Furthermore, some frequency domain based method could also produce continuous-time sequence from the discrete. 
@@ -355,7 +356,7 @@ x_{k+n}^{1} & \cdots & x_{k+n}^{m}
 % While the spline interpolations can avoid this problem.
 % The experiment section will show the influence from the choice of the order in spline interpolation.
 
-\section{基于工业数据集的模型性能分析}
+\section{实验验证与分析}
 \label{sec:case}
 
 \begin{figure}[t]
@@ -537,7 +538,8 @@ Transformer和Attention-Seq2Seq的超参数设置与原文献保持一致。
 %%%%%%%
 % seeking help : 预测底流浓度的RRSE、MSE 误差 以及每次预测序列所需的时间
 %RRSE and MSE error of predicted underflow concentration and time consumption for each prediction.
-Root relative squared error (RRSE), mean squared error (MSE), and time consumption of predicted underflow concentration.
+底流浓度预测的相对方根误差（RRSE）、平均平方误差（MSE）、时间消耗
+% Root relative squared error (RRSE), mean squared error (MSE), and time consumption of predicted underflow concentration.
 }
 %%%%%%%
 \label{tab:exp_all}
@@ -624,41 +626,41 @@ Root relative squared error (RRSE), mean squared error (MSE), and time consumpti
 
 为了更直观地比较使用稳定系统和非平稳系统定义导数模块的区别，我们进一步地可视化了不同ODE求解器对非稳定和稳定系统的预测效果。
 图\ref{fig:predict_cmp_60}描述了对于$L=60$的短期预测任务，使用不同ODE求解器求解非平稳系统和平稳系统得到的预测序列:
-\begin{figure}[h]
+
+\begin{figure}[htpb]
 \centering
 %\setlength{\abovecaptionskip}{-0.1cm} 
 \subfigure[稳定系统+RK4求解器]{
-\begin{minipage}[t]{0.33\linewidth}
+\begin{minipage}[t]{\linewidth}
 \centering
 % \hspace{-22pt}
-\includegraphics[width=\linewidth,trim=12 0 0 20,clip]{figures/chapter3/predict_cmp/Pressure_GRU_sta_rk4_60.eps}
+\includegraphics[width=0.49\linewidth,trim=50 0 0 200,clip]{figures/chapter3/predict_cmp/Pressure_GRU_sta_rk4_60.pdf}
 % \hspace{-18pt}
-
-\includegraphics[width=\linewidth,trim=12 0 0 20,clip]{figures/chapter3/predict_cmp/UC_GRU_sta_rk4_60.eps}
+\includegraphics[width=0.49\linewidth,trim=50 0 0 200,clip]{figures/chapter3/predict_cmp/UC_GRU_sta_rk4_60.pdf}
 %\caption{fig1}
 \end{minipage}
 }%
-\hspace{-22pt}
+
+% \hspace{-22pt}
 \subfigure[非稳定系统+RK4求解器]{
-\begin{minipage}[t]{0.33\linewidth}
+\begin{minipage}[t]{\linewidth}
 \centering
 % \hspace{-22pt}
-\includegraphics[width=\linewidth,trim=12 0 0 20,clip]{figures/chapter3/predict_cmp/Pressure_MLP_nonsta_rk4_60.eps}
+\includegraphics[width=0.49\linewidth,trim=50 0 0 200,clip]{figures/chapter3/predict_cmp/Pressure_MLP_nonsta_rk4_60.pdf}
 % \hspace{-18pt}
-
-\includegraphics[width=\linewidth,trim=12 0 0 20,clip]{figures/chapter3/predict_cmp/UC_MLP_nonsta_rk4_60.eps}
+\includegraphics[width=0.49\linewidth,trim=50 0 0 200,clip]{figures/chapter3/predict_cmp/UC_MLP_nonsta_rk4_60.pdf}
 %\caption{fig1}
 \end{minipage}
 }%
-\hspace{-22pt}
+
+% \hspace{-22pt}
 \subfigure[非稳定系统+Dopri5求解器]{
-\begin{minipage}[t]{0.33\linewidth}
+\begin{minipage}[t]{\linewidth}
 \centering
 % \hspace{-22pt}
-\includegraphics[width=\linewidth,trim=12 0 0 20,clip]{figures/chapter3/predict_cmp/Pressure_MLP_nonsta_dopri5_60.eps}
+\includegraphics[width=0.49\linewidth,trim=50 0 0 200,clip]{figures/chapter3/predict_cmp/Pressure_MLP_nonsta_dopri5_60.pdf}
 % \hspace{-18pt}
-
-\includegraphics[width=\linewidth,trim=12 0 0 20,clip]{figures/chapter3/predict_cmp/UC_MLP_nonsta_dopri5_60.eps}
+\includegraphics[width=0.49\linewidth,trim=50 0 0 200,clip]{figures/chapter3/predict_cmp/UC_MLP_nonsta_dopri5_60.pdf}
 %\caption{fig1}
 \end{minipage}
 }%
@@ -667,6 +669,50 @@ Root relative squared error (RRSE), mean squared error (MSE), and time consumpti
 \label{fig:predict_cmp_60}
 %\vspace*{-0.4cm}
 \end{figure}
+% k
+% \begin{figure}[h]
+% \centering
+% %\setlength{\abovecaptionskip}{-0.1cm} 
+% \subfigure[稳定系统+RK4求解器]{
+% \begin{minipage}[t]{0.33\linewidth}
+% \centering
+% % \hspace{-22pt}
+% \includegraphics[width=\linewidth,trim=12 0 0 20,clip]{figures/chapter3/predict_cmp/Pressure_GRU_sta_rk4_60.eps}
+% % \hspace{-18pt}
+
+% \includegraphics[width=\linewidth,trim=12 0 0 20,clip]{figures/chapter3/predict_cmp/UC_GRU_sta_rk4_60.eps}
+% %\caption{fig1}
+% \end{minipage}
+% }%
+% \hspace{-22pt}
+% \subfigure[非稳定系统+RK4求解器]{
+% \begin{minipage}[t]{0.33\linewidth}
+% \centering
+% % \hspace{-22pt}
+% \includegraphics[width=\linewidth,trim=12 0 0 20,clip]{figures/chapter3/predict_cmp/Pressure_MLP_nonsta_rk4_60.eps}
+% % \hspace{-18pt}
+
+% \includegraphics[width=\linewidth,trim=12 0 0 20,clip]{figures/chapter3/predict_cmp/UC_MLP_nonsta_rk4_60.eps}
+% %\caption{fig1}
+% \end{minipage}
+% }%
+% \hspace{-22pt}
+% \subfigure[非稳定系统+Dopri5求解器]{
+% \begin{minipage}[t]{0.33\linewidth}
+% \centering
+% % \hspace{-22pt}
+% \includegraphics[width=\linewidth,trim=12 0 0 20,clip]{figures/chapter3/predict_cmp/Pressure_MLP_nonsta_dopri5_60.eps}
+% % \hspace{-18pt}
+
+% \includegraphics[width=\linewidth,trim=12 0 0 20,clip]{figures/chapter3/predict_cmp/UC_MLP_nonsta_dopri5_60.eps}
+% %\caption{fig1}
+% \end{minipage}
+% }%
+% \centering
+% \caption{不同系统及不同ODE求解器在$L=60$短期预测任务中的性能比较}
+% \label{fig:predict_cmp_60}
+% %\vspace*{-0.4cm}
+% \end{figure}
 
 结果表明，非平稳模型在短期预测任务中的表现优于平稳模型。非平稳模型的估计序列比平稳模型的估计序列更接近实际系统输出。
 非平稳系统的学习过程本质上相当于对隐状态进行差分，利用MLP网络学习平稳的系统一阶差分。
@@ -677,43 +723,42 @@ Root relative squared error (RRSE), mean squared error (MSE), and time consumpti
 
 图\ref{fig:predict_cmp_200}展示了长期预测任务($L=200$)中的模型预测结果。
 % ($L=500$的类似结果可以在Table~\ref{tab:exp_all}中找到)。
-\begin{figure}[t]
+\begin{figure}[htpb]
 %\setlength{\abovecaptionskip}{-0.1cm} 
 \centering
 \subfigure[非稳定系统+RK4求解器]{
-\begin{minipage}[t]{0.33\linewidth}
+\begin{minipage}[t]{\linewidth}
 \centering
 % \hspace{-22pt}
-\includegraphics[width=\linewidth,trim=12 0 0 20,clip]{figures/chapter3/predict_cmp/Pressure_MLP_nonsta_rk4_200.eps}
+\includegraphics[width=0.49\linewidth,trim=50 0 0 200,clip]{figures/chapter3/predict_cmp/Pressure_MLP_nonsta_rk4_200.pdf}
 % \hspace{-18pt}
-
-\includegraphics[width=\linewidth,trim=12 0 0 20,clip]{figures/chapter3/predict_cmp/UC_MLP_nonsta_rk4_200.eps}
+\includegraphics[width=0.45\linewidth,trim=50 0 0 200,clip]{figures/chapter3/predict_cmp/UC_MLP_nonsta_rk4_200.pdf}
 %\caption{fig:subfig_200_nonsta_rk4}
 \end{minipage}
 \label{fig:subfig_200_nonsta_rk4}
 }%
-\hspace{-22pt}
+% \hspace{-22pt}
+
 \subfigure[稳定系统+Euler求解器]{
-\begin{minipage}[t]{0.33\linewidth}
+\begin{minipage}[t]{\linewidth}
 \centering
 % \hspace{-22pt}
-\includegraphics[width=\linewidth,trim=12 0 0 20,clip]{figures/chapter3/predict_cmp/Pressure_GRU_sta_euler_200.eps}
+\includegraphics[width=0.45\linewidth,trim=50 0 0 200,clip]{figures/chapter3/predict_cmp/Pressure_GRU_sta_euler_200.pdf}
 % \hspace{-18pt}
-
-\includegraphics[width=\linewidth,trim=12 0 0 20,clip]{figures/chapter3/predict_cmp/UC_GRU_sta_euler_200.eps}
+\includegraphics[width=0.45\linewidth,trim=50 0 0 200,clip]{figures/chapter3/predict_cmp/UC_GRU_sta_euler_200.pdf}
 %\caption{fig:subfig_200_sta_euler}
 \end{minipage}%
 \label{fig:subfig_200_sta_euler}
 }%
+
 \hspace{-22pt}
 \subfigure[稳定系统+RK4求解器]{
-\begin{minipage}[t]{0.33\linewidth}
+\begin{minipage}[t]{\linewidth}
 \centering
 % \hspace{-22pt}
-\includegraphics[width=\linewidth,trim=12 0 0 20,clip]{figures/chapter3/predict_cmp/Pressure_GRU_sta_rk4_200.eps}
-
+\includegraphics[width=0.45\linewidth,trim=50 0 0 200,clip]{figures/chapter3/predict_cmp/Pressure_GRU_sta_rk4_200.pdf}
 % \hspace{-18pt}
-\includegraphics[width=\linewidth,trim=12 0 0 20,clip]{figures/chapter3/predict_cmp/UC_GRU_sta_rk4_200.eps}
+\includegraphics[width=0.45\linewidth,trim=50 0 0 200,clip]{figures/chapter3/predict_cmp/UC_GRU_sta_rk4_200.pdf}
 %\caption{fig:subfig_200_sta_rk4}
 \end{minipage}%
 \label{fig:subfig_200_sta_rk4}
@@ -744,7 +789,7 @@ Root relative squared error (RRSE), mean squared error (MSE), and time consumpti
 在由非稳定系统定义的导数模块中，其内部结构导致了隐状态在积分过程中是无约束的，状态的取值空间将逐渐扩张。
 虽然模型在解码器网络中嵌入$\tanh$函数，能够将预测的系统输出限制在合理的范围内，但解码器模块无法学习有效的映射函数，实现从极大的隐状态空间到系统输出空间的准确映射。
 
-同样地，图~\ref{Fig:predict_cmp_200}也证明了在长期预测问题中，高阶ODE求解器（如4阶Runge—Kutta）能够获得比低阶ODE求解器（如Euler）更好的预测效果。
+同样地，图~\ref{fig:predict_cmp_200}也证明了在长期预测问题中，高阶ODE求解器（如4阶Runge—Kutta）能够获得比低阶ODE求解器（如Euler）更好的预测效果。
 
 
 % It notes that in the last part of simulation, the predicted system outputs deviate from the real sequences.
@@ -779,7 +824,7 @@ Root relative squared error (RRSE), mean squared error (MSE), and time consumpti
 本节额外进行了数组实验，以评估在不同预测长度$L$下，稳定系统和非稳定系统预测的底流浓度误差(MSE)变化。
 图~\ref{fig:length_cmp}展示了五次重复实验中，底流浓度的预测误差波动情况($ log_{10}{\text{MSE}} \pm 2\sigma$)。虽然在长期预测任务中稳定系统优于非稳定系统，但非稳定系统在短期预测任务中的表现优于稳定系统(如$L<100$)。
 大约当$L$超过$120$时，非稳定系统的误差随预测长度的增加而显著增加。
-\begin{figure}[htpb]
+\begin{figure}[h]
 %\setlength{\abovecaptionskip}{-0.1cm} 
     \centering
     \includegraphics[width=\linewidth,trim=50 0 50 10, clip]{figures/chapter3/length_cmp.pdf}
@@ -804,7 +849,7 @@ Root relative squared error (RRSE), mean squared error (MSE), and time consumpti
 \label{tab:interolopation_cmp}
 \begin{tabular}{c|cc|cc|cc}
 \toprule
- \multirow{2}{*}{模型}         & \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}$L=60$ \\ (120 minutes)\end{tabular}}                 & \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}$L=200$ \\ (400 minutes)\end{tabular}}                  & \multicolumn{2}{c}{\begin{tabular}[c]{@{}c@{}}$L=500$ \\ (1000 minutes)\end{tabular}}                 \\
+ \multirow{2}{*}{模型}         & \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}$L=60$ \\ (120 分钟)\end{tabular}}                 & \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}$L=200$ \\ (400 分钟)\end{tabular}}                  & \multicolumn{2}{c}{\begin{tabular}[c]{@{}c@{}}$L=500$ \\ (1000 分钟)\end{tabular}}                 \\
     & RRSE                 & MSE                  & RRSE                 & MSE                   & RRSE                 & MSE                   \\ \hline
 三次样条插值     &  \uline{\textbf{3.083}} & \uline{ \textbf{8.565}} & \uline{ \textbf{3.581}} & 32.90                & 1.615                & \uline{\textbf{ 34.88}} \\
 二次样条插值 & 3.097                & 8.993                & 3.593                &\uline{ \textbf{32.585}} &\uline{ \textbf{1.613}} & 36.741                \\
@@ -837,7 +882,7 @@ Root relative squared error (RRSE), mean squared error (MSE), and time consumpti
 \renewcommand{\arraystretch}{1.5}
 \begin{tabular}{|c|cc|cc|cc|}
 \hline
-\multirow{2}{*}{$N$}                                                & \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}$L=60$ \\ (120 minutes)\end{tabular}}                 & \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}$L=200$ \\ (400 minutes)\end{tabular}}                  & \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}$L=500$ \\ (1000 minutes)\end{tabular}}                \\
+\multirow{2}{*}{$N$}                                                & \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}$L=60$ \\ (120 分钟)\end{tabular}}                 & \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}$L=200$ \\ (400 分钟)\end{tabular}}                  & \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}$L=500$ \\ (1000 分钟)\end{tabular}}                \\
 \cline{2-7}
                                                                                      & RRSE                & MSE                 & RRSE                & MSE                  & RRSE                & MSE                  \\ \hline
 160                                                                               & 3.11                & 9.08                &  \uline{\textbf{3.56}} & 34.13                & 1.61                & 35.88                \\

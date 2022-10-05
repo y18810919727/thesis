@@ -1,5 +1,8 @@
-
-\chapter{ODE-RSSM:利用非均匀采样数据建模随机状态空间模型}
+% \usepackage{colortbl}  %彩色表格需要加载的宏包
+% \usepackage{xcolor}
+% \usepackage{array}   %对表列和表格线的设置需要用到array宏包
+% \chapter{ODE-RSSM:利用非均匀采样数据建模随机状态空间模型}
+\chapter{基于深度常微分马尔可夫模型的随机非确定性系统建模}
 \renewcommand{\b}{\boldsymbol}   % This command is specifically forbidden
 % \renewcommand{\b}[1]{\boldsymbol{#1}}
 \newcommand{\zt}{\boldsymbol{z}_{t_i}}
@@ -60,7 +63,7 @@
 % However, there are several common challenges in modelling real systems:
 % First, many neural-network-based system identification models in previous studies only model the deterministic dynamics.
 基于深度学习的系统识别方法结合了深度神经网络在建模非线性复杂函数的优势，实现利用离线输入输出数据识别未知参数结构的黑盒系统动态。
-训练后的模型可以作为实际系统的近似替代，以支撑仿真预测、模型预测控制和基于模型的强化学习(model-based reinforcement learning, MBRL)等下游决策优化任务。
+训练后的模型可以作为实际系统的近似替代，以支撑仿真预测、模型预测控制和基于模型的强化学习(Model-based Reinforcement learning, MBRL)等下游决策优化任务。
 然而，在建模真实工业系统时经常面临如下挑战:
 首先，在以往的研究中，许多基于神经网络的系统辨识模型属于确定性模型，无法对系统状态转移的随机性以及不完备观测造成的确定性进行建模。因此，此类模型仅适用于对确定性动态系统进行建模，不适用于带有随机性或观测空间存在非确定性的系统。
 % , which can not learn the systems that suffers from high uncertainty the stochastic property. 
@@ -101,10 +104,28 @@
 因此，本文提出常微分方程循环状态空间模型(Ordinary Differential Equation Recurrent State Space Model, ODE-RSSM)，该模型一个定义在连续时间(CT)域中的随机过渡模型，
 该模型描述了系统状态在连续时间域下的随机演化，能够用于从不规则样本数据中学习具有随机性和长时滞特性的动态系统。
 具体地，相比于离散时间域下的循环状态空间模型，ODE-RSSM通过在状态演化中加入ODE-Net以描述模型内部状态对时间的导数，以此建模任意长度时间间隔的状态演变。
-另外，在训练阶段，为了使该模型能够支持批量并行化推理与训练，需要解决同一batch中求解时间点彼此不同、积分区间彼此不一致的问题。
+另外，在训练阶段，为了使该模型能够支持批量并行化推理与训练，需要解决同一数据批中求解时间点彼此不同、积分区间彼此不一致的问题。
 因此本章提出了一种批常微分方程并行求解方法，通过构造辅助常微分方程以对其各常微分方程的求解时间点，进而利用现有的深度学习框架高效地求解多个积分区间不同的常微分方程。
 此外，本章在训练阶段引入了一种计算复杂度更低的隐空间超调技术，在不显著增加时间复杂度的情况下有效改善模型的长期预测性能。
-在实验环节，我们在共3个系统辨识数据集(2个公共数据集和1个私有数据集)上评估了所述模型在长期开环预测问题中的性能。实验表明在非均匀采样下的随机系统预测任务上，ODE-RSSM无论是在处理非均匀采样方面还是建模系统随机性方面均具有良好表现，预测精度显著优于离散时间状态空间模型以及带有确定性状态演变的连续时间模型。
+在实验环节，我们在共3个系统辨识数据集(2个公共数据集和1个私有数据集)上评估了所述模型在长期开环预测问题中的性能。实验表明在非均匀采样下的随机系统预测任务上，ODE-RSSM无论是在处理非均匀采样方面还是建模系统随机性方面均具有良好表现，预测精度显著优于离散时间状态空间模型以及带有确定性状态演变的连续时间模型。相比于其他基于神经网络的系统建模方法，本章提出模型的优势如表\ref{tab:c5_comparison}所示。
+\begin{table}[t]
+    \centering
+    \caption{本章提出方法与现有系统建模方法的对比}
+    \label{tab:c5_comparison}
+    \begin{tabular}{c|ccc}
+    \toprule 
+     模型         & 随机性                                 & 非均匀采样                   & 在线预测                           \\ \hline 
+    RNN       &  {\XSolidBrush}                        &  {\XSolidBrush}                        &   {\Checkmark} \\
+    RSSM           &  {\Checkmark}                          &  {\XSolidBrush}                        &  {\Checkmark}                        \\
+    Time-Aware RNN &  {\XSolidBrush}                        &  {\Checkmark}                          &  {\Checkmark}                        \\
+    % SNODE &  {\XSolidBrush}                        &  {\Checkmark}                          &  {\Checkmark}                        \\
+    ODE-RNN,SNODE        &  {\XSolidBrush}                        &  {\Checkmark}                          &  {\Checkmark}                        \\
+    Latent SDE     &  {\Checkmark}                          &  {\Checkmark}                          &  {\XSolidBrush}                      \\
+    \textbf{ODE-RSSM}       &  {\Checkmark}                          &  {\Checkmark}                          &  {\Checkmark}                        \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+    
 
 % Furthermore, we utilize the DcspNet to model a real thickening system and  MPC framework whick 
 % Furthermore, a MPC control policy is implemented based on DcspNet and cross entropy optimization method(CEM) to solve the process control problem of thickening system.
@@ -138,111 +159,29 @@
 % 最后，\ref{sec:conclusion}节对本章工作做出了总结，并对未来的研究研究方向做出了讨论。
 
 
-
-\section{研究背景及相关工作}
-\label{sec:related_work}
-% Dynamics model learning, also known as System identification~\cite{aastrom1971system}, is a task that learns the dynamical model of a inputs-outputs system from offline data.
-% It raises an important role in areas of system prediction and model-based Reinforcement learning. 
-动态系统建模，也被称为系统辨识~\cite{aastrom1971system}，是一项从离线数据中学习输入输出系统动态模型的任务。
-其广泛应用于系统仿真预测及基于模型的强化学习领域。
-% The learned model can be used in control, state estimation, and prediction.
-% In this paper, we focus on the black-box system modelling where both of the functional forms and parameters are unknown.
-% In order to model the unknown non-linear complicated systems, approximate parametric model based on neural networks are able to flexibly approximate the systems with non-linear functions and high dimensional inputs\cite{wang2017new,ogunmolu2016nonlinear}.
-在本章中，我们重点关注函数结构及系统参数均未知的黑盒系统辨识任务。
-为了对此类未知非线性复杂系统进行建模辨识，基于神经网络的参数近似模型能够灵活地对具有非线性动态和高维输入的系统进行拟合近似~\cite{wang2017new,ogunmolu2016nonlinear}。
-% In many real-world systems, the sequential data are sampled unevenly from the identified system. 
-% SNODE\cite{Quaglino2019} uses the spectral element methods for fast and accurate training of Neural Ordinary Differential Equations for system identification. 
-% ODE-RNN\cite{Rubanova2019} inserts an ODE-Net module between adjacent RNN updates for modelling the continuous-time evolution of hidden states.
-% In order to improve the long-term prediction, previous studies \cite{Demeester2019,Yuan2022} incorporate the advantages of recurrent network and differential equation to tackle the unit root problem and propose the Time-Aware RNN, as a continuous-time system identification model.
-
-在许多真实的工业场景中，从被识别系统采样得到的序列数据经常是间隔非均匀的。
-SNODE\cite{Quaglino2019}使用谱方法用于快速和准确地训练神经常微分方程模型以辨识低维输入输出系统。
-ODE-RNN~\cite{Rubanova2019}在RNN网络相邻状态更新处插入ODE-Net模块，用于建模网络隐状态的连续时间演化。
-为了改善辨识模型在长期预测时的稳定性，如本文第三章所述的稳定性模型，现有研究\cite{Demeester2019,Yuan2022}将递归神经网络的稳定性融入到微分方程的导数网络设计中以解决单位根问题，并提出了一种连续时间系统辨识模型——时间感知的RNN模型。
-% In order to improve the stability of long-term prediction, Time-Aware RNN~\cite{Srinivas2020,Yuan2022} incorporate the advantages of recurrent network and differential equation to tackle the unit root problem.
-% and propose the Time-Aware RNN, as a continuous-time system identification model.
-% tackle the unit root problem and utilize a time-aware and stationary RNN for long-term prediction.
-% The models above are conti
-% The above-mentioned continuous-time models are capable of tackling the problem of unevenly sampling, but are weak in modeling stochastic systems because their internal states evolution is deterministic.
-上述连续时间模型能够有效解决系统的不均匀采样问题，但由于其模型内部状态的转换是确定性的，因此对于存在随机性的系统，其建模能力较弱。
-% 但由于随机系统内部状态演化具有确定性，因此对随机系统建模能力较弱。
-
-% In the perspective of modelling stochastic system, deep temporal generative models~\cite{Fraccaro2016,Chung2015,Karl2017} extend the Variational Auto-encoders (VAEs)~\cite{kingma2013auto} to sequential situations.
-在建模随机性系统方面，深度时序生成模型~\cite{Fraccaro2016,Chung2015,Karl2017}，一般也称谓深度状态空间模型（Deep State Space Model, Dssm）将变分自动编码器模型(Variational Auto-encoder)~\cite{kingma2013auto}扩展到了序列数据。
-% Introducing stochastic latent variables enables the models to learn the stochasticity in the sequences
-% The models are capable of learn the stochasticity in the sequences by introducing stochastic latent variables.
-% PR-SSM~\cite{doerr2018probabilistic} and PILCO~\cite{deisenroth2011pilco} introduce Gaussian Processes to learn the probabilistic state space models of input/output systems.
-此类模型通过引入时序的随机隐变量学习序列的随机性。
-类似地，PR-SSM~\cite{doerr2018probabilistic}和PILCO~\cite{deisenroth2011pilco}采用高斯过程来学习输入/输出系统的概率状态空间模型。
-% , which is realized by learning
-% They learn the representations of the sequential data and generate new instances from the same distributions or conditional distributions.
-% With the benefits of efficient sampling and prediction, the learned generative models are employed in many applications, such as missing data imputation\cite{Fraccaro2017}, open-loop prediction\cite{Hafner2019} and model-based reinforcement learning(RL)\cite{Hafner2019}.
-利用上述方法构建的序列生成模型能够极为便捷地在给定条件序列输入的情况下，预测输出分布并从中采样。这种性质也使得这些方法广泛应用于缺失数据填充\cite{Fraccaro2017}、开环预测\cite{Hafner2019}、基于模型的强化学习等任务\cite{Hafner2019}。
-% With the approximate posterior model for inferring latent variables, high-dimensional temporal observations can be compressed to low-dimensional state representations, which is widely used in visual encoding\cite{Li2018a} and image-based control\cite{Lee2019}.
-% The generative model is capable of efficient sampling and prediction, which has been used in
-% These model with both functions been used in many applications, such as missing data imputation\cite{Fraccaro2017}, open-loop prediction\cite{Hafner2019} and model-based reinforcement learning(RL)\cite{Hafner2019}.
-
-% To leverage the advantages of stochastic model to quantify the uncertainty of identified system, 
-% Some previous works also integrate the temporal variational inference framework and differential networks to learn a stochastic continuous-time process. 
-以往的一些工作尝试将时序变分推理框架与微分方程网络相结合，用于学习随机的连续时间过程处理非均匀采样的序列数据。
-% LatentODE\cite{Rubanova2019}, ODE2VAE\cite{Yildiz2019} and LatentSDE\cite{Li2020} infer the posterior distribution of latent state from the irregular observed sequences. 
-LatentODE\cite{Rubanova2019}、 ODE2VAE\cite{Yildiz2019} 和 LatentSDE\cite{Li2020}利用非均匀观测数据推理隐状态的近似后验分布。
-通过从近似后验中采样状态并求解参数化的微分方程网络，模型能够从连续时间域角度对给定时间区间上的任一点进行插值或预测，进而有效地解决非均匀采样观测下的随机系统预测问题。
-% By solving the differential network with an initial state which is sampled from the inferred posterior distribution, the model support interpolating the internal missing positions and extrapolating the system outputs in future. 
-% With an sampled initial state from the inferred posterior distribution, model can interpolate the missing positions and predict the system outputs by solving the differential network.
-% While these work are offline models, as 
-% However, these models are offline, because they have to read the complete irregular time series for encoding before prediction and interpolation\cite{Liu2020}.
-然而，由于这些模型在预测或插值前必须输入完整的采样序列以用于隐状态的推理，因此这些模型均是离线模型\cite{Liu2020}。
-在某些特定任务中，如在线控制，预测模型需要能够运行在在线模式下以处理流式数据。如循环神经网络，可以支持递归地输入单点数据并更新其内部状态。
-% In actual industrial intelligent system, such as MPC, the prediction model is required to be working in online mode and recurrent manner for reducing the computing load.
-% In some specific tasks, such as online control, the prediction model is required to be working in online mode for handling streaming data\cite{lesort2018state}, just like the recurrent neural network which updates internal state recursively.
-
-% In backward propagation, the gradient flow in $p_{\theta}\left(\boldsymbol{z}_{t} \mid \boldsymbol{h}_{t}\right)$ depends on the KL-divergence in single step $t$.
-% Generally, there is long-time delay in the influences from system inputs on system outputs in most complicated industrial system.
-% It is a critical issue to guarantee the long-term forecasting of the prediction.
-% However, the loss function in \eqref{equ:elbo_single} are unfavorable for guaranteeing the accuracy of long-term prediction.
-
-% One or parts of issues mentioned above are indeed solved by previous studies.
-% In this paper, we propose a novel ODE-RSSM model which satisfies the all requirements in actual industrial applications, including of learning irregular sampled data, modelling stochasticity, and online prediction.
-% The comparison of the proposed model and other neural-based system modelling methods is shown in \ref{tab:comparison}.
-
-本章针对上述问题，提出了一种新颖的ODE-RSSM模型。该模型能够满足实际工业应用场景下的对于预测模型的上述所有要求。包括利用不均匀采样数据进行学习、建模动态系统的随机性以及支持在线预测。
-相比于其他基于神经网络的系统建模方法，本章提出模型的优势如表\ref{tab:comparison}所示。
 % In some real industrial systems, the collection data 
-\begin{table}[t]
-\centering
-\caption{本章提出方法与现有系统建模方法的对比}
-\label{tab:comparison}
-\begin{tabular}{c|ccc}
-\toprule 
- 模型         & 随机性                                 & 非均匀采样                   & 在线预测                           \\ \hline 
-RNN       &  {\XSolidBrush}                        &  {\XSolidBrush}                        &   {\Checkmark} \\
-RSSM           &  {\Checkmark}                          &  {\XSolidBrush}                        &  {\Checkmark}                        \\
-Time-Aware RNN &  {\XSolidBrush}                        &  {\Checkmark}                          &  {\Checkmark}                        \\
-% SNODE &  {\XSolidBrush}                        &  {\Checkmark}                          &  {\Checkmark}                        \\
-ODE-RNN,SNODE        &  {\XSolidBrush}                        &  {\Checkmark}                          &  {\Checkmark}                        \\
-Latent SDE     &  {\Checkmark}                          &  {\Checkmark}                          &  {\XSolidBrush}                      \\
-\textbf{ODE-RSSM}       &  {\Checkmark}                          &  {\Checkmark}                          &  {\Checkmark}                        \\
-\bottomrule
-\end{tabular}
-\end{table}
 
-\section{前置知识}
-\label{sec:background}
-\subsection{基于变分自编码机的系统辨识模型}
-% In the deep state space models, the evolution of latent states and the projection of observable variables are modeled as parametric deep neural networks.
-% Similar to the vanilla variational auto-encoder, VAE-based system modelling methods introduce stochastic latent variables in  the internal states of sequential models. 
-类似于原始的变分自编码器，基于变分自编码机的系统辨识模型通过引入了序列级隐变量，表示系统输出在受控输入下的条件生成过程。
-% Taking the Recurrent State Space Model(RSSM)~\cite{Hafner2019} for example, the evolved state includes a deterministic path $\b{h}_{i}$ and a stochastic path $\b{z}_{i}$.
-以循环状态空间模型(Recurrent State Space, Model, RSSM)~\cite{Hafner2019}为例，模型的内部的更新状态同时包括确定性变量$\b{h}_{i}$和随机变量$\b{z}_{i}$。
-利用生成模型参数$\theta$，定义离散时间域下序列隐变量和观测值的联合概率如下:
-% The joint probability of the sequential latent states and observations in discrete-time domain is defined with generative parameters $\theta$: 
-% \begin{equation}
-% \begin{aligned}
-% p_{\theta}\left(\b{y}_{1: N}, \b{z}_{1: N},\right.&\left.\b{h}_{1: N} \mid \b{u}_{1: N}, \b{h}_{0}\right)=p_{\theta}\left(\b{y}_{1: N} \mid \b{z}_{1: N}, \b{h}_{1: N}\right) \times \\
-% & \times p_{\theta}\left(\b{z}_{1: N} \mid \b{h}_{1: N}\right) \widetilde{p}\left(\b{h}_{1: N} \mid \b{u}_{1: N},\boldsymbol{z}_{1: N}, \b{h}_{0}\right),
-% \end{aligned}
-% \end{equation}
+% \section{前置知识}
+% \section{常微分方程-循环状态空间模型}
+\section{问题形式化描述}
+% For an input-output system, we sample the system trajectories irregularly and define the sequential system inputs as  $\{\ut\}_{i=1}^{N}$ and system outputs as  $\{\yt\}_{i=1}^{N}$, where $t_i$ is the sampling time point of the $i$-th position and $N$ is the complete sequence length.
+对于任一输入输出系统，
+对其非均匀采样数据进行定义，包括序列系统输入为$\{\ut\}_{i=1}^{N}$，以及序列系统输出为$\{\yt\}_{i=1}^{N}$，其中$t_i$为第$i$个位置数据点的采样时间，$N$为完整序列长度。
+本文假设对于各维度输入和各维度输出的采样都是同步地。
+% 我们对系统轨迹进行非规则采样，定义顺序系统输入为$\{\ut\}_{i=1}^{N}$，系统输出为$\{\yt\}_{i=1}^{N}$，其中$t_i$为$i$-th位置的采样时间点，$N$为完整序列长度。
+
+% we define the time index $t_i$ to denote the sampling time point of the $i$-th position.
+% The system inputs and outputs are denoted as $\{\ut\}_{i=1}^{N}$ and $\{\yt\}_{i=1}^{N}$.
+% To identify the dynamical system from evenly sampled sequences, we introduce deep state space model, named ODE-RSSM, with latent variables $\zt$ to identify the evolution of dynamical system.
+% In the meanwhile, we also follow the basic RSSM\cite{Hafner2019} and introduce a deterministic path with variable $\hti$ in the learned parametric system.
+% Similar to the RSSM\cite{Hafner2019} model, the latent states in the proposed ODE-RSSM consist of both deterministic part $\hti$ and stochastic part $\zt$.
+本章将具有随机非确定性的系统表示为包含随机隐变量的受控状态空间模型。
+% 与RSSM\cite{Hafner2019}模型相似，
+模型的隐状态由确定性部分$\hti$和随机部分$\zt$共同组成。
+为了描述简便，本章定义$\boldsymbol{s}_{t_{i}}=[\boldsymbol{z}_{t_{i}},\boldsymbol{h}_{t_{i}}]$用于表示$t_i$时刻完整的隐状态。
+该序列隐变量描述了系统输出在受控输入下的条件生成过程。
+% 以循环状态空间模型(Recurrent State Space, Model, RSSM)~\cite{Hafner2019}为例，模型的内部的更新状态同时包括确定性变量$\b{h}_{i}$和随机变量$\b{z}_{i}$。
+利用生成模型参数$\theta$，定义序列隐变量和观测值的联合概率如下:
 \begin{equation}
 \begin{aligned}
 p_{\theta}\left(\b{y}_{1: N}, \b{z}_{1: N},\right.&\left.\b{h}_{1: N} \mid \b{u}_{1: N}, \b{h}_{0}\right)=\prod_{i=1}^{N}
@@ -251,28 +190,76 @@ p_{\theta}\left(\b{y}_i \mid \b{z}_i, \b{h}_i\right) \times \\
 \end{aligned}
 \label{equ:discrete_rssm}
 \end{equation}
+% For simplicity, we define $\boldsymbol{s}_{t_{i}}=[\boldsymbol{z}_{t_{i}},\boldsymbol{h}_{t_{i}}]$ to denote the complete latent state at time point $t_i$.
+% The purpose of the ODE-RSSM is to learn a deep temporal generative model, which consist of a inference model for inferring the sequential latent states $\{\st\}_{i=1}^{N}$ given both system inputs and outputs, and a generative model for predicting the distribution of $\{\yt\}_{i=1}^{N}$ given system inputs $\{\ut\}_{i=1}^{N}$
+
+% 类似于原始的变分自编码器，基于变分自编码机的系统辨识模型通过引入了序列级隐变量，表示系统输出在受控输入下的条件生成过程。
+本章提出的ODE-RSSM为时序变分自编码机模型，模型包括生成模块和推断模块两部分。
+推断模块能够在给定系统输入和输出的情况下推断序列隐状态$\{\st\}_{i=1}^{N}$，其生成模型能够在给定系统输入$\{\ut\}_{i=1}^{N}$下，识别$\b z_{1:N}$和$\b h_{1:N}$的变化，进而
+预测系统输出$\{\yt\}_{i=1}^{N}$的条件分布.
+% 在式\eqref{equ:discrete_rssm}中，$\b z_{1:N}$和$\b h_{1:N}$的变化用于识别给定输入信号$\b u_{1:N}$下，模型的内部状态转换过程。
+% The model, meanwhile, could predict the $\yt$ under the condition of known $\ut$.
+
+\section{常微分方程网络-循环状态空间模型}
+
+% In the deep state space models, the evolution of latent states and the projection of observable variables are modeled as parametric deep neural networks.
+% Similar to the vanilla variational auto-encoder, VAE-based system modelling methods introduce stochastic latent variables in  the internal states of sequential models. 
 
 % The deterministic transition $\widetilde{p}_{\theta}(\boldsymbol h_{i}|\cdot)$ is a delta distribution and modelled by a deterministic RNN.
 % The conditional prior of the stochastic latent state $p_{\theta}\left(\boldsymbol{z}_{t} \mid \boldsymbol{h}_{t}\right)$ and decoder $p_{\theta}\left(\boldsymbol{y}_{i} \mid \boldsymbol{h}_{i}, \boldsymbol{z}_{i}\right)$ are modelled as parametric gaussian distributions.
 % In equation \eqref{equ:discrete_rssm}, the evolution of $\b z_{1:N}$ and $\b h_{1:N}$ approximates the state transitions under the input signal $\b u_{1:N}$ in the identified model.
 
-确定性转移函数$\widetilde{p}_{\theta}(\b h_{i}|\cdot)$为一delta分布，由一个确定性的循环神经网络进行建模。
-随机隐状态$p_{\theta}\left(\b {z}_{t} \mid \b {h}_{t}\right)$和解码网络$p_{theta}\left(\b {y}_{i} \mid \bold {h}_{i},\b {z}_{i}\right)$的条件分布均为参数化的高斯分布。
-在式\eqref{equ:discrete_rssm}中，$\b z_{1:N}$和$\b h_{1:N}$的变化用于识别给定输入信号$\b u_{1:N}$下，模型的内部状态转换过程。
+\label{sec:oderssm}
+% \subsection{Preliminary}
+% For an evenly spaced sequence with length $N$, we define the time index $t_i$ to denote the sampling time point of the $i$-th position.
+% With the inspiration from RSSM\cite{Hafner2019}, the latent states in the proposed ODE-RSSM consist of both deterministic parts $\hti$ and stochastic parts $\zt$.
+\begin{figure*}[ht]
+\subfigure[生成模型]{
+\begin{minipage}[t]{0.64\linewidth}
+\centering
+% \hspace{-22pt}
+\includegraphics[width=0.9\linewidth]{figures/chapter5/generation.pdf}
+%\caption{fig1}
+\end{minipage}
+\label{fig:generation}
+}%
+\subfigure[推理模型]{
+\begin{minipage}[t]{0.36\linewidth}
+\centering
+% \hspace{-22pt}
+\includegraphics[width=0.9\linewidth]{figures/chapter5/inference.pdf}
+%\caption{fig1}
+\end{minipage}
+\label{fig:encoder}
+}%
+\centering
+\caption{ODE-RSSM中的生成过程和推理过程}
+\label{fig:model_fig}
+\end{figure*}
+% In this section, we first introduce the components of the ODE-RSSM from two aspects: generative process and inference process, as shown in Fig.~\ref{fig:model_fig}.
+本节首先介绍ODE-RSSM的生成模型和推断模型，如图~\ref{fig:model_fig}所示。
+在生成模型中，在给定系统输入的情况下，模型通过组合门控循环单元(Gate Recurrent Unit, GRU)和ODE网络建模隐状态的转移过程。
+为了训练生成模型参数$\theta$， 本章通过引入近似后验编码器 $q_{\phi}\left(\boldsymbol{z}_{i} \mid \boldsymbol{y}_{i}, \boldsymbol{h}_{i}\right)$对隐变量的真实后验分布进行近似，以最大化证据下限(Evidence Lower Bound, ELBO)的方式协同训练参数 $\phi$ 和$\theta$。
+另一方面，我们在训练阶段进一步引入隐空间超调技术\cite{Hafner2019}用于改善模型的多步预测。
+为了减少引入隐空间超调带来的额外时间开销，进而优化训练效率。本章通过重用临时采样状态的方式显著减少了求解多步KL散度的时间复杂度。
+
+% 在本章提出的ODE-RSSM模型中，
+% 将确定性转移函数$\widetilde{p}_{\theta}(\b h_{i}|\cdot)$定义为一德塔（Delta）分布，由一个确定性的循环神经网络进行建模。
+% 随机隐状态$p_{\theta}\left(\b {z}_{t} \mid \b {h}_{t}\right)$和解码网络$p_{\theta}\left(\b {y}_{i} \mid \bold {h}_{i},\b {z}_{i}\right)$的条件分布均为参数化的高斯分布。
+
 % The evolution of the stochastic latent state $\b z_t$ and deterministic hidden state $\b h_t$ represent the transitions in the identified model with the input signal $\b u_t$.  
 % Generally, the parameters $\theta$ are learned by jointly introducing approximate posterior encoder $q_{\phi}\left(\boldsymbol{z}_{i} \mid \boldsymbol{y}_{i}, \boldsymbol{h}_{i}\right)$ and maximizing evidence lower bound (ELBO):
 
-为了训练生成参数$\theta$， 一般地，通过引入近似后验编码器 $q_{\phi}\left(\boldsymbol{z}_{i} \mid \boldsymbol{y}_{i}, \boldsymbol{h}_{i}\right)$对隐变量的真实后验分布进行近似，以最大化证据下限(Evidence Lower Bound, ELBO)的方式协同训练参数 $\phi$ 和$\theta$：
-\begin{equation}
-\begin{aligned}
-\widetilde{\mathcal{L}}(\theta, \phi)=& \sum_{t=1}^{N} E_{q_{\phi}\left(\boldsymbol{z}_{t} \mid \boldsymbol{y}_{t}, \boldsymbol{h}_{t}\right)}\left[\log p_{\theta}\left(\boldsymbol{y}_{t} \mid \boldsymbol{z}_{t}\right)\right]-\\
-& \mathrm{KL}\left(q_{\phi}\left(\boldsymbol{z}_{t} \mid \boldsymbol{y}_{t}, \boldsymbol{h}_{t}\right) \| p_{\theta}\left(\boldsymbol{z}_{t} \mid \boldsymbol{h}_{t}\right)\right)
-\end{aligned}
-\label{equ:elbo_single}
-\end{equation}
 
+% \begin{equation}
+% \begin{aligned}
+% \widetilde{\mathcal{L}}(\theta, \phi)=& \sum_{t=1}^{N} E_{q_{\phi}\left(\boldsymbol{z}_{t} \mid \boldsymbol{y}_{t}, \boldsymbol{h}_{t}\right)}\left[\log p_{\theta}\left(\boldsymbol{y}_{t} \mid \boldsymbol{z}_{t}\right)\right]-\\
+% & \mathrm{KL}\left(q_{\phi}\left(\boldsymbol{z}_{t} \mid \boldsymbol{y}_{t}, \boldsymbol{h}_{t}\right) \| p_{\theta}\left(\boldsymbol{z}_{t} \mid \boldsymbol{h}_{t}\right)\right)
+% \end{aligned}
+% \label{equ:elbo_single}
+% \end{equation}
 % With the generative model $p_\theta$ and a sampled latent state inferred from posterior model, the distributions of the latent states and observations in future can be predicted in open loop given sequential inputs.
-利用后验编码器可以推断隐状态的后验分布，给定从分布中采样的初始隐状态，利用生成模型$p_\theta$，可以在给定序列输入下，对系统隐状态和系统输出值进行开环预测。
+% 利用后验编码器可以推断隐状态的后验分布，给定从分布中采样的初始隐状态，利用生成模型$p_\theta$，可以在给定序列输入下，对系统隐状态和系统输出值进行开环预测。
 % 给定从后验模型推断的隐状态分布中采样的初始隐状态，
 
 % \subsection{Neural Ordinary Differential Equations}
@@ -304,70 +291,9 @@ p_{\theta}\left(\b{y}_i \mid \b{z}_i, \b{h}_i\right) \times \\
 % \end{equation}
 % The training of the network parameters $\theta$ is memory-efficient by introducing adjoint sensitivity algorithm\cite{chen2018neuralode}.
 
-\section{常微分方程-循环状态空间模型}
-\label{sec:oderssm}
-% \subsection{Preliminary}
-% For an evenly spaced sequence with length $N$, we define the time index $t_i$ to denote the sampling time point of the $i$-th position.
-% With the inspiration from RSSM\cite{Hafner2019}, the latent states in the proposed ODE-RSSM consist of both deterministic parts $\hti$ and stochastic parts $\zt$.
-\begin{figure*}[ht]
-\subfigure[生成模型]{
-\begin{minipage}[t]{0.64\linewidth}
-\centering
-% \hspace{-22pt}
-\includegraphics[width=0.9\linewidth]{figures/chapter5/generation.pdf}
-%\caption{fig1}
-\end{minipage}
-\label{fig:generation}
-}%
-\subfigure[推理模型]{
-\begin{minipage}[t]{0.36\linewidth}
-\centering
-% \hspace{-22pt}
-\includegraphics[width=0.9\linewidth]{figures/chapter5/inference.pdf}
-%\caption{fig1}
-\end{minipage}
-\label{fig:encoder}
-}%
-\centering
-\caption{ODE-RSSM中的生成过程和推理过程}
-\label{fig:model_fig}
-\end{figure*}
-% In this section, we first introduce the components of the ODE-RSSM from two aspects: generative process and inference process, as shown in Fig.~\ref{fig:model_fig}.
-本节首先介绍ODE-RSSM的生成模型和推断模型，如图~\ref{fig:model_fig}所示。
-在生成模型中，在给定系统输入的情况下，模型通过组合GRU网络和ODE网络建模隐状态的转移过程。
-% In the generative process, the joint probability of latent states and system outputs with the given system inputs is modeled by the combination of a GRU network and an ODE-Net.
-% The distribution of system outputs is also predicted 
-% by the condition of system inputs.
-在推理过程中，模型引入了编码器模型用于在已知系统输出和输入序列的情况下，推断隐状态的近似后验分布。
-% Furthermore, we introduce an efficient latent overshooting technique to generalize the standard single-step variational bound to multi-step setting, which improves the multi-step predictions in latent space.
-% On the other hand, we further introduce the latent overshooting\cite{Hafner2019} technique in training phase to improve the long-term prediction.
-% For enabling the technique to be efficient in training ODE-RSSM, we improve the efficiency of state sampling process by reusing the temporary sampled states and extending the solving of batched ODE-Net to be parallelizable in irregular sampling setting
-另一方面，我们在训练阶段进一步引入隐空间超调技术\cite{Hafner2019}用于改善模型的多步预测。
-为了减少引入隐空间超调带来的额外时间开销，进而优化训练效率。本章通过重用临时采样状态的方式显著减少了求解多步KL散度的时间复杂度。
-% 为了使该技术能够有效地训练ODE-RSSM，我们通过重用临时采样状态和将批处理ODE-Net的求解扩展到不规则采样设置下的并行化来提高状态采样过程的效率
-% optimizing the time complexity and extend the batched ODE solving to be parallelizable in irregular sampling setting.
-
-\subsection{变量定义}
-% For an input-output system, we sample the system trajectories irregularly and define the sequential system inputs as  $\{\ut\}_{i=1}^{N}$ and system outputs as  $\{\yt\}_{i=1}^{N}$, where $t_i$ is the sampling time point of the $i$-th position and $N$ is the complete sequence length.
-对于任一输入输出系统，
-对其非均匀采样数据进行定义，包括序列系统输入为$\{\ut\}_{i=1}^{N}$，以及序列系统输出为$\{\yt\}_{i=1}^{N}$，其中$t_i$为$i$-th位置数据点的采样时间，$N$为完整序列长度。
-本文假设对于各维度输入和各维度输出的采样都是同步地。
-% 我们对系统轨迹进行非规则采样，定义顺序系统输入为$\{\ut\}_{i=1}^{N}$，系统输出为$\{\yt\}_{i=1}^{N}$，其中$t_i$为$i$-th位置的采样时间点，$N$为完整序列长度。
-
-% we define the time index $t_i$ to denote the sampling time point of the $i$-th position.
-% The system inputs and outputs are denoted as $\{\ut\}_{i=1}^{N}$ and $\{\yt\}_{i=1}^{N}$.
-% To identify the dynamical system from evenly sampled sequences, we introduce deep state space model, named ODE-RSSM, with latent variables $\zt$ to identify the evolution of dynamical system.
-% In the meanwhile, we also follow the basic RSSM\cite{Hafner2019} and introduce a deterministic path with variable $\hti$ in the learned parametric system.
-% Similar to the RSSM\cite{Hafner2019} model, the latent states in the proposed ODE-RSSM consist of both deterministic part $\hti$ and stochastic part $\zt$.
-与RSSM\cite{Hafner2019}模型相似，ODE-RSSM中的隐状态由确定性部分$\hti$和随机部分$\zt$共同组成。
-为了描述简便，本章定义$\boldsymbol{s}_{t_{i}}=[\boldsymbol{z}_{t_{i}},\boldsymbol{h}_{t_{i}}]$用于表示$t_i$时刻完整的隐状态。
-% For simplicity, we define $\boldsymbol{s}_{t_{i}}=[\boldsymbol{z}_{t_{i}},\boldsymbol{h}_{t_{i}}]$ to denote the complete latent state at time point $t_i$.
-% The purpose of the ODE-RSSM is to learn a deep temporal generative model, which consist of a inference model for inferring the sequential latent states $\{\st\}_{i=1}^{N}$ given both system inputs and outputs, and a generative model for predicting the distribution of $\{\yt\}_{i=1}^{N}$ given system inputs $\{\ut\}_{i=1}^{N}$
-ODE-RSSM模型的目标是学习深度条件序列生成模型，该模型的推断模块能够在给定系统输入和输出的情况下推断序列隐状态$\{\st\}_{i=1}^{N}$，其生成模型能够在给定系统输入$\{\ut\}_{i=1}^{N}$下，预测系统输出$\{\yt\}_{i=1}^{N}$的条件分布.
-% The model, meanwhile, could predict the $\yt$ under the condition of known $\ut$.
 
 
-\subsection{生成模型}
+\subsection{连续时间域下含随机隐变量的生成模型}
 
 % In industrial system controlling, the  $r\left(\boldsymbol{s}(t), \boldsymbol{a}(t)\right)$ is usually a 
 
@@ -390,7 +316,7 @@ p\left(\boldsymbol{h}_{t_{i}} \mid \boldsymbol{s}_{t_{i-1}}, \boldsymbol{u}_{t_{
 
 % The Dirac distribution $p\left(\boldsymbol{h}_{t_{i}} \mid \boldsymbol{z}_{t_{i-1}}, \boldsymbol{u}_{t_{i-1}}\right)$ is determined under the latent state and system inputs in last sampling time step $t_{i-1}$.
 % In Eq.~\eqref{equ:prob_latent}, $p\left(\boldsymbol{h}_{t_{i}} \mid \boldsymbol{h}_{t_{i-1}}, \boldsymbol{u}_{t_{i-1}}\right)$ is a Dirac distribution and $\hti$ is deterministic given latent states and system inputs in last sampling time step $t_{i-1}$.
-在式.~\eqref{equ:prob_latent}中， $p\left(\boldsymbol{h}_{t_{i}} \mid \boldsymbol{h}_{t_{i-1}}, \boldsymbol{u}_{t_{i-1}}\right)$为狄拉克分布，并且在给定$t_{i-1}$时刻的的隐变量$\st$和系统输入$\ut$下，$\hti$是确定性的。
+在式.~\eqref{equ:prob_latent}中， $p\left(\boldsymbol{h}_{t_{i}} \mid \boldsymbol{h}_{t_{i-1}}, \boldsymbol{u}_{t_{i-1}}\right)$为德塔分布，并且在给定$t_{i-1}$时刻的的隐变量$\st$和系统输入$\ut$下，$\hti$是确定性的。
 % Because the sampling interval $t_i - t_{i-1}$ at different positions $i$ are not uniform in irregular setting, 
 
 由于在采样不规则的情况下，在不同时刻$t_i$下的采样间隔$t_i - t_{i-1}$不是恒等的，
@@ -418,6 +344,43 @@ p\left(\boldsymbol{h}_{t_{i}} \mid \boldsymbol{s}_{t_{i-1}}, \boldsymbol{u}_{t_{
 \end{aligned}
 \end{equation}
 此处，系统输入$\utm$作为常微分方程的输入，被定义为分段恒定函数$\b u[t_{i-1},t_i]=\utm$。
+% Common ODE-Nets employ Multilayer Perceptron MLPs to model the derivative functions.
+一般的常微分方程网络采用多层感知机建模导数函数。
+如本文第三章研究表明，连续地对导数进行积分会导致隐状态不断地增加，使得增量式的ODE方程不适用于长时间序列预测和系统辨识问题。
+本章提出一种正交的导数定义方法~\cite{jia2019neural}：
+\begin{equation}
+\frac{d \b h(t)}{dt}=NN_{\theta}(\b h(t))-\frac{\b h(t)}{|h(t)|}*\frac{<{NN_{\theta}(\b h(t))},{\b h(t)}>}{|\b h(t)|},
+\end{equation}
+其中，$NN_{\theta}(\cdot)$是标准的多层感知机，$<\cdot, \cdot>$是向量内积。 
+普通的ODE单元、稳定的ODE单元以及本章提出的正交ODE单元之间的区别如\ref{fig:cells}所示：
+\begin{figure}[h]
+    \centering
+    \subfigure[普通ODE单元]{
+    % \begin{minipage}[t]{0.3\linewidth}
+    \includegraphics[width=0.3\linewidth]{figures/chapter5/normal.pdf}
+    % \end{minipage}
+    }
+    % \hfill
+    \subfigure[稳定ODE单元]{
+    % \begin{minipage}[t]{0.3\linewidth}
+    \includegraphics[width=0.3\linewidth]{figures/chapter5/sta.pdf}
+    % \end{minipage}
+    }
+    % \hfill
+    \subfigure[正交ODE单元]{
+    % \begin{minipage}[t]{0.3\linewidth}
+    \includegraphics[width=0.3\linewidth]{figures/chapter5/orth.pdf}
+    % \end{minipage}
+    }
+    % \includegraphics[width=0.3\linewidth]{figs/orth.pdf}
+    \caption{三种导数模块定义方法图示}
+    \label{fig:cells}
+\end{figure}
+正交形式保证了导数预测值$\frac{d \b h(t)}{dt}$始终与当前状态$\b h(t)$正交。
+因此，从$t_i$到$t_{i+1}$的积分过程中，只会改变$\b h(t)$的方向，其二范数不变。
+$|\b h(t)|$仅由GRU网络决定，且被严格限制在$[-1,1]$。
+该导函数改进方法能够避免长采样间隔下由于增量式更新导致的隐状态范围过大的问题。
+% 一般的
 
 通过求解常微分方程得到$\hti$后，进而可以预测$\zt$的先验高斯分布:
 % Here, the system input $\utm$ is regarded as a piecewise constant signal, which is not changed until $\ut$ is given.
@@ -427,7 +390,7 @@ p\left(\boldsymbol{h}_{t_{i}} \mid \boldsymbol{s}_{t_{i-1}}, \boldsymbol{u}_{t_{
   \label{equ:prior_z}
 \end{equation}
 % where parameters $\boldsymbol{\mu}_{t_i}^{\text {prior }}$ and $\boldsymbol{\sigma}_{t_i}^{\text {prior }}$ are estimated from a Multilayer perceptron(MLP) whose input is the deterministic latent states $\hti$.
-其中，采用多层感知机模型估计分布参数$\boldsymbol{\mu}_{t_i}^{\text {prior }}$ 和 $\boldsymbol{\sigma}_{t_i}^{\text {prior }}$，模型输入为确定性的隐状态 $hti$。
+其中，采用多层感知机模型估计分布参数$\boldsymbol{\mu}_{t_i}^{\text {prior }}$ 和 $\boldsymbol{\sigma}_{t_i}^{\text {prior }}$，模型输入为确定性的隐状态 $\hti$。
 % In the generative process, $\hti$ represents the predicted latent state at time $t_i$ before perceiving the information brought from $\ut$.
 % The state $\thti$ denotes the updated state after incorporating the information from $\zt$ and $\ut$.
 在生成过程中，$\hti$可以表示在获得$\ut$之前，在时刻$t_i$下预测的隐状态。
@@ -452,170 +415,8 @@ p\left(\boldsymbol{h}_{t_{i}} \mid \boldsymbol{s}_{t_{i-1}}, \boldsymbol{u}_{t_{
 
 % We define the equations \eqref{equ:ode}, \eqref{equ:gru} and decoder as generative model.
 % \subsection{Parallel single-step generative process with batched non-uniform sampling intervals}
-\subsection{非均匀采样间隔下的批量常微分方程并行化求解方法}
-\label{sec:parallel_ode_solve}
-% Furthermore, predicting and solving KL divergence at each position are independent.
-% For the internal loop in Eq.\eqref{equ:kld}, it is apparent that the predictions at all positions are independent, which inspires us to optimize the loop $1\leq i\leq N$ by predicting the states $p(\hat{\b{s}}_{t_2:t_N}|\b{s}_{t_1:t_{N-1}})$ in parallel.
-% Therefore, we could optimize the loop $1\leq i\leq N$ by predicting the states $p(\hat{\b{s}}_{t_2:t_N}|\b{s}_{t_1:t_{N-1}})$ in parallel.
-% Networks are typically trained in batches to take advantage of efficient data-parallel GPU operations.
-% In the generative process, the GRU update in \eqref{equ:gru} and the prediction of the prior distribution in \eqref{equ:prior_z} are naturally parallelizable. 
-% However, it is difficult to solve the batched ODEs in parallel because their time intervals for integrating are non-uniform when the sequence is unevenly sampled .
-网络通常被批量训练，以利用高效的数据并行GPU操作。
-利用GPU的并行计算能力对神经网络进行批量数据训练，可以显著减少神经网络的训练时间。这是当前训练深度模型的必要前提。
-因此，使ODE-RSSM模型支持并行推理和预测是极其重要的。
-在生成过程中，式\eqref{equ:gru}表示的GRU更新和式\eqref{equ:prior_z}表示的先验分布预测过程是很容易实现并行化的。
-而对于式\eqref{equ:ode}描述的求解ODE的过程，当序列采样点不均匀时，需要并行求解多个积分时间间隔彼此不同的数值积分
-% 批处理ode的积分时间间隔不均匀，使得并行求解困难。
-% because of evenly spaced data, 
-% Existing software packages for solving neural ODE-net\cite{kidger2021,chen2018neuralode} all assume that the solved time points are identical for all of the sequences in the given batch.
-% Most differential equation software libraries assume that the solved time points are identical for all of the sequences in the given batch and do not intrinsically support batching over different regions of integration~\cite{kidger2021}
-现有的大多数神经微分方程求解工具假设批数据中的求解时间点是彼此相同的，并且大多数不支持对不同积分区间进行批处理~\cite{kidger2021}。
-% In order to solve all ODEs in a minibatch in sync, Latent ODE.\cite{Rubanova2019} solves the solutions of the combined ODE at the union of all time points in the batch.
-% In order to solve all ODEs in a minibatch in sync, previous time series models based on ODE-net\cite{yildiz2021continuous,Rubanova2019} solve the solutions at the union of all the time points in the batch.
-% 为了在一个小批量中同步求解所有的ode，之前基于ODE-net的时间序列模型引用{yildiz2021continuous,Rubanova2019}求解该批中所有时间点的并集。
-为了让ODE-net模型适用批量的非均匀采样数据，现有的基于ODE-net的时间序列模型\cite{yildiz2021continuous,Rubanova2019}构建batch中所有时间点的有序并集，并对并集中的所有时间点求解所有常微分方程的解。
-% In order to solve all ODEs in a minibatch in sync, previous time series models based on ODE-net\cite{Rubanova2019} find the union of all time points in the batch and solve the solutions at the generated new time points sequence.
-% Although we can merge the batched time points and sort the union set in parallel, it is also time-consuming for solving the ODE-net with the constructed time points sequence in practice.
-% Although we can merge the batched time points and sort the union set in parallel, it is also time-consuming for solving the ODE-net with the constructed time points sequence in practice.
-% In practical terms it is also time-consuming for solving the ODE-net with the constructed time points sequence.
-实际应用中，在构造的时间点序列并集上求解ODE网络是非常耗时的。
-
-% The practical time consumption of solving the ODE-net with the constructed time points sequence
-% Because the length $N$ is large in system modelling problem, the size of the union set that depends on the number of distinct items in $N-1$ time differences is also large. 
-% Because more solved time points produce more checkpoints and increase the frequencies to call ODE module on, solving the ODE-Net on the generated time points is much more time-consuming than the original single-step prediction whose length of the solved points is only 2.
-
-% In order to avoid solving ODE-net at a large time points union set, we provide a parallel acceleration for batched single-step prediction in training state.
-% This paper proposes a reparame
-% In this paper, we reparameterize the original ODE-net to accelerate the solving of the batched ODEs in training phase.
-% Our performance experiments in Section~\ref{sec:parallel_experiment} shows that our method is significant faster than solving the ODE-net with time points union set.
-在本章中，我们对原始的常微分方程网络进行了重新参数化，以加快训练阶段批量化求解多个ODE的速度。
-根据本章~\ref{sec:parallel_experiment}节中的实验表明，本章提出的批常微分方程并行求解方法在时间效率上显著优于构建时间点并集的方法。
-% In ODE-RSSM, we provide a parallel acceleration for batched single-step prediction, which could avoid solving ODE-net at a large time points union set.
-% We define the batched time points as $\boldsymbol{T}_{i} = [t^1_i, \cdots,t^B_i]$, and the batched initial states in ODE-Net are denoted as $\tilde{\b{H}}_{\b{T}_i}=[\tilde{\b{h}}^{1}_{t^1_i},\cdots,\tilde{\b{h}}^B_{t^B_i}]$. $B$ is batch-size. 
-
-
-% From a general perspective, we assume that the ODE-Net is solved from an initial batched time points $\boldsymbol{T} = [t_1, \cdots,t_B]$ to a terminal batched time points $\boldsymbol{T'} = [t'_1, \cdots,t'_B]$, where $B$ is the batch size.
-不失一般性地，我们假设求解批常微分方程的时间范围为从初始时间点$\boldsymbol{T} = [t_1， \cdots,t_B]\in R^B$到终止时间点$\boldsymbol{T'} = [T' _1， \cdots, T' _B]\in R^B$，其中$B$是批大小。
-在初始时间点$\boldsymbol{T}$的批初始状态表示为${\b{H}}_{\b{T}}=[\b{h}_{t_1},\cdots,\b{h}_{t_B}]$.
-% The batched initial states at time points $\boldsymbol{T}$ are denoted as ${\b{H}}_{\b{T}}=[\b{h}_{t_1},\cdots,\b{h}_{t_B}]$.
-% The terminal state ${\b{H}}_{\b{T'}}$ could be solved by integrating  every derivatives defined by ODE-Net in every time range independently:
-% The terminal state ${\b{H}}_{\b{T'}}$ could be solved
-% By solving $B$ ODE equations with different time range independently, we 
-% The terminal state ${\b{H}}_{\b{T'}}$ is the concatenation of the solutions which of $B$ ODE equations with different time range.
-% The terminal state ${\b{H}}_{\b{T'}}$ is the concatenation of the solutions which are solved by independently solving ODE equations with different initial states and time range .
-% The desired batched terminal state ${\b{H}}_{\b{T'}}$ can be solved by concatenating the solutions of $B$ ODEs , each of which has different initial states and timespan:
-我们希望求解B个初态不同、时间区间不同的常微分方程，并对结果进行拼接以得到批终态${\b{H}}_{\b{T'}}$。
-\begin{equation}
-    \b{{H}}_{\b{T'}} = 
-    \left[
-    \begin{aligned}
-  &\text{ODE Solve}(f_\theta, \b{h}_{t_1}, t_1, t'_1) = \b{h}_{t_1} + \int_{t_{1}}^{t'_1}f_{\theta}(\b h_t) \text{dt}\\
-  &\cdots\\
-  &\text{ODE Solve}(f_\theta,\b{h}_{t_B}, t_B, t'_B) = \b{h}_{t_B} + \int_{t_{B}}^{t'_{B}}f_{\theta}(\b h_t) \text{dt}
-  \end{aligned}
-    \right]\\
-    % &\approx \text{RK}(\b{\tilde H}_{\b{T}_i}, \b{T}_i, \b{T}_{i+1})
-    % &=\b{\tilde H}_{\b{T}_{i}}+\frac{1}{6} \text{d}\b{T}\left(\b{k}_{0}+2 \b{k}_{1}+2 \b{k}_{2}+\b{k}_{3}\right)
-    \label{equ:solve_all_ode}
-\end{equation}
-
-% To solve the $B$ ODE equations with different initial states and time ranges in parallel, 
-% To solve the $B$ ODEs in parallel, 
-为了并行化地求解 $B$ 个常微分方程。
-% we first give a theorem to demonstrate the property of linear transformation on integration limits: 
-我们首先给出一个定理以揭示积分区间的线性变换特性：
-\newtheorem{theorem}{\indent 定理}
-% \newtheorem{proposition}{\indent Proposition}
-\begin{theorem}
-\textbf{任意定积分积分区间的线性变换等价性}
-
-\label{therom:interval_trans}
-% With an initial state $\b R(0) = \b{{H}}_{\b{T}}$, the solution of the auxiliary ODE \eqref{equ:construct_ode} at $\tau=1$ is equal to $\b{{H}}_{\b{T'}}$, the batched solution of the original ODE.
-% With a specific initial state $\b R(0) = \b{{H}}_{\b{T}}$, the solution of the auxiliary ODE \eqref{equ:construct_ode} at $\tau=1$ is equal to the concatenated solutions of the original $B$ ODEs.
-% For an arbitrary scalar function $f(\cdot)$, whose integration defined on limits $[a, b]$ satisfies with:
-对于任一标量函数$f(\cdot)$，其在区间$[a, b]$上的定积分满足：
-\begin{equation}
-\int_{a}^bf(t) \text{d}t=\int_{0}^1f(\tau(b-a)+a) (b-a)\text{d}\tau
-\end{equation}
-\end{theorem}
-通过替换$\tau = \frac{t-a}{b-a}$，可以很容易地证明该理论成立。
-% This theorem is easy to be proven by defining $\tau = \frac{t-a}{b-a}$.
-该理论启发我们可以通过对$B$个常微分方程进行再参数化，以保证其具有一致的积分区间。
-% This theorem inspires us to normalize the time intervals of $B$ ODES as identical integration limits .
-因此我们在原ODE方程的基础上构造了一个辅助常微分方程，其描述了构造状态$\b{R}(\tau)$ 对于标量时间变量$\tau$的导数。
-% Therefore we reparameterize the original ODE as an auxiliary ODE which describes the derivative of the $\b{R}(\tau)$ with respect to the scalar time step $\tau$:
-% \begin{equation}
-%     \begin{aligned}
-%     \b{{H}}_{\b{T'}_{i+1}} &= 
-%     \left[
-%     \begin{aligned}
-%   &\text{ODESolve}(f_\theta, \tilde{\b{h}}^1, t^1_i, t^1_{i+1}) = \int_{t^1_{i}}^{t^1_{i+1}}f_{\theta}(\b z_t) \text{dt}\\
-%   &\cdots\\
-%   &\text{ODESolve}(f_\theta,\tilde{\b{h}}^B, t^B_i, t^B_{i+1}) = \int_{t^B_{i}}^{t^B_{i+1}}f_{\theta}(\b z_t) \text{dt}
-%   \end{aligned}
-%     \right]\\
-%     % &\approx \text{RK}(\b{\tilde H}_{\b{T}_i}, \b{T}_i, \b{T}_{i+1})
-%     &= \text{ODE Solver}(g_\theta, \b{\tilde H}_{\b{T}_i}, 0, 1)
-%     % &=\b{\tilde H}_{\b{T}_{i}}+\frac{1}{6} \text{d}\b{T}\left(\b{k}_{0}+2 \b{k}_{1}+2 \b{k}_{2}+\b{k}_{3}\right)
-%     \end{aligned}
-%     \label{equ:parallel_solver}
-% \end{equation}
-% The process of solving ODE-net with batched initial states and time points is:
-\begin{equation}
-    \frac{d\b R(\tau)}{d\tau}=g_{\theta}(\b R(\tau), \tau)=f_\theta(\b R(\tau))\circ (\b{T}'-\b{T})
-\label{equ:construct_ode}
-\end{equation}
-
-% \begin{equation}
-%     \frac{d\b R(\tau)}{d\tau}= g_{\theta}(\b R(t), \tau) \text{ where } \b R(0) = \b{{H}}_{\b{T}_{i}} 
-% \end{equation}
-% Where the derivative $\b{R}(t)$ is defined as :
-% \begin{equation}
-% g_{\theta}(\b R(t), t) =f_\theta(\b R(t), \b{T}_{i} + t(\b{T}_{i+1}-\b{T}_{i}))\circ (\b{T}_{i+1}-\b{T}_{i})
-% \end{equation}
-其中$\circ$是支持广播的逐元素相乘。
-% where $\circ$ is the broadcast point-wise production.
-% With a specific initial state $\b R(0) = \b{{H}}_{\b{T}}$, the solution of the auxiliary ODE \eqref{equ:construct_ode} at $\tau=1$ is equal to the concatenated solutions of the original $B$ ODEs.
-可以证明，对于给定的初态$\b R(0) = \b{{H}}_{\b{T}}$，辅助常微分方程在$\tau=1$时刻的解等于原始B个常微分方程的解的拼接：
-\begin{equation}
-    % &\approx \text{RK}(\b{\tilde H}_{\b{T}_i}, \b{T}_i, \b{T}_{i+1})
-    \b{{H}}_{\b{T'}}=\b{R}(1)= \text{ODE Solve}(g_\theta, \b{R}(0)=\b{H}_{\b{T}}, 0, 1)
-    % &=\b{\tilde H}_{\b{T}_{i}}+\frac{1}{6} \text{d}\b{T}\left(\b{k}_{0}+2 \b{k}_{1}+2 \b{k}_{2}+\b{k}_{3}\right)
-    \label{equ:parallel_solver}
-\end{equation}
-% From the proposition \ref{proposition:interval_trans} (proof is given in Appendix.\ref{sec:proof_ode}), 
-% we can solve the batched ODEs in parallel and the time consumption in training phase is irrelevant with the batch size.
-% By parallelly solving the auxiliary ODEs where the timespans in integration are uniform, we can solve the original batched ODEs efficiently and the time consumption in training phase is irrelevant with the batch size.
-因为辅助常微分方程的积分区间为$[0,1]$，因此其求解过程非常简便。
-% It is easy to solve the auxiliary ODEs in parallel because the timespans in integration are uniform.
-基于此，我们可以高效并行化地求解原始的多个常微分方程，且时间消耗与批的大小无关。
-% From this, we can solve the original batched ODEs efficiently and the time consumption in training phase is irrelevant with the batch size.
-% Solving the original batched ODEs is replaced with solving auxiliary ODEs where the timespans in integration are uniform.
-% which is easy to be parallized
-%whose operands in left side and right side have identical shapes.
-% Here, we give a proposition to reveal the equivalency between the solutions of the original ODE and the auxiliary ODE.
-
-% \newtheorem{proposition}{\indent Proposition}
-% \begin{proposition}
-% \mathbf{Interval Transformation for Ordinary Differential Equation:}
-% \label{proposition:interval_trans}
-% % With an initial state $\b R(0) = \b{{H}}_{\b{T}}$, the solution of the auxiliary ODE \eqref{equ:construct_ode} at $\tau=1$ is equal to $\b{{H}}_{\b{T'}}$, the batched solution of the original ODE.
-% With a specific initial state $\b R(0) = \b{{H}}_{\b{T}}$, the solution of the auxiliary ODE \eqref{equ:construct_ode} at $\tau=1$ is equal to the concatenated solutions of the original $B$ ODEs.
-% \begin{equation}
-%     % &\approx \text{RK}(\b{\tilde H}_{\b{T}_i}, \b{T}_i, \b{T}_{i+1})
-%     \b{{H}}_{\b{T'}}=\b{R}(1)= \text{ODE Solve}(g_\theta, \b{R}(0)=\b{H}_{\b{T}}, 0, 1)
-%     % &=\b{\tilde H}_{\b{T}_{i}}+\frac{1}{6} \text{d}\b{T}\left(\b{k}_{0}+2 \b{k}_{1}+2 \b{k}_{2}+\b{k}_{3}\right)
-%     \label{equ:parallel_solver}
-% \end{equation}
-% \end{proposition}
-% % With the proposition \ref{proposition:interval_trans}, we could parallelize the generative process by solving the auxiliary ODE with a time interval defined on scalar.
-% % From the proposition \ref{proposition:interval_trans} (proof is given in Appendix.\ref{sec:proof_ode}), we parallelize the generative processs for avoiding the predictions on $N$ positions one by one.
-% % From the proposition \ref{proposition:interval_trans} (proof is given in Appendix.\ref{sec:proof_ode}), the batched ODEs could be solved in parallely 
-% From the proposition \ref{proposition:interval_trans} (proof is given in Appendix.\ref{sec:proof_ode}), we can solve the batched ODEs in parallel and the time consumption in training phase is irrelevant with the batch size.
-% by solving the auxiliary ODE with a time interval defined on scalar.
-% In conclusion, the time complexity of estimating unbiased KL-D is optimized to $\mathcal{O}(D)$ by introducing Equ.\eqref{equ:reuse} and \eqref{equ:parallel_solver}.
-\subsection{推理与训练}
-
+\section{隐变量推理与训练}
+% 基于高效隐空间超调的多步预测性能改善
 % In order to train the parameters $\theta$ in the generative model, a regular way is to maximize the log likelihood of system outputs $\mathcal{L}=\sum_{i=1}^N\log p_{\theta}\left( \yt \mid  \b u_{<t_i}  \right)$.
 为了训练生成模型中的参数$\theta$，常规方法是最大化系统输出的对数似然$\mathcal{L}=\sum_{i=1}^N\log p_{\theta}\left( \yt \mid  \b u_{<t_i}  \right)$。
 % Because it is intractable to solve the exact posterior $\b{s}_{t_1:t_N}$, we cannot estimate the exact $\mathcal{L}$ by averaging the log likelihood over the probability of all possible values.
@@ -683,7 +484,7 @@ p\left(\boldsymbol{h}_{t_{i}} \mid \boldsymbol{s}_{t_{i-1}}, \boldsymbol{u}_{t_{
 % \end{alined}
 
 % \subsection{Efficient latent overshooting for improving long-term prediction}
-\subsection{基于高效隐空间超调的多步预测性能改善}
+\section{基于高效隐空间超调的多步预测性能改善}
 % In multi-step planning, the model is required to make multi-step predictions~\cite{Hafner2019} according to the inputs sequence.
 在基于模型的序贯决策问题中，模型需要根据给定的控制输入序列进行多步预测~\cite{Hafner2019}。
 % In this case, the generative model is iteratively applied, feeding through the latent states sampled from the previous predicted prior distribution as its new inputs.
@@ -742,7 +543,7 @@ p\left(\boldsymbol{s}_{t_i} \mid \boldsymbol{s}_{t_{i-d}}\right) & \triangleq \i
 % It can be proved that $\ln p_d\left(\boldsymbol{y}_{t_{1}: t_{N}}\right)$ is a lower bound of the one-step prediction ELBO in \eqref{equ:elbo_single} and the original log likelihood of system outputs.
 % According to the proof in ~\cite{Hafner2019}, $\ln p_d\left(\boldsymbol{y}_{t_{1}: t_{N}}\right)$ is a lower bound of the one-step prediction ELBO in \eqref{equ:elbo_single} and the original log likelihood of system outputs.
 
-根据文献~\cite{Hafner2019}给出的证明, $\ln p_d\left(\boldsymbol{y}_{t_{1}: t_{N}}\right)$ 是式\eqref{equ:elbo_single}给出的单步预测ELBO的下限，自然也是原始系统输出对数似然的下限。
+根据文献~\cite{Hafner2019}给出的证明, $\ln p_d\left(\boldsymbol{y}_{t_{1}: t_{N}}\right)$ 是式\eqref{equ:loss_single}给出的单步预测ELBO的下限，自然也是原始系统输出对数似然的下限。
 % Given a hyper-parameter $D$, we average the variational bound of all distances $1\leq d\leq D$ to improve multi-step prediction for all possible distances, 
 给定超参数$D$，我们可以对多种可能的预测距离$1\leq d \leq D$的变分下界求平均，以改进不同距离下的多步预测精度：
 \begin{equation}
@@ -943,7 +744,208 @@ $\tilde{\b{h}}_{t_d:t_N}=\text{GRU}(\left [\b{u}_{t_d:t_N}, \hat{\b{z}}_{t_d:t_N
 \end{algorithmic}
 \end{algorithm}
 
-\section{实验}
+\section{非均匀采样间隔下的批量常微分方程并行化求解方法}
+\label{sec:parallel_ode_solve}
+% Furthermore, predicting and solving KL divergence at each position are independent.
+% For the internal loop in Eq.\eqref{equ:kld}, it is apparent that the predictions at all positions are independent, which inspires us to optimize the loop $1\leq i\leq N$ by predicting the states $p(\hat{\b{s}}_{t_2:t_N}|\b{s}_{t_1:t_{N-1}})$ in parallel.
+% Therefore, we could optimize the loop $1\leq i\leq N$ by predicting the states $p(\hat{\b{s}}_{t_2:t_N}|\b{s}_{t_1:t_{N-1}})$ in parallel.
+% Networks are typically trained in batches to take advantage of efficient data-parallel GPU operations.
+% In the generative process, the GRU update in \eqref{equ:gru} and the prediction of the prior distribution in \eqref{equ:prior_z} are naturally parallelizable. 
+% However, it is difficult to solve the batched ODEs in parallel because their time intervals for integrating are non-uniform when the sequence is unevenly sampled .
+网络通常被批量训练，以利用高效的数据并行GPU操作。
+利用GPU的并行计算能力对神经网络进行批量数据训练，可以显著减少神经网络的训练时间。这是当前训练深度模型的必要前提。
+因此，使ODE-RSSM模型支持并行推理和预测是极其重要的。
+在生成过程中，式\eqref{equ:gru}表示的GRU更新和式\eqref{equ:prior_z}表示的先验分布预测过程是很容易实现并行化的。
+而对于式\eqref{equ:ode}描述的求解ODE的过程，当序列采样点不均匀时，需要并行求解多个积分时间间隔彼此不同的数值积分
+% 批处理ode的积分时间间隔不均匀，使得并行求解困难。
+% because of evenly spaced data, 
+% Existing software packages for solving neural ODE-net\cite{kidger2021,chen2018neuralode} all assume that the solved time points are identical for all of the sequences in the given batch.
+% Most differential equation software libraries assume that the solved time points are identical for all of the sequences in the given batch and do not intrinsically support batching over different regions of integration~\cite{kidger2021}
+现有的大多数神经微分方程求解工具假设批数据中的求解时间点是彼此相同的，并且大多数不支持对不同积分区间进行批处理~\cite{kidger2021}。
+% In order to solve all ODEs in a minibatch in sync, Latent ODE.\cite{Rubanova2019} solves the solutions of the combined ODE at the union of all time points in the batch.
+% In order to solve all ODEs in a minibatch in sync, previous time series models based on ODE-net\cite{yildiz2021continuous,Rubanova2019} solve the solutions at the union of all the time points in the batch.
+% 为了在一个小批量中同步求解所有的ode，之前基于ODE-net的时间序列模型引用{yildiz2021continuous,Rubanova2019}求解该批中所有时间点的并集。
+为了让ODE-net模型适用批量的非均匀采样数据，现有的基于ODE-net的时间序列模型\cite{yildiz2021continuous,Rubanova2019}构建batch中所有时间点的有序并集，并对并集中的所有时间点求解所有常微分方程的解。
+% In order to solve all ODEs in a minibatch in sync, previous time series models based on ODE-net\cite{Rubanova2019} find the union of all time points in the batch and solve the solutions at the generated new time points sequence.
+% Although we can merge the batched time points and sort the union set in parallel, it is also time-consuming for solving the ODE-net with the constructed time points sequence in practice.
+% Although we can merge the batched time points and sort the union set in parallel, it is also time-consuming for solving the ODE-net with the constructed time points sequence in practice.
+% In practical terms it is also time-consuming for solving the ODE-net with the constructed time points sequence.
+实际应用中，在构造的时间点序列并集上求解ODE网络是非常耗时的。
+
+% The practical time consumption of solving the ODE-net with the constructed time points sequence
+% Because the length $N$ is large in system modelling problem, the size of the union set that depends on the number of distinct items in $N-1$ time differences is also large. 
+% Because more solved time points produce more checkpoints and increase the frequencies to call ODE module on, solving the ODE-Net on the generated time points is much more time-consuming than the original single-step prediction whose length of the solved points is only 2.
+
+% In order to avoid solving ODE-net at a large time points union set, we provide a parallel acceleration for batched single-step prediction in training state.
+% This paper proposes a reparame
+% In this paper, we reparameterize the original ODE-net to accelerate the solving of the batched ODEs in training phase.
+% Our performance experiments in Section~\ref{sec:parallel_experiment} shows that our method is significant faster than solving the ODE-net with time points union set.
+在本章中，我们对原始的常微分方程网络进行了重新参数化，以加快训练阶段批量化求解多个ODE的速度。
+根据本章~\ref{sec:parallel_experiment}节中的实验表明，本章提出的批常微分方程并行求解方法在时间效率上显著优于构建时间点并集的方法。
+% In ODE-RSSM, we provide a parallel acceleration for batched single-step prediction, which could avoid solving ODE-net at a large time points union set.
+% We define the batched time points as $\boldsymbol{T}_{i} = [t^1_i, \cdots,t^B_i]$, and the batched initial states in ODE-Net are denoted as $\tilde{\b{H}}_{\b{T}_i}=[\tilde{\b{h}}^{1}_{t^1_i},\cdots,\tilde{\b{h}}^B_{t^B_i}]$. $B$ is batch-size. 
+
+
+% From a general perspective, we assume that the ODE-Net is solved from an initial batched time points $\boldsymbol{T} = [t_1, \cdots,t_B]$ to a terminal batched time points $\boldsymbol{T'} = [t'_1, \cdots,t'_B]$, where $B$ is the batch size.
+不失一般性地，我们假设求解批常微分方程的时间范围为从初始时间点$\boldsymbol{T} = [t_1， \cdots,t_B]\in R^B$到终止时间点$\boldsymbol{T'} = [T' _1， \cdots, T' _B]\in R^B$，其中$B$是批大小。
+在初始时间点$\boldsymbol{T}$的批初始状态表示为${\b{H}}_{\b{T}}=[\b{h}_{t_1},\cdots,\b{h}_{t_B}]$.
+% The batched initial states at time points $\boldsymbol{T}$ are denoted as ${\b{H}}_{\b{T}}=[\b{h}_{t_1},\cdots,\b{h}_{t_B}]$.
+% The terminal state ${\b{H}}_{\b{T'}}$ could be solved by integrating  every derivatives defined by ODE-Net in every time range independently:
+% The terminal state ${\b{H}}_{\b{T'}}$ could be solved
+% By solving $B$ ODE equations with different time range independently, we 
+% The terminal state ${\b{H}}_{\b{T'}}$ is the concatenation of the solutions which of $B$ ODE equations with different time range.
+% The terminal state ${\b{H}}_{\b{T'}}$ is the concatenation of the solutions which are solved by independently solving ODE equations with different initial states and time range .
+% The desired batched terminal state ${\b{H}}_{\b{T'}}$ can be solved by concatenating the solutions of $B$ ODEs , each of which has different initial states and timespan:
+我们希望求解B个初态不同、时间区间不同的常微分方程，并对结果进行拼接以得到批终态${\b{H}}_{\b{T'}}$。
+\begin{equation}
+    \b{{H}}_{\b{T'}} = 
+    \left[
+    \begin{aligned}
+  &\text{ODE Solve}(f_\theta, \b{h}_{t_1}, t_1, t'_1) = \b{h}_{t_1} + \int_{t_{1}}^{t'_1}f_{\theta}(\b h_t) \text{dt}\\
+  &\cdots\\
+  &\text{ODE Solve}(f_\theta,\b{h}_{t_B}, t_B, t'_B) = \b{h}_{t_B} + \int_{t_{B}}^{t'_{B}}f_{\theta}(\b h_t) \text{dt}
+  \end{aligned}
+    \right]\\
+    % &\approx \text{RK}(\b{\tilde H}_{\b{T}_i}, \b{T}_i, \b{T}_{i+1})
+    % &=\b{\tilde H}_{\b{T}_{i}}+\frac{1}{6} \text{d}\b{T}\left(\b{k}_{0}+2 \b{k}_{1}+2 \b{k}_{2}+\b{k}_{3}\right)
+    \label{equ:solve_all_ode}
+\end{equation}
+
+% To solve the $B$ ODE equations with different initial states and time ranges in parallel, 
+% To solve the $B$ ODEs in parallel, 
+为了并行化地求解 $B$ 个常微分方程。
+% we first give a theorem to demonstrate the property of linear transformation on integration limits: 
+我们首先给出一个定理以揭示积分区间的线性变换特性：
+
+% \newtheorem{theorem}{\indent 定理}
+% \newtheorem{proposition}{\indent Proposition}
+% \begin{theorem}
+\textbf{定理1：任意定积分积分区间的线性变换等价性}
+
+% \label{therom:interval_trans}
+% With an initial state $\b R(0) = \b{{H}}_{\b{T}}$, the solution of the auxiliary ODE \eqref{equ:construct_ode} at $\tau=1$ is equal to $\b{{H}}_{\b{T'}}$, the batched solution of the original ODE.
+% With a specific initial state $\b R(0) = \b{{H}}_{\b{T}}$, the solution of the auxiliary ODE \eqref{equ:construct_ode} at $\tau=1$ is equal to the concatenated solutions of the original $B$ ODEs.
+% For an arbitrary scalar function $f(\cdot)$, whose integration defined on limits $[a, b]$ satisfies with:
+\textit{对于任一标量函数$f(\cdot)$，其在区间$[a, b]$上的定积分满足：}
+\begin{equation}
+\int_{a}^bf(t) \text{d}t=\int_{0}^1f(\tau(b-a)+a) (b-a)\text{d}\tau
+\end{equation}
+
+% \end{theorem}
+通过替换$\tau = \frac{t-a}{b-a}$，可以很容易地证明该理论成立。
+% This theorem is easy to be proven by defining $\tau = \frac{t-a}{b-a}$.
+该理论启发我们可以通过对$B$个常微分方程进行再参数化，以保证其具有一致的积分区间。
+% This theorem inspires us to normalize the time intervals of $B$ ODES as identical integration limits .
+因此我们在原ODE方程的基础上构造了一个辅助常微分方程，其描述了构造状态$\b{R}(\tau)$ 对于标量时间变量$\tau$的导数。
+% Therefore we reparameterize the original ODE as an auxiliary ODE which describes the derivative of the $\b{R}(\tau)$ with respect to the scalar time step $\tau$:
+% \begin{equation}
+%     \begin{aligned}
+%     \b{{H}}_{\b{T'}_{i+1}} &= 
+%     \left[
+%     \begin{aligned}
+%   &\text{ODESolve}(f_\theta, \tilde{\b{h}}^1, t^1_i, t^1_{i+1}) = \int_{t^1_{i}}^{t^1_{i+1}}f_{\theta}(\b z_t) \text{dt}\\
+%   &\cdots\\
+%   &\text{ODESolve}(f_\theta,\tilde{\b{h}}^B, t^B_i, t^B_{i+1}) = \int_{t^B_{i}}^{t^B_{i+1}}f_{\theta}(\b z_t) \text{dt}
+%   \end{aligned}
+%     \right]\\
+%     % &\approx \text{RK}(\b{\tilde H}_{\b{T}_i}, \b{T}_i, \b{T}_{i+1})
+%     &= \text{ODE Solver}(g_\theta, \b{\tilde H}_{\b{T}_i}, 0, 1)
+%     % &=\b{\tilde H}_{\b{T}_{i}}+\frac{1}{6} \text{d}\b{T}\left(\b{k}_{0}+2 \b{k}_{1}+2 \b{k}_{2}+\b{k}_{3}\right)
+%     \end{aligned}
+%     \label{equ:parallel_solver}
+% \end{equation}
+% The process of solving ODE-net with batched initial states and time points is:
+\begin{equation}
+    \frac{d\b R(\tau)}{d\tau}=g_{\theta}(\b R(\tau), \tau)=f_\theta(\b R(\tau))\circ (\b{T}'-\b{T})
+\label{equ:construct_ode}
+\end{equation}
+
+% \begin{equation}
+%     \frac{d\b R(\tau)}{d\tau}= g_{\theta}(\b R(t), \tau) \text{ where } \b R(0) = \b{{H}}_{\b{T}_{i}} 
+% \end{equation}
+% Where the derivative $\b{R}(t)$ is defined as :
+% \begin{equation}
+% g_{\theta}(\b R(t), t) =f_\theta(\b R(t), \b{T}_{i} + t(\b{T}_{i+1}-\b{T}_{i}))\circ (\b{T}_{i+1}-\b{T}_{i})
+% \end{equation}
+其中$\circ$是支持广播的逐元素相乘。
+% where $\circ$ is the broadcast point-wise production.
+% With a specific initial state $\b R(0) = \b{{H}}_{\b{T}}$, the solution of the auxiliary ODE \eqref{equ:construct_ode} at $\tau=1$ is equal to the concatenated solutions of the original $B$ ODEs.
+可以证明，对于给定的初态$\b R(0) = \b{{H}}_{\b{T}}$，辅助常微分方程在$\tau=1$时刻的解等于原始B个常微分方程的解的拼接：
+\begin{equation}
+    % &\approx \text{RK}(\b{\tilde H}_{\b{T}_i}, \b{T}_i, \b{T}_{i+1})
+    \b{{H}}_{\b{T'}}=\b{R}(1)= \text{ODE Solve}(g_\theta, \b{R}(0)=\b{H}_{\b{T}}, 0, 1)
+    % &=\b{\tilde H}_{\b{T}_{i}}+\frac{1}{6} \text{d}\b{T}\left(\b{k}_{0}+2 \b{k}_{1}+2 \b{k}_{2}+\b{k}_{3}\right)
+    \label{equ:parallel_solver}
+\end{equation}
+% From the proposition \ref{proposition:interval_trans} (proof is given in Appendix.\ref{sec:proof_ode}), 
+% we can solve the batched ODEs in parallel and the time consumption in training phase is irrelevant with the batch size.
+% By parallelly solving the auxiliary ODEs where the timespans in integration are uniform, we can solve the original batched ODEs efficiently and the time consumption in training phase is irrelevant with the batch size.
+为了证明重参数化构造的初值问题（Initial value problem, IVP）的解等于原始ODE的解，可以定义两个常微分方程以及它们的解 $h(b)$和$v(1)$。
+\begin{equation}
+    \begin{aligned}
+        h(b) = h(a) + \int_{a}^{b} f(h(t), t)\text{d}t,\\
+        v(1) = v(0) + \int_{0}^{1} g(v(\tau), \tau) \text{d}\tau.
+    \end{aligned}
+\end{equation}
+其中$\alpha = b-a$，本章进一步假设$g(x, \tau)= {\alpha}f(x, a+\tau\alpha)$ 且 $v(0)=h(a)$。
+
+给定任意正整数$N$，可以对两个ODE的状态轨迹进行离散化，得到$\{h_n\mid n\in{1,2,\cdots, N}\}$和$\{v_n\mid n\in{1,2,\cdots N}\}$。
+\begin{equation}
+    \begin{aligned}
+    h_{n+1} = h_{n}+f(h_{n}, a+\frac{n\alpha}{N})\times \frac{\alpha}{N}, \text{ where } h_0=h(a);\\
+    v_{n+1} = v_{n}+g(v_{n}, \frac{n}{N})\times \frac{1}{N}, \text{ where } v_0=v(0).
+    \end{aligned}
+\end{equation}
+很明显可以得到 $h(b)=\lim_{N\to\infty}h_N$ 和 $v(1)=\lim_{N\to\infty}v_N$. 
+
+进一步地，我们可以通过数学归纳法证明 $\forall i, 1 \leq i \leq N, \ h_N = v_N$。
+
+\textbf{当$\mathbf{n=0}$时}: 满足 $h_n=v_n$；
+
+\textbf{当$\mathbf{n\geq 1}$}: 假设对于任意$n\in\{1,2,\cdots,N\}$，$h_n=v_n$ 成立，可以得到
+\begin{equation}
+    \begin{aligned}
+    v_{n+1} =& v_{n}+g(v_{n}, \frac{n)}{N}\times \frac{1}{N} \\
+    =&h_{n}+{{\alpha}}f(h_n, a+\frac{n{\alpha}}{ N})\frac{ 1}{N} \\
+    =&h_{n+1},
+    \end{aligned}
+\end{equation}
+因此，可以证明当$N\to\infty$时，下式成立：
+    % Therefore, it can be proved that the following equation holds when $N\to\infty$:
+\begin{equation}
+    v(1)=v_N=h_N=h(b).
+\end{equation}
+由此，\equref{equ:parallel_solver}得证。
+因为辅助常微分方程的积分区间为$[0,1]$，因此其求解过程非常简便。
+% It is easy to solve the auxiliary ODEs in parallel because the timespans in integration are uniform.
+基于此，我们可以高效并行化地求解原始的多个常微分方程，且时间消耗与批的大小无关。
+% From this, we can solve the original batched ODEs efficiently and the time consumption in training phase is irrelevant with the batch size.
+% Solving the original batched ODEs is replaced with solving auxiliary ODEs where the timespans in integration are uniform.
+% which is easy to be parallized
+%whose operands in left side and right side have identical shapes.
+% Here, we give a proposition to reveal the equivalency between the solutions of the original ODE and the auxiliary ODE.
+
+% \newtheorem{proposition}{\indent Proposition}
+% \begin{proposition}
+% \mathbf{Interval Transformation for Ordinary Differential Equation:}
+% \label{proposition:interval_trans}
+% % With an initial state $\b R(0) = \b{{H}}_{\b{T}}$, the solution of the auxiliary ODE \eqref{equ:construct_ode} at $\tau=1$ is equal to $\b{{H}}_{\b{T'}}$, the batched solution of the original ODE.
+% With a specific initial state $\b R(0) = \b{{H}}_{\b{T}}$, the solution of the auxiliary ODE \eqref{equ:construct_ode} at $\tau=1$ is equal to the concatenated solutions of the original $B$ ODEs.
+% \begin{equation}
+%     % &\approx \text{RK}(\b{\tilde H}_{\b{T}_i}, \b{T}_i, \b{T}_{i+1})
+%     \b{{H}}_{\b{T'}}=\b{R}(1)= \text{ODE Solve}(g_\theta, \b{R}(0)=\b{H}_{\b{T}}, 0, 1)
+%     % &=\b{\tilde H}_{\b{T}_{i}}+\frac{1}{6} \text{d}\b{T}\left(\b{k}_{0}+2 \b{k}_{1}+2 \b{k}_{2}+\b{k}_{3}\right)
+%     \label{equ:parallel_solver}
+% \end{equation}
+% \end{proposition}
+% % With the proposition \ref{proposition:interval_trans}, we could parallelize the generative process by solving the auxiliary ODE with a time interval defined on scalar.
+% % From the proposition \ref{proposition:interval_trans} (proof is given in Appendix.\ref{sec:proof_ode}), we parallelize the generative processs for avoiding the predictions on $N$ positions one by one.
+% % From the proposition \ref{proposition:interval_trans} (proof is given in Appendix.\ref{sec:proof_ode}), the batched ODEs could be solved in parallely 
+% From the proposition \ref{proposition:interval_trans} (proof is given in Appendix.\ref{sec:proof_ode}), we can solve the batched ODEs in parallel and the time consumption in training phase is irrelevant with the batch size.
+% by solving the auxiliary ODE with a time interval defined on scalar.
+% In conclusion, the time complexity of estimating unbiased KL-D is optimized to $\mathcal{O}(D)$ by introducing Equ.\eqref{equ:reuse} and \eqref{equ:parallel_solver}.
+
+\section{实验验证与分析}
 \label{sec:experiment}
 % In this section, we examine the proposed ODE-RSSM and some other baselines including several discrete-time and continuous-time models on three input/output datasets.
 在本节中，我们采用三个输入输出数据集对ODE-RSSM和其他基线模型进行评估，
@@ -979,7 +981,7 @@ ODE-RSSM能否从非均匀采样数据中学习到有效的泛化，以支持采
 \end{itemize}
 
 
-\subsection{数据集}
+\subsection{数据集介绍}
 % The descriptions of three datasets are listed as follows:
 % For conducting the experiments, we use three input/output datasets, including:
 本节采用的实验数据集共有三个，具体包括：
@@ -1007,7 +1009,7 @@ ODE-RSSM能否从非均匀采样数据中学习到有效的泛化，以支持采
     % The input of this dataset is the combination of the 3 reels' angular speeds and the 2 setpoint current of the motors for the different type of reels. The output of this dataset is the combination of the 2 measurements of the web's tension in between the reels. i
     % The data was first introduced by Bastogne et al.(1997) 
     
-    \item \textbf{膏体浓密机泥层压力变化数据集(Thickening)}:
+    \item \textbf{膏体浓密机泥层压力变化数据集}:
     本章使用第三章所述的膏体浓密机数据集作为实验对象。具体地，定义系统输入为进料浓度、进料流量、出料浓度、出料流量，系统输出为浓密机内泥层压力。由于浓密机系统运行机理复杂，内部状态难以监测，因此其属于典型的不完全观测系统。同时，由于系统控制反馈的时滞极长，系统输入对系统输出的影响是长期的，因此该数据集对于模型的长时预测能力以及长依赖关系建模能力提出了更高的要求。
     % This paper is the rollout of the provided paste thickening dataset which is derived from a running paste thickener.
     % This paste thickener is manufactured by the FLSmidth company and utilized in a copper mining paste backfilling station, for producing high concentrated slurry.
@@ -1022,14 +1024,14 @@ ODE-RSSM能否从非均匀采样数据中学习到有效的泛化，以支持采
 三个数据集的特性总结如下：
 \begin{table}
 \centering
-\resizebox{\linewidth}{!}{
+\resizebox{0.7\linewidth}{!}{
 \begin{tabular}{ccccccc} 
 \toprule
 数据集            & 输入 & 输出 & 随机性 & 时延 & $M$ & $L$  \\
 \hline
-\textit{CSTR}       & 1      & 2       & +          & +          & 60  & 180  \\
-\textit{Winding}    & 5      & 2       & +++        & ++         & 60  & 180  \\
-\textit{Thickening} & 4      & 1       & ++         & +++        & 30  & 60   \\
+连续搅拌釜式反应器       & 1      & 2       & +          & +          & 60  & 180  \\
+工业绕组数据集    & 5      & 2       & +++        & ++         & 60  & 180  \\
+浓密机数据集 & 4      & 1       & ++         & +++        & 30  & 60   \\
 \bottomrule
 \end{tabular}
 }
@@ -1057,7 +1059,7 @@ ODE-RSSM能否从非均匀采样数据中学习到有效的泛化，以支持采
 % We further move a sliding window on each split part to generate data batches,
 % each of which is a tensor with the shape $B \times N\times K$, where $B$ is the batch size, $N$ denotes the length of the sequence, and $K$ is the sum of the dimensions of both system inputs and system outputs.
 对于训练集，引入一个固定大小的滑动窗口用于生成批量的训练数据。
-生成的每一批数据均为大小为$B \ * N\ * K$的张量，其中$B$是批大小，$N$表示序列的长度，$K=\text{dim}_{in}+\text{dim}_{out}$是系统输入和系统输出的维数之和。
+生成的每一批数据均为大小为$B \ * N\ * K$的张量，其中$B$是批大小，$N$表示序列的长度，$K$是系统输入和系统输出的维数之和。
 
 % In the training phase, the sequence with length $N$ is totally fed to the model and the ELBO defined in \eqref{equ:loss_multi} is maximized.
 在训练阶段，如式\eqref{equ:loss_multi}所示，将长度为$N$的序列完全输入到模型中，并优化模型参数以最大化ELBO。
@@ -1131,90 +1133,181 @@ ODE-RSSM能否从非均匀采样数据中学习到有效的泛化，以支持采
 % All of the models are trained by adam optimizer where the learning rate is 5e-4.
 % The training will not stop until the validation loss does not decrease for 100 epochs.
 所有的模型均采用adam优化器训练的，学习率是5e-4。
-当验证集损失在连续100个epoch内不下降时，训练停止。
+当验证集损失在连续100个训练轮次内不下降时，训练停止。
 
 \subsection{相比于离散时间模型，ODE-RSSM建模非均匀采样系统的效果探究}
-\begin{table*}[htb]
-\centering
-\caption{CSTR}
-\label{tab:cstr}
-\begin{tabular}{l|ll|ll|ll|ll|ll} 
-\toprule
-\multicolumn{1}{c|}{} & \multicolumn{2}{c|}{25\%(uneven)} & \multicolumn{2}{c|}{25\%(even)} & \multicolumn{2}{c|}{50\%(uneven)} & \multicolumn{2}{c|}{50\%(even)} & \multicolumn{2}{c}{100\%}  \\
-                      & RRSE   & RMSE                     & RRSE   & RMSE                   & RRSE   & RMSE                     & RRSE   & RMSE                   & RRSE   & RMSE              \\ 
-\hline
-VAE-RNN               & 0.3018 & 0.2024                   & 0.203  & 0.1407                 & 0.1977 & 0.1372                   & 0.1791 & 0.1238                 & 0.1607 & 0.1099            \\
-SRNN                  & 0.3053 & 0.2081                   & 0.1427 & 0.1018                 & 0.2017 & 0.1451                   & 0.0898 & 0.0659                 & 0.0856 & 0.0641            \\
-STORN                 & 0.2918 & 0.1955                   & 0.1993 & 0.1379                 & 0.2372 & 0.1664                   & 0.1628 & 0.1115                 & 0.155  & 0.1054            \\
-RSSM                  & 0.3155 & 0.2158                   & 0.1457 & 0.1026                 & 0.2017 & 0.1447                   & 0.0811 & 0.0594                 & 0.0684 & 0.0499            \\
-RSSM-O                & 0.3114 & 0.2127                   & 0.1407 & 0.1003                 &0.141   & 0.1                      & 0.0872 & 0.0648                 & 0.0797 & 0.0596
-            \\ 
-\hline
+% \begin{table}[htb]
+% \centering
+% \caption{CSTR}
+% \label{tab:cstr}
+% \resizebox{\linewidth}{!}{
+% \begin{tabular}{l|ll|ll|ll|ll|ll} 
+% \toprule
+% \multicolumn{1}{c|}{} & \multicolumn{2}{c|}{25\%(uneven)} & \multicolumn{2}{c|}{25\%(even)} & \multicolumn{2}{c|}{50\%(uneven)} & \multicolumn{2}{c|}{50\%(even)} & \multicolumn{2}{c}{100\%}  \\
+%                       & RRSE   & RMSE                     & RRSE   & RMSE                   & RRSE   & RMSE                     & RRSE   & RMSE                   & RRSE   & RMSE              \\ 
+% \hline
+% VAE-RNN               & 0.3018 & 0.2024                   & 0.203  & 0.1407                 & 0.1977 & 0.1372                   & 0.1791 & 0.1238                 & 0.1607 & 0.1099            \\
+% SRNN                  & 0.3053 & 0.2081                   & 0.1427 & 0.1018                 & 0.2017 & 0.1451                   & 0.0898 & 0.0659                 & 0.0856 & 0.0641            \\
+% STORN                 & 0.2918 & 0.1955                   & 0.1993 & 0.1379                 & 0.2372 & 0.1664                   & 0.1628 & 0.1115                 & 0.155  & 0.1054            \\
+% RSSM                  & 0.3155 & 0.2158                   & 0.1457 & 0.1026                 & 0.2017 & 0.1447                   & 0.0811 & 0.0594                 & 0.0684 & 0.0499            \\
+% RSSM-O                & 0.3114 & 0.2127                   & 0.1407 & 0.1003                 &0.141   & 0.1                      & 0.0872 & 0.0648                 & 0.0797 & 0.0596
+%             \\ 
+% \hline
+% % ODE-RNN               & \textbf{0.2627} & \textbf{0.1791} & {0.14} & {0.0996}  & {0.1466} & {0.1047} &{ 0.0784 }&{ 0.057}& {0.0668} & {0.0489}            \\
 % ODE-RNN               & \textbf{0.2627} & \textbf{0.1791} & {0.14} & {0.0996}  & {0.1466} & {0.1047} &{ 0.0784 }&{ 0.057}& {0.0668} & {0.0489}            \\
-ODE-RNN               & \textbf{0.2627} & \textbf{0.1791} & {0.14} & {0.0996}  & {0.1466} & {0.1047} &{ 0.0784 }&{ 0.057}& {0.0668} & {0.0489}            \\
-Time-Aware            & 0.3134 & 0.2138                   & 0.1581 & 0.1131                 & 0.1965 & 0.1411                   & 0.136  & 0.0991                 & 0.108  & 0.0786            \\ 
-\hline
-ODE-RSSM              & 0.3079 & 0.2087                   & \textbf{0.1376} & \textbf{0.0975}& 0.1486 & 0.1059                   & 0.0798 & 0.0593                 & 0.0739 & 0.0517            \\
-ODE-RSSM-O            & {0.2807} & {0.1913} & 0.1411 & 0.1003                 & \textbf{0.1336} & \textbf{0.0956}  & \textbf{0.0654} & \textbf{0.0477} & \textbf{0.0659} & \textbf{0.0474}           \\
-\bottomrule
-\end{tabular}
-\end{table*}
+% Time-Aware            & 0.3134 & 0.2138                   & 0.1581 & 0.1131                 & 0.1965 & 0.1411                   & 0.136  & 0.0991                 & 0.108  & 0.0786            \\ 
+% \hline
+% ODE-RSSM              & 0.3079 & 0.2087                   & \textbf{0.1376} & \textbf{0.0975}& 0.1486 & 0.1059                   & 0.0798 & 0.0593                 & 0.0739 & 0.0517            \\
+% ODE-RSSM-O            & {0.2807} & {0.1913} & 0.1411 & 0.1003                 & \textbf{0.1336} & \textbf{0.0956}  & \textbf{0.0654} & \textbf{0.0477} & \textbf{0.0659} & \textbf{0.0474}           \\
+% \bottomrule
+% \end{tabular}
+% }
+% \end{table}
 % \usepackage{booktabs}
 
 
-\begin{table*}[htb]
-\centering
-\begin{tabular}{l|ll|ll|ll|ll|ll} 
+% \begin{table}[htb]
+% \centering
+% \resizebox{\linewidth}{!}{
+% \begin{tabular}{l|ll|ll|ll|ll|ll} 
+% \toprule
+% \multicolumn{1}{c|}{} & \multicolumn{2}{c|}{25\%(uneven)} & \multicolumn{2}{c|}{25\%(even)} & \multicolumn{2}{c|}{50\%(uneven)} & \multicolumn{2}{c|}{50\%(even)} & \multicolumn{2}{c}{100\%}  \\
+%                       & RRSE   & RMSE                     & RRSE   & RMSE                   & RRSE   & RMSE                     & RRSE   & RMSE                   & RRSE   & RMSE              \\ 
+% \hline
+% VAE-RNN               & 0.4942  &	0.4886                   & 0.4276	&   0.4346                 & 0.4308	&   0.4306                   & 0.4521	&   0.4589                  & 0.4192    &	0.4167            \\
+% SRNN                  & 0.5677	& 0.5617                  & 0.4998	&   0.5098                 & 0.4703	&   0.469                   &0.4295	&   0.4348                 & 0.3844   &	0.3809            \\
+% STORN                 & 0.4982	&   0.4951                   & 0.4151	&   0.4231                 & 0.4299	&   0.4286                    & 0.4058  &	0.4111                 & 0.384	&   0.3807            \\
+% RSSM                  & 0.5667 & 0.5593                   & 0.4155 & 0.4234                 & 0.4932 & 0.4918                   & 0.4013 & 0.4066                 & 0.4211 & 0.4176            \\
+% RSSM-O                & 0.5366 & 0.5313                   & 0.4124 & 0.4202                 & 0.5236 & 0.523                    & 0.4098 & 0.415                  & 0.3911 & 0.3876            \\ 
+% \hline
+% ODE-RNN               & 0.4136	&   0.4083                   & 0.4007	&   0.4071                 & 0.4141	&   0.4118                   & 0.369	&   0.3733                 & 0.3288	&   0.3245            \\
+% % ODE-RNN               & 0.5018 & 0.4953                   & \mathbf{0.402}  & \mathbf{0.4079}                 & \mathbf{0.3947} & \mathbf{0.3908}                   & 0.3852 & 0.3891                 & 0.3808 & 0.3751            \\
+% Time-Aware            & 0.6009	&   0.5961                   & 0.4653	&   0.4748                 & 0.4615	&   0.4613                    & 0.431	&   0.4369                 & 0.4017	&   0.398            \\ 
+% \hline
+% ODE-RSSM              & 0.511  & 0.5042                   & 0.4529 & 0.4638                 & 0.4459 & 0.4442                   & 0.3899 & 0.3946                 & 0.3732 & 0.3688            \\
+% ODE-RSSM-O            & \textbf{0.4934} & \textbf{0.4878}                   & 0.4063 & 0.4152                 & 0.4209 & 0.4198                   & \textbf{0.3776} & \textbf{0.3822}                 & \textbf{0.3448} & \textbf{0.3402}            \\
+% \bottomrule
+% \end{tabular}
+% }
+% \caption{Winding}
+% \label{tab:winding}
+% \end{table}
+% \usepackage{booktabs}
+
+
+% \begin{table}[htb]
+% \centering
+% \caption{Thickening}
+% \resizebox{\linewidth}{!}{
+% \begin{tabular}{l|ll|ll|ll|ll|ll} 
+% \toprule
+%            & \multicolumn{2}{c|}{25\%(uneven)} & \multicolumn{2}{c|}{25\%(even)} & \multicolumn{2}{c|}{50\%(uneven)} & \multicolumn{2}{c|}{50\%(even)} & \multicolumn{2}{c}{100\%}  \\
+%            & RRSE    & RMSE                    & RRSE    & RMSE                  & RRSE    & RMSE                    & RRSE    & RMSE                  & RRSE    & RMSE             \\ 
+% \hline
+% VAE-RNN    & 16.255 & 0.4696                  & 14.471 & 0.4589                & 14.779 & 0.4361                  & 13.915 & 0.4319                & 13.163 & 0.4065           \\
+% SRNN       & 1.8748  & 0.0593                  & 1.6621  & 0.061                 & 1.7969  & 0.0612                  & 1.6439  & 0.0592                & 1.6008  & 0.0583           \\
+% STORN      & 11.336 & 0.3249                  & 8.6047  & 0.2765                & 7.9986  & 0.2463                  & 7.7936  & 0.2473                & 6.8105  & 0.2184           \\
+% RSSM       & 1.619   & 0.0553                  & 1.5165  & 0.0561                & 1.5808  & 0.0534                  & 1.439   & 0.0532                & 1.5001  & 0.0548           \\
+% RSSM-O     & 1.3725  & 0.0529                  & 1.375   & 0.0517                & 1.4275  & 0.0519                  & 1.4214  & 0.0518                & 1.4153  & 0.0522           \\ 
+% \hline
+% ODE-RNN    & 1.4789  & 0.0507                  & \textbf{1.2927}  & 0.0494                & 1.6023  & 0.0566                  & 1.3138  & \textbf{0.0489}                & \textbf{1.3193}  & \textbf{0.0487}           \\
+% Time-Aware & 3.302   & 0.11                    & 1.7698  & 0.0636                & 1.4732  & 0.0531                  & 1.3882  & 0.0509                & 1.4108  & 0.0516           \\ 
+% \hline
+% ODE-RSSM   & 1.5349  & 0.0558                  & 1.4791  & 0.0549                & 1.4174  & 0.0522                  & 1.4625  & 0.0544                & 1.5856  & 0.0577           \\
+% ODE-RSSM-O & \textbf{1.3678}  & \textbf{0.0504}                  & 1.2947  & \textbf{0.0493}                & \textbf{1.3064}  & \textbf{0.0487}                  & \textbf{1.3082}  & 0.0493                & 1.3302  & 0.05             \\
+% \bottomrule
+% \end{tabular}
+% }
+% \label{tab:thickening}
+% \end{table}
+
+
+
+\begin{table}[ht]
+    \centering
+\footnotesize
+    % \begin{subtable}[t]{.9\linewidth}
+\caption{连续搅拌釜式反应器}
+\resizebox{\linewidth}{!}{
+    \begin{tabular}{l|ll|ll|ll|ll|ll} 
 \toprule
-\multicolumn{1}{c|}{} & \multicolumn{2}{c|}{25\%(uneven)} & \multicolumn{2}{c|}{25\%(even)} & \multicolumn{2}{c|}{50\%(uneven)} & \multicolumn{2}{c|}{50\%(even)} & \multicolumn{2}{c}{100\%}  \\
+\multicolumn{1}{c|}{} & \multicolumn{2}{c|}{25\% (uneven)} & \multicolumn{2}{c|}{25\% (even)} & \multicolumn{2}{c|}{50\% (uneven)} & \multicolumn{2}{c|}{50\% (even)} & \multicolumn{2}{c}{100\%}  \\
                       & RRSE   & RMSE                     & RRSE   & RMSE                   & RRSE   & RMSE                     & RRSE   & RMSE                   & RRSE   & RMSE              \\ 
 \hline
-VAE-RNN               & 0.4942  &	0.4886                   & 0.4276	&   0.4346                 & 0.4308	&   0.4306                   & 0.4521	&   0.4589                  & 0.4192    &	0.4167            \\
-SRNN                  & 0.5677	& 0.5617                  & 0.4998	&   0.5098                 & 0.4703	&   0.469                   &0.4295	&   0.4348                 & 0.3844   &	0.3809            \\
-STORN                 & 0.4982	&   0.4951                   & 0.4151	&   0.4231                 & 0.4299	&   0.4286                    & 0.4058  &	0.4111                 & 0.384	&   0.3807            \\
-RSSM                  & 0.5667 & 0.5593                   & 0.4155 & 0.4234                 & 0.4932 & 0.4918                   & 0.4013 & 0.4066                 & 0.4211 & 0.4176            \\
+VAE-RNN               & 0.3118 & 0.2224                   & 0.203  & 0.1407                 & 0.1977 & 0.1372                   & 0.1791 & 0.1238                 & 0.1607 & 0.1099            \\
+STORN                 & 0.3198 & 0.2235                   & 0.1993 & 0.1379                 & 0.2372 & 0.1664                   & 0.1628 & 0.1115                 & 0.155  & 0.1054            \\
+RSSM                  & 0.3155 & 0.2158                   & 0.1457 & 0.1026                 & 0.2017 & 0.1447                   & 0.0811 & 0.0594                 & 0.0684 & 0.0499            \\
+RSSM-O                & 0.3114 & 0.2127                   & 0.1507 & 0.1103                 &0.151   & 0.11                      & 0.0872 & 0.0648                 & 0.0797 & 0.0596 \\
+\hline
+ODE-RNN               & \cellcolor{Green!60} 0.2627 & \cellcolor{Green!60} 0.1791 & \cellcolor{Green!30} 0.14 & \cellcolor{Green!30} 0.0996  & \cellcolor{Green!30} 0.1466 & \cellcolor{Green!30} 0.1047 & \cellcolor{Green!30} 0.0784 & \cellcolor{Green!30} 0.057 & \cellcolor{Green!30} 0.0668 & \cellcolor{Green!30} 0.0489            \\
+Time-Aware            & 0.3134 & 0.2138                   & 0.1581 & 0.1131                 & 0.1965 & 0.1411                   & 0.136  & 0.0991                 & 0.108  & 0.0786            \\ 
+% \hline
+\hline
+% ODE-RSSM            & {0.2807} & {0.1913} & 0.1411 & 0.1003                 & \textbf{0.1336} & \textbf{0.0956}  & \textbf{0.0654} & \textbf{0.0477} & \textbf{0.0659} & \textbf{0.0474}           \\
+ODE-RSSM              & 0.2979 & 0.1987                   & \cellcolor{Green!60} 0.1376 & \cellcolor{Green!60} 0.0975 & 0.1486 & 0.1059                   & 0.0798 & 0.0593                 & 0.0739 & 0.0517            \\
+ODE-RSSM-O            & \cellcolor{Green!30} 0.2807 & \cellcolor{Green!30} 0.1913 & 0.1411 & 0.1003                 & \cellcolor{Green!60} 0.1336 & \cellcolor{Green!60} 0.0956  & \cellcolor{Green!60} 0.0654 & \cellcolor{Green!60} 0.0477 & \cellcolor{Green!60} 0.0659 & \cellcolor{Green!60} 0.0474           \\
+\bottomrule
+\end{tabular}}
+    % \end{subtable}
+    % \subfloat[2]{
+\label{tab:cstr}
+\end{table} 
+
+\begin{table}
+    % \begin{subtable}[t]{.9\linewidth}
+\caption{工业绕组数据集}
+\resizebox{\linewidth}{!}{
+\begin{tabular}{l|ll|ll|ll|ll|ll} 
+\toprule
+\multicolumn{1}{c|}{} & \multicolumn{2}{c|}{25\% (uneven)} & \multicolumn{2}{c|}{25\% (even)} & \multicolumn{2}{c|}{50\% (uneven)} & \multicolumn{2}{c|}{50\% (even)} & \multicolumn{2}{c}{100\%}  \\
+                      & RRSE   & RMSE                     & RRSE   & RMSE                   & RRSE   & RMSE                     & RRSE   & RMSE                   & RRSE   & RMSE              \\ 
+\hline
+VAE-RNN               & 0.5242  &	0.5186                   & 0.4276	&   0.4346                 & 0.4708	&   0.4706                   & 0.4521	&   0.4589                  & 0.4192    &	0.4167            \\
+STORN                 & 0.5282	&   0.5251                   & 0.4151	&   0.4231                 & 0.4799	&   0.4786                    & 0.4058  &	0.4111                 & 0.384	&   0.3807            \\
+RSSM                  & 0.5667 & 0.5593                   & 0.4155 & 0.4234                 & 0.4932 & 0.4918                   & 0.4013 & 0.4066                 & 0.4011 & 0.3976            \\
 RSSM-O                & 0.5366 & 0.5313                   & 0.4124 & 0.4202                 & 0.5236 & 0.523                    & 0.4098 & 0.415                  & 0.3911 & 0.3876            \\ 
 \hline
-ODE-RNN               & 0.4136	&   0.4083                   & 0.4007	&   0.4071                 & 0.4141	&   0.4118                   & 0.369	&   0.3733                 & 0.3288	&   0.3245            \\
-% ODE-RNN               & 0.5018 & 0.4953                   & \mathbf{0.402}  & \mathbf{0.4079}                 & \mathbf{0.3947} & \mathbf{0.3908}                   & 0.3852 & 0.3891                 & 0.3808 & 0.3751            \\
+ODE-RNN               & \cellcolor{Green!30} 0.5018 & \cellcolor{Green!30} 0.4953                   & \cellcolor{Green!60} 0.402  & \cellcolor{Green!60} 0.4079                 & \cellcolor{Green!30} 0.4247 & \cellcolor{Green!30} 0.4208                   & \cellcolor{Green!30} 0.3852 & \cellcolor{Green!30} 0.3891                 & 0.3808 & 0.3751            \\
 Time-Aware            & 0.6009	&   0.5961                   & 0.4653	&   0.4748                 & 0.4615	&   0.4613                    & 0.431	&   0.4369                 & 0.4017	&   0.398            \\ 
 \hline
-ODE-RSSM              & 0.511  & 0.5042                   & 0.4529 & 0.4638                 & 0.4459 & 0.4442                   & 0.3899 & 0.3946                 & 0.3732 & 0.3688            \\
-ODE-RSSM-O            & \textbf{0.4934} & \textbf{0.4878}                   & 0.4063 & 0.4152                 & 0.4209 & 0.4198                   & \textbf{0.3776} & \textbf{0.3822}                 & \textbf{0.3448} & \textbf{0.3402}            \\
+ODE-RSSM              & 0.511  & 0.5042                   & 0.4129 & 0.4238                 & 0.4459 & 0.4442                   & 0.3899 & 0.3946                 & \cellcolor{Green!30} 0.3732 & \cellcolor{Green!30} 0.3688            \\
+ODE-RSSM-O            & \cellcolor{Green!60} 0.4934 & \cellcolor{Green!60} 0.4878                   & \cellcolor{Green!30} 0.4063 & \cellcolor{Green!30} 0.4152                 & \cellcolor{Green!60} 0.4209 & \cellcolor{Green!60} 0.4198                   & \cellcolor{Green!60} 0.3776 & \cellcolor{Green!60} 0.3822                 & \cellcolor{Green!60} 0.3448 & \cellcolor{Green!60} 0.3402            \\
 \bottomrule
-\end{tabular}
-\caption{Winding}
+\end{tabular}}
 \label{tab:winding}
-\end{table*}
-% \usepackage{booktabs}
+\end{table}
+    % \end{subtable}
 
-
-\begin{table*}[htb]
-\centering
+\begin{table}
+% \begin{subtable}[t]{.9\linewidth}
+\caption{浓密机数据集}
+\resizebox{\linewidth}{!}{
 \begin{tabular}{l|ll|ll|ll|ll|ll} 
 \toprule
-           & \multicolumn{2}{c|}{25\%(uneven)} & \multicolumn{2}{c|}{25\%(even)} & \multicolumn{2}{c|}{50\%(uneven)} & \multicolumn{2}{c|}{50\%(even)} & \multicolumn{2}{c}{100\%}  \\
+           & \multicolumn{2}{c|}{25\% (uneven)} & \multicolumn{2}{c|}{25\% (even)} & \multicolumn{2}{c|}{50\% (uneven)} & \multicolumn{2}{c|}{50\% (even)} & \multicolumn{2}{c}{100\%}  \\
            & RRSE    & RMSE                    & RRSE    & RMSE                  & RRSE    & RMSE                    & RRSE    & RMSE                  & RRSE    & RMSE             \\ 
 \hline
 VAE-RNN    & 16.255 & 0.4696                  & 14.471 & 0.4589                & 14.779 & 0.4361                  & 13.915 & 0.4319                & 13.163 & 0.4065           \\
-SRNN       & 1.8748  & 0.0593                  & 1.6621  & 0.061                 & 1.7969  & 0.0612                  & 1.6439  & 0.0592                & 1.6008  & 0.0583           \\
 STORN      & 11.336 & 0.3249                  & 8.6047  & 0.2765                & 7.9986  & 0.2463                  & 7.7936  & 0.2473                & 6.8105  & 0.2184           \\
 RSSM       & 1.619   & 0.0553                  & 1.5165  & 0.0561                & 1.5808  & 0.0534                  & 1.439   & 0.0532                & 1.5001  & 0.0548           \\
-RSSM-O     & 1.3725  & 0.0529                  & 1.375   & 0.0517                & 1.4275  & 0.0519                  & 1.4214  & 0.0518                & 1.4153  & 0.0522           \\ 
+RSSM-O     &\cellcolor{Green!30} 1.3725  & 0.0529                  & 1.375   & 0.0517                & 1.4275  & 0.0519                  & 1.4214  & 0.0518                & 1.4153  & 0.0522           \\ 
 \hline
-ODE-RNN    & 1.4789  & 0.0507                  & \textbf{1.2927}  & 0.0494                & 1.6023  & 0.0566                  & 1.3138  & \textbf{0.0489}                & \textbf{1.3193}  & \textbf{0.0487}           \\
+ODE-RNN    &  1.4789  & \cellcolor{Green!30} 0.0507                  & \cellcolor{Green!60} 1.2927  & \cellcolor{Green!30} 0.0494                & 1.6023  & 0.0566                  & \cellcolor{Green!30} 1.3138  & \cellcolor{Green!60} 0.0489                & \cellcolor{Green!60} 1.3193  & \cellcolor{Green!60} 0.0487           \\
 Time-Aware & 3.302   & 0.11                    & 1.7698  & 0.0636                & 1.4732  & 0.0531                  & 1.3882  & 0.0509                & 1.4108  & 0.0516           \\ 
 \hline
-ODE-RSSM   & 1.5349  & 0.0558                  & 1.4791  & 0.0549                & 1.4174  & 0.0522                  & 1.4625  & 0.0544                & 1.5856  & 0.0577           \\
-ODE-RSSM-O & \textbf{1.3678}  & \textbf{0.0504}                  & 1.2947  & \textbf{0.0493}                & \textbf{1.3064}  & \textbf{0.0487}                  & \textbf{1.3082}  & 0.0493                & 1.3302  & 0.05             \\
+ODE-RSSM   & 1.5349  & 0.0558                  & 1.4791  & 0.0549                & \cellcolor{Green!30} 1.4174  & \cellcolor{Green!30} 0.0522                  & 1.4625  & 0.0544                & 1.5856  & 0.0577           \\
+ODE-RSSM-O & \cellcolor{Green!60} 1.3678  & \cellcolor{Green!60} 0.0504                  & \cellcolor{Green!30} 1.2947  & \cellcolor{Green!60} 0.0493                & \cellcolor{Green!60} 1.3064  & \cellcolor{Green!60} 0.0487                  & \cellcolor{Green!60} 1.3082  & \cellcolor{Green!30} 0.0493                & \cellcolor{Green!30} 1.3302  & \cellcolor{Green!30} 0.05             \\
 \bottomrule
-\end{tabular}
-\caption{Thickening}
+\end{tabular}}
+% \end{subtable}
+    % '-O' refers to training model with latent overshooting.}
+% \caption{Main results on three Input/output datasets. The best and the second-best results are marked with dark green and light green, respectively.
+% The models with suffix `-O' are trained with latent overshooting.}
 \label{tab:thickening}
-\end{table*}
+\end{table}
 
 % The comparison between the proposed ODE-RSSM and the discrete-time models on three datasets are shown in Table.~\ref{tab:cstr}, \ref{tab:winding}, and \ref{tab:thickening}.
-提出的ODE-RSSM与离散时间模型在三个数据集上的比较如表所示。\ref{制表符:cstr}， \ref{制表符:winding}，和\ref{制表符:thickening}。
+提出的ODE-RSSM与离散时间模型在三个数据集上的比较如表所示。
 表~\ref{tab:cstr}, \ref{tab:winding}, 和 \ref{tab:thickening}展示了ODE-RSSM与各个离散时间模型在三个数据集上的预测效果。
 % The results show that ODE-RSSM outperforms the discrete-time models when the dataset is downsampled.
 结果表明，对于经过下采样的数据集，ODE-RSSM的预测精度明显优于离散时间模型。
@@ -1314,7 +1407,7 @@ ODE-RSSM本质上可以视为ODE-RNN模型的变种，它将瞬时状态更新�
 % In this section, we made an ablation study to verify the meaning of introducing latent overshooting in RSSM and ODE-RSSM.
 在本节实验中，我们通过消融实验验证在RSSM和ODE-RSSM中引入隐空间超调对于模型多步预测的改善效果。
 % The results in Table.~\ref{tab:} show that introducing latent overshooting in training phases is considerablly beneficial to improve the open-loop prediction.
-从表\ref{tab:}可以发现，训练阶段添加隐空间超调能够有效改善模型的开环预测精度，且由于浓密机数据集存在更明显的系统时延于非确定性，改善程度更加明显。
+从表\ref{tab:cstr}-\ref{tab:thickening}可以看出，训练阶段添加隐空间超调能够有效改善模型的开环预测精度，且由于浓密机数据集存在更明显的系统时延于非确定性，改善程度更加明显。
 % The improvement is more marked in the paste thickening dataset because of more obvious system delay and uncertainy.
 
 % In Figure.~\ref{fig:predict_cmp}, we mark the positions P1 and P4 where the models trained by latent overshooting (a and c) outperform the ones without being trained by latent overshooting(b and d).
@@ -1383,7 +1476,7 @@ ODE-RSSM(25\%)比ODE-RSSM(50\%)性能更好的另一个原因是低采样率减�
 在这种外推预测下，ODE-RSSM的性能难以得到保证，但其预测精度仍然优于离散时间模型RSSM。
 % The performance of ODE-RSSM is not guaranteed in such extrapolated predictions, but it is still better than discrete-time one, RSSM.
 
-\begin{table*}[htb]
+\begin{table}[htb]
 \centering
 \caption{
 测试集采样比例与训练集比例采样比例不同时，模型预测性能对比
@@ -1393,7 +1486,7 @@ ODE-RSSM(25\%)比ODE-RSSM(50\%)性能更好的另一个原因是低采样率减�
 % \resizebox{\textwidth}{
 \begin{tabular}{c|cccc|cccc|cccc} 
 \toprule
-\multirow{2}{*}{Model} & \multicolumn{4}{c|}{25\%(uneven)}                            & \multicolumn{4}{c|}{50\%(uneven)}                            & \multicolumn{4}{c}{100\%}                            \\
+\multirow{2}{*}{模型} & \multicolumn{4}{c|}{25\%(非均匀)}                            & \multicolumn{4}{c|}{50\%(非均匀)}                            & \multicolumn{4}{c}{100\%}                            \\
                        & \multicolumn{2}{c}{RRSE} & \multicolumn{2}{c|}{RMSE} & \multicolumn{2}{c}{RRSE} & \multicolumn{2}{c|}{RMSE} & \multicolumn{2}{c}{RRSE} & \multicolumn{2}{c}{RMSE}  \\ 
 \hline
 RSSM(25\%)             & 0.5366 & (0)             & 0.5313 & (0)              & 0.4621 & (-0.0745)       & 0.4617 & (-0.0696)        & 0.4596 & (-0.077)        & 0.4588 & (-0.0725)        \\
@@ -1402,7 +1495,7 @@ ODE-RSSM(25\%)         & 0.4934 & (0)             & 0.4878 & (0)              & 
 ODE-RSSM(50\%)         & 0.5754 & (0.1545)        & 0.5696 & (0.1498)         & 0.4209 & (0)             & 0.4198 & (0)              & 0.3794 & (-0.0415)       & 0.3771 & (-0.0427)        \\
 \bottomrule
 \end{tabular}}
-\end{table*}
+\end{table}
 
 
 % \subsection{RQ5: Evaluating the time efficiency of the Batched ancestor sampling for estimating KL-D}
@@ -1474,28 +1567,28 @@ rk4作为固定阶求解器时，任意两个相邻时间点之间对导数$f_\t
 
 
 \begin{figure}[ht]
-\subfigure[Reusing sampled latent states]{
-\begin{minipage}[t]{0.45\linewidth}
+\subfigure[重用采样隐状态评估]{
+\begin{minipage}[t]{0.49\linewidth}
 \centering
 % \hspace{-22pt}
 % \includegraphics[width=1\linewidth,trim=0 0 0 0,clip]{figures/chapter5/D_time.eps}
-\includegraphics[height=4.5cm]{figures/chapter5/D_time.eps}
+\includegraphics[width=\linewidth]{figures/chapter5/D_time.png}
 %\caption{fig1}
 \end{minipage}
 \label{fig:D_time}
 }%
-\subfigure[Parallel ODE solver]{
-\begin{minipage}[t]{0.45\linewidth}
+\subfigure[重参数化ODE求解器评估]{
+\begin{minipage}[t]{0.49\linewidth}
 \centering
 % \hspace{-22pt}
 % \includegraphics[width=1\linewidth,trim=0 0 0 0,clip]{figures/chapter5/ode_time.eps}
-\includegraphics[height=4.5cm]{figures/chapter5/ode_time.eps}
+\includegraphics[width=\linewidth]{figures/chapter5/ode_time.png}
 %\caption{fig1}
 \end{minipage}
 \label{fig:ode_time}
 }%
 \centering
-\caption{Evaluating the time consumption}
+\caption{时间复杂度改善效果评估}
 \label{fig:time_cmp}
 \end{figure}
 
@@ -1623,41 +1716,41 @@ rk4作为固定阶求解器时，任意两个相邻时间点之间对导数$f_\t
 % \begin{center} {\centering \vbox{\centerline{\psfig{width=0.45\textwidth,figure=1.eps}}
 % \vskip2mm }} \end{center} 
 
-\section{讨论}
-\label{sec:discussion}
-% The ODE-RSSM model encodes the evenly spaced streaming data to a continuous-time hidden state in latent space.
-ODE-RSSM模型能够对不均匀流式序列数据进行编码，并在隐空间中生成连续时间的隐状态。
-% When the new monitored system inputs and outputs are fed, the GRU module updates the deterministic hidden state and infer new stochastic latent state.
-% Otherwise, the ODE-net predicts the evolution the $\b{h}_t$ and indirectly determines the distribution of $\b{z}_t$.
-在同时给定新的输入输出数据时，ODE-RSSM采用GRU模块更新确定性隐状态，同时推理随机的隐变量，以此起到序列在线编码的作用。在仅有输入点时，模型能够使用ODE-Net预测$\b{h}_t$的变化并以此估计随机变量$\b{z}_t$的先验分布。
-% ODE-RSSM具备的在线编码、在线预测能力使得该模型在除系统预测以外的潜在应用。
-ODE-RSSM具备的在线编码、在线预测能力能够有效应用于除系统预测以外的问题及场景中。
-% On the basis of such property, this section will discuss the available applications of ODE-RSSM except for system prediction.
+% \section{讨论}
+% \label{sec:discussion}
+% % The ODE-RSSM model encodes the evenly spaced streaming data to a continuous-time hidden state in latent space.
+% ODE-RSSM模型能够对不均匀流式序列数据进行编码，并在隐空间中生成连续时间的隐状态。
+% % When the new monitored system inputs and outputs are fed, the GRU module updates the deterministic hidden state and infer new stochastic latent state.
+% % Otherwise, the ODE-net predicts the evolution the $\b{h}_t$ and indirectly determines the distribution of $\b{z}_t$.
+% 在同时给定新的输入输出数据时，ODE-RSSM采用GRU模块更新确定性隐状态，同时推理随机的隐变量，以此起到序列在线编码的作用。在仅有输入点时，模型能够使用ODE-Net预测$\b{h}_t$的变化并以此估计随机变量$\b{z}_t$的先验分布。
+% % ODE-RSSM具备的在线编码、在线预测能力使得该模型在除系统预测以外的潜在应用。
+% ODE-RSSM具备的在线编码、在线预测能力能够有效应用于除系统预测以外的问题及场景中。
+% % On the basis of such property, this section will discuss the available applications of ODE-RSSM except for system prediction.
 
- \textbf{模型预测控制}：在模型预测控制中(Model Prediction Control, MPC)，ODE-RSSM可以作为优化过程所需的预测模型或仿真模型，
-模型能够预测给定输入对系统序列输出的影响。ODE-RSSM支持状态循环更新的特性使其在处理增量数据时计算成本小，且优化序列长度范围灵活可变，在实际工业应用中具有很好的适用性。
+%  \textbf{模型预测控制}：在模型预测控制中(Model Prediction Control, MPC)，ODE-RSSM可以作为优化过程所需的预测模型或仿真模型，
+% 模型能够预测给定输入对系统序列输出的影响。ODE-RSSM支持状态循环更新的特性使其在处理增量数据时计算成本小，且优化序列长度范围灵活可变，在实际工业应用中具有很好的适用性。
 
-\textbf{异常检测:} 
-ODE-RSSM本质上为变分自编码器模型，利用其编码器和解码器模块能够估计给定序列数据的条件边缘似然。该似然能够作为监测数据是否存在异常的指标\cite{Xu2018}。
+% \textbf{异常检测:} 
+% ODE-RSSM本质上为变分自编码器模型，利用其编码器和解码器模块能够估计给定序列数据的条件边缘似然。该似然能够作为监测数据是否存在异常的指标\cite{Xu2018}。
 
-本节，我们分析了ODE-RSSM存在的限制以及不足，并以此延伸展望了未来可能的研究方向：
+% 本节，我们分析了ODE-RSSM存在的限制以及不足，并以此延伸展望了未来可能的研究方向：
 
-\textbf{异步观测}
-ODE-RSSM假设所有通道的采样时间点是同步的。而在实际的工业系统中，不同传感器的数据采集是独立的，因此不同监测项的采集频率和采集时刻可能是不同的。
-为了适用于此类异步观测数据，需要在模型中引入在线的数据连续化插值\cite{Che2018}技术。
+% \textbf{异步观测}
+% ODE-RSSM假设所有通道的采样时间点是同步的。而在实际的工业系统中，不同传感器的数据采集是独立的，因此不同监测项的采集频率和采集时刻可能是不同的。
+% 为了适用于此类异步观测数据，需要在模型中引入在线的数据连续化插值\cite{Che2018}技术。
 
-% \mathbf{Asynchronous observations} 
-% ODE-RSSM assumes the sampling time points of all channels are simultaneous. While different sensors may be observed at different frequencies in real industrial systems. 
-% It is worthwhile to incorporate online data imputation techniques\cite{Che2018} into the proposed framework.
+% % \mathbf{Asynchronous observations} 
+% % ODE-RSSM assumes the sampling time points of all channels are simultaneous. While different sensors may be observed at different frequencies in real industrial systems. 
+% % It is worthwhile to incorporate online data imputation techniques\cite{Che2018} into the proposed framework.
 
 
-\textbf{时间演化过程中的随机性建模}：% ODE-RSSM is intrinsically a discrete-time model, which only infers the stochastic latent variables at discrete-time steps. 
-% The ODE-Net in CT domain only models the deterministic continuous-time evolution between adjacent observed time points.
-% In future, we look into complete continuous-time models with stochasticity, such as Stochastic Differential Equation Network(SDE), to model the continuous-time stochastic transitions of complicated system.
+% \textbf{时间演化过程中的随机性建模}：% ODE-RSSM is intrinsically a discrete-time model, which only infers the stochastic latent variables at discrete-time steps. 
+% % The ODE-Net in CT domain only models the deterministic continuous-time evolution between adjacent observed time points.
+% % In future, we look into complete continuous-time models with stochasticity, such as Stochastic Differential Equation Network(SDE), to model the continuous-time stochastic transitions of complicated system.
 
-因为ODE-RSSM仅预测或推理出离散时间步下的随机隐变量分布，因此该模型本质上仍是一个离散时间模型。
-ODE-Net仅建模了相邻观测时间点之间确定性隐状态在连续时间域上的确定性演化，而无法建模状态演化过程中的存在随机性，如维纳过程等连续时间随机过程。
-未来，本人将尝试引入具有随机性的连续时间模型作为ODE-NET的替代，如随机微分方程网络(Stochastic Differential Equation Neural Network SDE-Net)，用于建模复杂系统中存在的连续时间随机性。
+% 因为ODE-RSSM仅预测或推理出离散时间步下的随机隐变量分布，因此该模型本质上仍是一个离散时间模型。
+% ODE-Net仅建模了相邻观测时间点之间确定性隐状态在连续时间域上的确定性演化，而无法建模状态演化过程中的存在随机性，如维纳过程等连续时间随机过程。
+% 未来，本人将尝试引入具有随机性的连续时间模型作为ODE-NET的替代，如随机微分方程网络(Stochastic Differential Equation Neural Network SDE-Net)，用于建模复杂系统中存在的连续时间随机性。
 
 \section{本章小结}
 \label{sec:conclusion}

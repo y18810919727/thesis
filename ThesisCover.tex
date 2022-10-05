@@ -8,11 +8,12 @@
     \vspace{5em}
 
     \begin{tabular}[H]{p{60pt} p{1em}}
-    & \linespread{0.8}\selectfont \zihao{3} \heiti \textbf{\ThesisTitleCN} \\	%带英文会出现格式错误
+    % & \linespread{0.8}\selectfont \zihao{3} \heiti \textbf{\ThesisTitleCN} \\	%带英文会出现格式错误
+    & \linespread{0.8}\selectfont \zihao{3} \textbf{\ThesisTitleCN} \\	%带英文会出现格式错误
     &\\
-    &\linespread{0.8}\selectfont \zihao{3} \heiti \textbf{\AuthorCN} \\
+    &\linespread{0.8}\selectfont \zihao{3}  \textbf{\AuthorCN} \\
     &\\
-    &\linespread{0.8}\selectfont \zihao{3} \heiti \textbf{北京科技大学}
+    &\linespread{0.8}\selectfont \zihao{3}  \textbf{北京科技大学}
     \end{tabular}
 
     \newpage
@@ -36,7 +37,7 @@
 
             %论文主标题
             % \centerline{\zihao{-3} 论文题目：\zihao{-2} \textbf{\ThesisTitleCN}} \par    %强制只使用一行
-            \zihao{-3} 论文题目：\zihao{-2} {\ThesisTitleCN} \par     %可以分行
+            \zihao{-3} 论文题目：\zihao{-2} {\textbf{\ThesisTitleCN}} \par     %可以分行
             \vspace{10mm}
 
             %论文副标题，没用请注释掉
@@ -46,13 +47,13 @@
             \zihao{-3}
 
             \begin{tabular}{rc}
-            学 \qquad 号：& \underline{\makebox[5cm]{\StudentID}} \\
-            作 \qquad 者：& \underline{\makebox[5cm]{\AuthorCN}}\\
-            专业名称：& \underline{\makebox[5cm]{\MajorCN}}
+            学 \qquad 号：& \underline{\makebox[5cm]{\zihao{-3} \StudentID}} \\
+            作 \qquad 者：& \underline{\makebox[5cm]{\zihao{-3} \AuthorCN}}\\
+            专业名称：& \underline{\makebox[5cm]{\zihao{-3} \MajorCN}}
             \end{tabular}
             \vspace{10mm}
 
-            \ThesisYear 年 \ThesisMonth 月 \ThesisDay 日
+            \zihao{-3}\ThesisYear 年 \zihao{-3}\ThesisMonth 月 \zihao{-3}\ThesisDay 日
 
         \end{center}
     \end{titlepage}
@@ -129,7 +130,9 @@
                 \zihao{4}
                 %论文主标题
                 % \centerline{ \textbf{论文题目：} \underline{\makebox[10cm]{\ThesisTitleCN}} } \par    %强制只使用一行
-                \textbf{论文题目：} \ThesisTitleCN \par     %可以分行
+                % \textbf{论文题目：}\underline{\makebox[10cm]{\zihao{4} \ThesisTitleCN}} \par     %可以分行
+                \textbf{论文题目：} \underline{\ThesisTitleCN} \par     %可以分行
+
                 \vspace{5mm}
                 %论文副标题，没用请注释掉
                 % \centerline{ —— \ThesisSubTitleCN} \par
@@ -140,7 +143,8 @@
 
                 \begin{tabular}{rcrl}
                 \makebox[7em][s]{\textbf{指\hspace{\fill}导\hspace{\fill}教\hspace{\fill}师：}} & \zihao{5} \underline{\makebox[3cm]{\TeacherCN \qquad \TeacherJobtitle}} & \zihao{4} \textbf{单位：} & \zihao{5} \underline{\makebox[3cm]{\TeacherDepartment}} \\
-                % \zihao{4} \makebox[7em][s]{\textbf{指导小组成员：}} & \zihao{5} \underline{\makebox[3cm]{\SubTeacherCN \qquad \SubTeacherJobtitle}} & \zihao{4} \textbf{单位：} & \zihao{5} \underline{\makebox[3cm]{\SubTeacherDepartment}} \\
+                \zihao{4} \makebox[7em][s]{\textbf{指导小组成员：}} & \zihao{5} \underline{\makebox[3cm]{\SubTeacherCN \qquad \SubTeacherJobtitle}} & \zihao{4} \textbf{单位：} & \zihao{5} \underline{\makebox[3cm]{\SubTeacherDepartment}} \\
+                % \zihao{4} \makebox[7em][s]{\textbf{ }} & \zihao{5} \underline{\makebox[3cm]{\SubTeacherCN \qquad \SubTeacherJobtitle}} & \zihao{4} \textbf{单位：} & \zihao{5} \underline{\makebox[3cm]{\SubTeacherDepartment}} \\
                 \zihao{4} \makebox[7em][s]{\textbf{论文提交日期：}} & \multicolumn{3}{l}{\makebox[7em][s]{\ThesisYear 年 \ThesisMonth 月 \ThesisDay 日}} \\
                 \makebox[7em][s]{\textbf{学位授予单位：}} & \multicolumn{3}{l}{\makebox[7em][s]{\textbf{北\hspace{\fill}京\hspace{\fill}科\hspace{\fill}技\hspace{\fill}大\hspace{\fill}学}}}
             \end{tabular}

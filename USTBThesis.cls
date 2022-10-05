@@ -69,6 +69,9 @@
 \RequirePackage{listings}   %插入代码
 \RequirePackage{texnames}   %TeX家族标识符
 \RequirePackage{float}      %表格位置
+% \RequirePackage{xcolor}      %表格位置
+\RequirePackage{colortbl}      %表格位置
+\RequirePackage[dvipsnames, svgnames, x11names]{xcolor}
 % \RequirePackage{floatrow}      %表格位置
 \RequirePackage{setspace}   %调整行距
 \RequirePackage{lastpage}   %得到论文页数
@@ -225,7 +228,7 @@
         \if@mainmatter
             %  \bfseries \space\nobreak
             %\vskip 20\p@  \@chapapp \thechapter
-            \CTEX@chaptername \zihao{-3} \heiti
+            \CTEX@chaptername \zihao{-3} \songti
         \fi
     \fi
     \interlinepenalty\@M
@@ -283,7 +286,7 @@
 %%%%%%%%%%%%%%%%%%%%%%目录%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \renewcommand{\contentsname}{\centering 目\quad 录}
-\titlecontents{chapter}[0pt]{\heiti\zihao{-4}}{\thecontentslabel\ }{}
+\titlecontents{chapter}[0pt]{\songti\zihao{-4}}{\thecontentslabel\ }{}
         {\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}
 \titlecontents{section}[2em]{\vspace{0.1\baselineskip}\songti\zihao{-4}}{\thecontentslabel\ }{}
         {\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}

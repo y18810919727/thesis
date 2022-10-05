@@ -77,8 +77,18 @@
 
 
 % The paper is organized as follows: related work on time series prediction for industrial systems, and for multi-state systems are summarized in Sec.~\ref{sec:review}. Then, preliminary in Sec.~\ref{sec:preliminary} describes the basic theory used in this study. After that, in Sec.~\ref{sec:methodology_dfaode}, the proposed framework AJ-ODEnet is detailed in terms of data processing, structure of key modules and training for loss functions. In practice, the proposed framework is applied to simulate several working variables of a cooling system in real data centers. Two use cases are included, one for real time estimation of the energy consumption based on system inputs and environmental condition, and the other takes advantage of the integrated prior knowledge, simulations are conducted to optimize the consumption by varying configurations. In the end, Sec.~\ref{sec:conclusion} concludes the entire work and discuss the potential future work.
-\section{前置工作及问题形式化描述}
+\section{问题形式化描述}
 \label{sec:notations}
+在本文中，标量和向量在形式上分别用小写字母和粗体小写字母表示，例如$y, \boldsymbol y$。假设输入输出数据由传感器观测得到，并带有时间戳$t_i\in \mathbb{R}$。
+因此，从系统中采集的带有非均匀采样间隔的离散输入序列和输出序列可表示为：
+$\boldsymbol X_{1:I},\boldsymbol Y_{1:I}= ((t_1,\boldsymbol x_1,\boldsymbol y_1),(t_2,\boldsymbol x_2, \boldsymbol y_2),\cdots,(t_I,\boldsymbol x_I,\boldsymbol y_I))$. 
+%with each $t_i\in \mathbb{R}$ the timestamp of the system input and output, and $t_{0}<\cdots<t_{n}$.
+% we define $\boldsymbol y_i$ as the $i$-th vectorial variable in a discrete sequence. 
+相应的，定义$\boldsymbol x(t_i)=\boldsymbol x_i$ 以及 $\boldsymbol y(t_i)=\boldsymbol y_i$。
+其连续时间过程可表示为$\boldsymbol x:\left[t_{1}, t_{I}\right] \rightarrow \mathbb{R}^{M}$ 和 $\boldsymbol y:\left[t_{1}, t_{I}\right] \rightarrow \mathbb{R}^{N}$.
+为了便于后文描述，本章将$\boldsymbol y:\left[t_{1}, t_{I}\right]$简化为$\boldsymbol Y_{t_1:t_I}$。
+
+
 连续时间跳变系统（Continuous-time Jump System，CTJS）由多个连续时间子系统组成，其内部阶段转换由一个有限状态过程支配\cite{8709809}。
 % As an important class of dynamical systems, CTJS arises in many applications, such as failure prediction\cite{9165930}, control applications\cite{pmlr-v120-jansch-porto20a}, and state estimation\cite{8709809}.
 作为一种特殊的动态系统，CTJS系统广泛应用于各类应用中，如故障预测\cite{9165930}、系统控制\cite{pmlr-v120-jansch-porto20a}，以及状态估计\cite{8709809}。
@@ -99,19 +109,10 @@
 为了明确区分跳变系统中的状态变量$\sigma(t)$以及以及循环神经网络中的隐状态，本章将跳变系统状态$\sigma(t)$命名为阶段。
 % 基于模型驱动的参数估计或系统辨识方法有时很难被应用于复杂的跳跃系统中，因为实际的动态行为很难被识别。为了从现有的输入输出数据中学习CTJS，以前的研究假设了系统的先验结构，并采用了EM算法（balenzuela2022parameter}、顺序蒙特卡洛（SMC）（6859280）和变异推理（opper2007variational）等方法来估计模型参数。
 
-在本文中，标量和向量在形式上分别用小写字母和粗体小写字母表示，例如$y, \boldsymbol y$。假设输入输出数据由传感器观测得到，并带有时间戳$t_i\in \mathbb{R}$。
-因此，从系统中采集的带有非均匀采样间隔的离散输入序列和输出序列可表示为：
-$\boldsymbol X_{1:I},\boldsymbol Y_{1:I}= ((t_1,\boldsymbol x_1,\boldsymbol y_1),(t_2,\boldsymbol x_2, \boldsymbol y_2),\cdots,(t_I,\boldsymbol x_I,\boldsymbol y_I))$. 
-%with each $t_i\in \mathbb{R}$ the timestamp of the system input and output, and $t_{0}<\cdots<t_{n}$.
-% we define $\boldsymbol y_i$ as the $i$-th vectorial variable in a discrete sequence. 
-相应的，定义$\boldsymbol x(t_i)=\boldsymbol x_i$ 以及 $\boldsymbol y(t_i)=\boldsymbol y_i$。
-其连续时间过程可表示为$\boldsymbol x:\left[t_{1}, t_{I}\right] \rightarrow \mathbb{R}^{M}$ and $\boldsymbol y:\left[t_{1}, t_{I}\right] \rightarrow \mathbb{R}^{N}$.
-为了便于后文描述，本章将$\boldsymbol y:\left[t_{1}, t_{I}\right]$简化为$\boldsymbol Y_{t_1:t_I}$
-
 本章所关注的问题为根据系统的历史数据信息和以及系统的未来序列输入，预测系统的未来输出。具体地本章对于给定数据的时间范围$[t_1:t_{I+L}]$分为两部分，分别作为条件范围$[t_1:t_{I}]$ 和预测范围$[t_{I}:t_{I+L}]$。
 %Given $\{{\boldsymbol{X}}_{t_{1}:t_{I+L}}, {\boldsymbol {Y}}_{t_{1}:t_{I+O}}\}$, the system inputs and system outputs in time range $[t_1:t_{I+O}]$,
 % , where ${\boldsymbol y}^i_{1:I+O}=[{\boldsymbol y}^i(t_1),\boldsymbol y^i(t_2),\dots,{\boldsymbol y}^i(t_{I+O})]$ and ${\boldsymbol y}^i(t_j)$ is the $j-th$ value in $i-th$ system outputs series collected at time $t_j$ . 
-模型通过给定条件范围$[t_1, t_I]$下的系统输入和系统输出生成初始状态，然后对预测范围$[t_{I}, t_{I+L}]$下的系统输出进行预测，如式~\ref{equa:problematique}所示：
+模型通过给定条件范围$[t_1, t_I]$下的系统输入和系统输出生成初始状态，然后利用学得的跳变模型\equref{equ:ctjls}对预测范围$[t_{I}, t_{I+L}]$下的系统输出进行预测，如式~\ref{equa:problematique}所示：
 
 \begin{equation}
 \label{equa:problematique}
@@ -121,7 +122,8 @@ $\boldsymbol X_{1:I},\boldsymbol Y_{1:I}= ((t_1,\boldsymbol x_1,\boldsymbol y_1)
 $\boldsymbol Y_{t_{1}:t_{I}}$表示在条件范围内系统的历史输出。
 $\boldsymbol X_{t_{1}:t_{I+L}}$表示完整时间范围内的系统输入，包括历史部分和预测序列部分。该系统输入在时间序列预测领域经常被称为协变量\cite{Wu2020}。
 $\boldsymbol \zeta$表示利用数据集训练的模型可学习参数。
-本章的目标为通过优化$\boldsymbol \zeta$以最小化$||\hat{\boldsymbol Y}_{t_{I}:t_{I+L}}-\boldsymbol {Y}_{t_{I}:t_{I+L}}||^2$
+本章的目标为通过优化$\boldsymbol \zeta$以最小化$||\hat{\boldsymbol Y}_{t_{I}:t_{I+L}}-\boldsymbol {Y}_{t_{I}:t_{I+L}}||^2$。
+值得注意的是，本章仍关注开环预测问题，模型预测过程中无法收到来自系统输出的反馈。
 % Where $\hat{\boldsymbol Y}_{t_{I}:t_{I+L}}$ is the estimated outputs in predictive range. $\boldsymbol Y_{t_{1}:t_{I}}$ represents the historical system outputs in conditional range.
 % $\boldsymbol X_{t_{1}:t_{I+L}}$ is the system inputs of whole range that involve both historical and predictive parts.
 % $\boldsymbol \zeta$ is the learnable parameters of model trained jointly from all available datasets. \\
@@ -134,17 +136,17 @@ $\boldsymbol \zeta$表示利用数据集训练的模型可学习参数。
 % With an inferred initial state, the model can predict the system outputs in open loop, based on the given system inputs in a predictive range. 
 % The length of the predictive range is determined according to the length of the simulation we want to make.
 % Taking the studied cooling system simulation as an example, we can theoretically feed arbitrary long heat loads as inputs and the model will simulate the corresponding temperature variation in that predictive range.
-以制冷系统为例，可以将任意长度的热负载序列数据作为模型输入，模型能够仿真预测区间下的温度变化。
-值得注意的是，本章仍关注开环预测问题，模型预测过程中无法收到来自系统输出的反馈。对于存在随机性及非确定性的系统，长期开环仿真是难以实现精准预测的。
-因此，在训练阶段，预测范围长度与条件范围长度是一致的，为800s。
-在实验一中，预测范围的长度为30分钟，本章考虑到由于误差累积导致的相位偏差，因此没有采用点对点式的评估指标，而是采用预测累积能耗的估计误差对模型可靠性进行评估。
+% 以制冷系统为例，可以将任意长度的热负载序列数据作为模型输入，模型能够仿真预测区间下的温度变化。
+% 因此，在训练阶段，预测范围长度与条件范围长度是一致的，为800s。
+% 在实验一中，预测范围的长度为30分钟，本章考虑到由于误差累积导致的相位偏差，因此没有采用点对点式的评估指标，而是采用预测累积能耗的估计误差对模型可靠性进行评估。
 
 % However, when there is no feedback from system outputs, the long-term open-loop simulations are unreliable for a stochastic or uncertain system.
 % In Section \ref{sec:case-study1}, although the length of the predictive range is altered to 30 minutes, 
 % we considered the accumulated estimated error of phases positions and give up the point-to-point evaluation and seek other evaluation indicators
 
 
-\section{基于层次ODE-Net模型的复杂系统稳定及非稳定输出混合预测}
+\section{自跳跃常微分方程网络及编码器-解码器预测架构}
+\subsection{基于层次ODE-Net模型的复杂系统稳定及非稳定输出混合建模}
 \label{sec:h-ode}
 大部分工业系统的输出是多维度的，不同维度输出的时序统计特性存在一定差异，某些输出量为均值方差恒定的稳定过程，某些输出为均值方差不断变化的非稳定过程。
 对于同时含有稳定和非稳定输出的混合过程进行建模学习具有一定难度，当前主流的基于深度学习的序列预测领域并未针对该类系统开展研究。
@@ -238,9 +240,9 @@ $\{\theta_i^{\mathcal{Y}^{ns}},\theta_i^{\mathcal{Y}^{ns}},\theta_i^{\mathcal{H}
 
 
 % \subsection{基于循环神经网络的初始状态编码}
-\section{自跳跃常微分方程网络}
+\subsection{自跳跃常微分方程网络}
 \label{sec:dfa-odenet}
-\subsection{状态定义}
+% \subsection{状态定义}
 部分工业系统存在多阶段、非确定和多物理过程混合等复杂特性。对这类系统进行高精度、高鲁棒的建模是一项具有挑战性的任务。
 在本章研究中，为了能够使模型准确地预测多阶段系统的阶段转换时刻以及预测系统输出，本章提出了AJ-ODEnet模型。
 具体地，我们首先根据系统先验知识构建系统的多阶段转换过程，对于每个阶段引入一个H-ODEnet以学习系统在该阶段内的动态特性，并对训练集中的序列数据进行阶段变量标注，引入阶段转换预测器学习每个阶段的持续时间。
@@ -293,7 +295,6 @@ T(t)+dt, \quad &\text{else}
 \end{aligned}
 \right]
 \end{align}
-\subsection{基于时间预测器的阶段自转移}
 \label{sec:stage_trans_predic}
 
 对于复杂的周期性多阶段系统而言，很难用统一的模型拟合系统的所有阶段，在长期预测问题中该问题更加明显。
@@ -318,7 +319,7 @@ $\sigma(t)\in\{0，\dots,N-1\}$表示系统当前所处阶段，$T(t)$表示系�
 % % 图.re.~\ref{fig:dt_label} illustrates the predicting and supervised signals of duration time predictors.
 % %the accumulative duration of current stage satisfies 
 % $T(t)\geq\hat{\tau}_{\sigma(t)}(\boldsymbol{h}(t),\boldsymbol{x}(t))$, the model will switch to the next stage $(\sigma(t)+1)\text{ mod } N$ and reset $T(t)$ to zero.
-\section{基于编码器解码器结构的微分方程网络初值估计与序列预测}
+\subsection{基于编码器解码器结构的微分方程网络初值估计与序列预测}
 \label{sec:encoder_decoder}
 % 求解ODE方程前，需要确定初值。
 在周期跳变系统的开环预测问题中，确定系统当前所处的相位，即识别当前所处阶段以及当前阶段已经持续的时间，是极其重要的。
@@ -349,13 +350,13 @@ $\sigma(t)\in\{0，\dots,N-1\}$表示系统当前所处阶段，$T(t)$表示系�
 % The whole AJ-ODEnet framework is shown in 图.~\ref{fig:AJ-ODEnet_framework}, illustrates how data flows through the modules. 
 \begin{figure*}[htb]
     \centering
-    \includegraphics[width=\linewidth]{figures/chapter4/Jump-ODEnet_flow.pdf}
+    \includegraphics[width=1.0\linewidth]{figures/chapter4/Jump-ODEnet_flow.pdf}
      \caption{基于AJ-ODEnet的编码器-解码器预测框架}
     % \caption{The data flow in AJ-ODEnet framework}
     \label{fig:AJ-ODEnet_framework}
 \end{figure*}
 
-由于ODEnet中求解微分方程需要连续的数据，所有范围的数据都需要先经过数据预处理转换为连续时间序列，利用编码器对条件范围内的数据进行编码，构建求解AJ-ODEnet解码器所需的初始状态$\boldsymbol S(t_I)$。
+由于ODEnet中求解微分方程需要连续信号，需要对原始的离散序列数据处理转换为连续时间序列，利用编码器对条件范围内的数据进行编码，构建求解AJ-ODEnet解码器所需的初始状态$\boldsymbol S(t_I)$。
 % be calculated in the end by solving 
 % AJ-ODEnet encoder for the decoding phase. 
 %conditional data range in $[t_1,t_I]$ contains the operational information of system and the initial state $\boldsymbol S(t_I)$ for decoding phase will be calculated at the end of conditional range by solving AJ-ODEnet encoder. 
@@ -443,7 +444,7 @@ AJ-ODEnets编码器和AJ-ODEnets解码器之间有两个区别。首先，系统
 \end{equation}
 其中$\lambda$是平衡$\mathcal{L_P}$和$\mathcal{L_{\tau}}$的权重参数。
 
-对于$\mathcal{L_P}$，由于模型将$\boldsymbol h(t_I)$作为隐变量进行后验推断，因此可以采用变分贝叶斯优化的方法，将最大化系统观测输出的证据下界\textit{Evidence lower bound} (ELBO) (ELBO)作为模型训练的目标，以近似地最大化系统输出的边际似然\cite{10.5555/3454287.3454765}:
+对于$\mathcal{L_P}$，由于模型将$\boldsymbol h(t_I)$作为隐变量进行后验推断，因此可以采用变分贝叶斯优化的方法，将最大化系统观测输出的证据下界（Evidence lower bound，ELBO）作为模型训练的目标，以近似地最大化系统输出的边际似然\cite{10.5555/3454287.3454765}:
 % For the part of $\mathcal{L_P}$, by considering $\boldsymbol h(t_I)$ as a latent variables, 
 % %$\mathcal{L_P}$ is the defined as the \textit{Evidence lower bound} on the marginal likelihood of system outputs:
 % we hope to maximize the \textit{Evidence lower bound} (ELBO) on the marginal likelihood of system outputs\cite{10.5555/3454287.3454765}:
@@ -527,7 +528,7 @@ $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\si
 \end{algorithm*}
 
 
-\section{周期性制冷系统预测仿真及系统优化}
+\section{实验验证与分析}
 \label{sec:evalutaion}
 接下来本章将使用AJ-ODENet模型及衍生出的编码器解码器预测框架解决某工业制冷系统的建模及预测问题，并采用两个实验探究模型的预测效果并基于仿真模型给出制冷系统的运行优化策略。
 具体地，在第一个实验中，我们使用AJ-ODENet模型根据当前的负载功率和环境温度，在线预测制冷系统的输出量。
@@ -550,7 +551,7 @@ Seduce平台是用于电源和温度管理的物联网平台，该系统以1hz�
 
 \begin{figure*}[!htbp]
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/chapter4/inrow_architecture.png}
+  \includegraphics[width=0.7\textwidth]{figures/chapter4/inrow_architecture.pdf}
   \caption{工业制冷系统整体结构及热交换过程}
 % \caption{Architecture of In-Row cooling module, position of heat eschanger, indoor and outdoor parts}
 \label{fig:inrow_3dArchitecture} 
@@ -699,7 +700,7 @@ Seduce平台是用于电源和温度管理的物联网平台，该系统以1hz�
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/chapter4/cooling_workloop.pdf}
-\caption{制冷系统运行原理概述}
+\caption{制冷系统运行机理简化图}
 \label{fig:cooling_workloop} 
 \end{figure}
 %when cooling system is off and slower decrease of inlet temperature when cooling system is working.Together with the stages of cooling system, the consumed power of cooling system $y_1(t)$ and cooling capacity $y_2(t)$ also change periodically with the frequencies and phase positions determined by inputs $x_1(t)$ and $x_2(t)$.  
@@ -837,7 +838,7 @@ Neural ODE的相对时间消耗为1.0。对比结果如表\ref{tab:Compare power
     \resizebox{0.9\linewidth}{!}{
     \begin{tabular}{lccccc} 
     \toprule
-                                & \multicolumn{4}{l}{\textbf{\textbf{各数据集中的热负载}}} & \multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}相对 \\时间\end{tabular}}  \\
+                                & \multicolumn{4}{l}{\textbf{\textbf{热负载}}} & \multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}相对 \\时间\end{tabular}}  \\
     \multicolumn{1}{c}{}        & 1.7k          & 3.8k          & 4.2k          & 6.3k               &                                                                           \\ 
     \hline
     \textbf{AJ-ODENet}(本文模型) & \textbf{4.20} & \textbf{1.51} & \textbf{3.46} & \textbf{2.53}      & 3.2                                                                        \\
@@ -868,7 +869,7 @@ Neural ODE的相对时间消耗为1.0。对比结果如表\ref{tab:Compare power
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\linewidth]{figures/chapter4/power_error.eps}
+    \includegraphics[width=0.8\linewidth]{figures/chapter4/power_error.pdf}
     \caption{预测不同时间长度的功耗的MAPE的变化}
     \label{fig:mape_evolution}
 \end{figure}
@@ -999,7 +1000,7 @@ COP的下降趋势也解释了为什么提高温度下限值，所需的冷却�
 
 \begin{table}[]
 \centering
-\caption{optimized power}
+\caption{能耗优化效果}
 \label{tab:power_save_percent}
 \begin{tabular}{lcccc}
 \hline
@@ -1076,8 +1077,8 @@ COP的下降趋势也解释了为什么提高温度下限值，所需的冷却�
 \begin{figure*}[htb]
     \centering
     \subfigure[制冷能耗]{\includegraphics[width=0.7\linewidth]{figures/chapter4/power.pdf}\label{fig:energy}}
-    \subfigure[PUE]{\includegraphics[width=0.7\linewidth]{figures/chapter4/pue.eps}\label{fig:pue}}
-    \subfigure[COP]{\includegraphics[width=0.7\linewidth]{figures/chapter4/cop.eps}\label{fig:cop}}
+    \subfigure[PUE]{\includegraphics[width=0.7\linewidth]{figures/chapter4/pue.pdf}\label{fig:pue}}
+    \subfigure[COP]{\includegraphics[width=0.7\linewidth]{figures/chapter4/cop.pdf}\label{fig:cop}}
     % \includegraphics[width=8cm]{figures/temperature.eps}
     \caption{在不同热负载下改变温度设定下限值对功耗、COP、PUE的影响}
     \label{fig:temperature}
@@ -1097,7 +1098,7 @@ COP的下降趋势也解释了为什么提高温度下限值，所需的冷却�
 % Furthermore, we search the optimal lower threshold set points for the inlet temperature for minimizing cooling energy consumption with different heat loads.
 此外，依托于训练得到的仿真模型，以最小化不同热负荷下的制冷能耗为目标，我们成功优化了制冷系统的温度下限设定点。
 % It is shown that up to 25\% energy can be saved by adopting the optimized settings obtained by the simulations.
-仿真结果表明，通过采纳优化后温度阈值设置可以节省高达25％的能耗。
+仿真结果表明，通过采纳优化后温度阈值设置可以节省高达6-25％的制冷能耗。
 % The proposed AJ-ODENet could be deployed forward to model general continuous-time markov jump systems, future works will be devoted to extend the deterministic stage prediction to markov process.
 % 本章所提出的AJ-ODENet可以被应用于一般的连续时间马尔科夫跳跃系统的模型中，未来的工作将致力于将确定性的阶段预测扩展到带有随机性的马尔科夫过程。
 % Moreover, instead of designing transition rules manually in complex systems, we consider to further develop more intelligent stage labeling solutions based on unsupervised machine learning methods~\cite{10.1145/3097983.3098060}.

@@ -3,14 +3,37 @@
 %中文摘要
 \chapter*{ 摘 \space 要 }
 \addcontentsline{toc}{chapter}{摘要}
-本文基于\LaTeX 使用手册，依据北京科技大学\degreecn 学位论文Word模板，
+
+% 在采矿、化工、能源为代表的过程工业领域中，复杂设备或系统的运行过程具有非线性、不完全观测、高时滞等特性，
+采矿、化工、能源等过程工业领域中存在诸多具有非线性、高随机、长时滞、不完全观测特性的复杂动态系统。
+% ，因其存在非线性、高随机、长时滞、不完全观测等特性，
+% 过程工业领域中的复杂设备或系统
+% 具有非线性、高随机、长时滞等特性，
+依赖于机理分析的传统动态系统辨识方法难以充分拟合系统的高复杂性。
+% 数据驱动的建模方法缺少系统机理和先验知识的限制，使得训练数据需求量大，在不同场景下的泛化能力差。
+依靠大量训练数据驱动的参数化建模方法难以引入系统机理和先验知识，使得训练数据需求量大，在不同场景下的泛化能力差。
+系统的高复杂性与现有建模方法的局限性造成了系统机理难分析、动态方程难辨识、关键指标难控制等问题。
+本文围绕连续时间域下复杂动态系统的建模与优化这一问题展开讨论，重点研究了连续时间系统与深度学习的结合体——\text{深度微分方程网络}在复杂系统辨识与控制优化中的应用。本文的主要研究工作包括：
+
+1）针对具有非线性、长时延特性且本质上为连续时间过程的复杂工业系统，本文提出一种以ODE-net作为骨架结构的深度连续时间系统辨识模型，模型能够从连续时间域角度学习工业系统输出的自回归变化和输入对输出的非线性影响。通过真实工业数据进行验证，该模型在长时预测和短时预测场景下均获得较好效果。   
+
+2）针对具有周期多阶段特性的复杂动态系统，本文提出了一种连续时间自跳变常微分方程网络以学习连续时间周期跳变过程。
+模型能够从非均匀采样数据中独立学习不同阶段下的系统动态特性。同时模型引入阶段转换预测器以实现开环预测时的阶段自转移。利用某工业制冷系统数据对模型进行验证，该模型能够准确地预测系统输出量以及阶段转移时间点，并辅助优化制冷系统的运行能耗。
+
+3）针对具有随机非确定性的复杂动态系统，
+本文提出了常微分方程循环状态空间模型。该模型在状态转移中引入随机路径以建模系统的随机非确定性，同时利用常微分方程网络建模相邻采样时间点之间的隐变量连续时间演化以支持从非均匀采样数据学习。
+另外，本文提出了一种时间导数的再参数化方法以解决批数据中时间间隔不均匀导致难以并行求解的问题。
+结果表明该模型在数据集存在随机非确定性以及稀疏非均采样的情况下，能获得相比基线模型更好的建模效果。
+
+4）针对复杂工业系统控制优化问题，本文提出了一种基于有模型强化学习的启发式评价网络值迭代算法。该方法采用微分方程网络构建系统的预测模型，并采用积分强化学习构建在线控制策略及自适应评价函数。经过尾矿浓缩机仿真模型验证，该方法在非均匀数据采样下能够获得比其他控制算法更优的控制性能，且该算法成功部署应用于某矿场的浓密机控制系统中，获得了较好的浓度控制效果。
+
 
 
 \vskip 30bp
 {
 
     % 在关键词冒号后添加你的关键词，使用全角逗号分割
-    \textbf{ \heiti \zihao{-4} 关键词：\LaTeX ，\degreecn 论文，北京科技大学}
+    \textbf{ \heiti \zihao{-4} 关键词：动态系统建模 ，系统辨识，常微分方程网络，有模型强化学习}
 }
 
 
@@ -18,11 +41,72 @@
 
 \chapter*{ Abstract }
 \addcontentsline{toc}{chapter}{Abstract}
-Based on the \LaTeX manual and referred to USTB word model for \degreeen, I
+% Based on the \LaTeX manual and referred to USTB word model for \degreeen, I
+% 过程工业领域中的复杂设备或系统具有非线性、高随机、长时滞等特性，
+% 进而造成系统机理难分析、动态方程难辨识，关键指标难控制等问题。
+In the process industry, most complex equipments or systems have strong non-linearity, high stochasticity, and long time delay.
+% his causes problems such as difficult analysis of system mechanism, difficult identification of dynamic equations, and difficult control of key indicators.
+These properties lead to the difficulties in analyzing system mechanisms, identifying dynamical equations, and controling critical operational indices. 
+Mechanistic-based dynamic system identification methods are weak to sufficiently fit the complexity of the system.
+% Deep learning methods ignore the limitations from systematic mechanisms and prior knowledge, 
+% which makes the training data requirement high and reduces generalization ability in different scenarios poor.
+which raises the required size of training data and reduces the generalization in different scenarios.
+% 本文围绕连续时间域下复杂动态系统的建模与优化这一问题展开讨论，重点研究了连续时间系统与深度学习的结合体——\text{深度微分方程网络}在复杂系统辨识与控制优化中的应用。
+% This paper discusses the problems of modeling and control in complex dynamic systems in the continuous-time domain.
+From the continuous-time domain, this paper focuses on the application of \text{deep differential equation networks}, a combination of continuous time systems and deep learning, in the identification and control optimization of complex systems.
+
+% 针对具有非线性、长时延特性且本质上为连续时间过程的复杂工业系统，本文提出一种以ODE-net作为骨架结构的深度连续时间系统辨识模型，模型能够从连续时间域角度学习工业系统输出的自回归变化和输入对输出的非线性影响。通过真实工业数据进行验证，该模型在长时预测和短时预测场景下均获得较好效果。   
+For modeling non-linear and long-delayed complex industrial systems which are essentially continuous-time processes, this paper proposes a continuous-time deep system identification model based on the ODE-net backbone.
+The model learns the auto-regressive changes of industrial system outputs and the non-linear effects from inputs on outputs in continuous-time domain. 
+By evaluating the model with real industrial dataset, the model performs better results in both long-time prediction and short-time prediction.   
+
+% 针对具有周期多阶段转移特性的复杂系统建模问题，本文提出了一种连续时间跳变常微分方程网络以学习连续时间周期跳变过程。
+% 模型能够从非均匀采样数据中独立学习不同阶段下的系统动态特性。同时模型引入阶段转换预测器以实现开环预测时的阶段自转移。利用某工业制冷系统数据对模型进行验证，该模型能够准确地预测系统输出量以及阶段转移时间点，并辅助优化制冷系统的运行能耗。
+To address the problem of modeling periodic multi-staged system, this paper proposes a continuous-time autonomous jump ordinary differential equation network to learn continuous-time period jump systems.
+The model is able to independently learn the sub-dynamics in different stages from non-uniformly sampled data. 
+The model also introduces a stage transition predictor to realize the autonomous stage transformation in open-loop prediction. 
+By evaluating the model with data from an industrial cooling system, we find the model is accurate enough to predict the system outputs and the duration time in each stage.
+The open-loop prediction of cooling system runtime also assists in optimizing the energy consumption of the cooling system.
+
+% 针对具有随机非确定性的复杂系统建模建模问题，
+% 本文提出了常微分方程循环状态空间模型。该模型在状态转移中引入随机路径以建模系统的随机非确定性，同时利用常微分方程网络建模相邻采样时间点之间的隐变量连续时间演化以支持从非均匀采样数据进行学习。
+% 另外，本文提出了一种常微分方程的再参数化方法以解决批中时间间隔不均匀导致难以并行求解的问题，达到加速训练的目的。
+% 结果表明该模型在稀疏非均采样以及数据集存在随机非确定性情况，能获得相比基线模型更好的预测效果。
+For modeling the complex systems with stochasticity and uncertainty,  we propose a novel continuous-time SSM named Ordinary Differential Equation Recurrent State Space Model. 
+ODE-RSSM incorporates an ordinary differential equation (ODE) network (ODE-Net) to model the continuous-time evolution of latent states between adjacent time points.
+Inspired from the equivalent linear transformation on integration limits,
+This paper also propose an efficient reparameterization method for solving batched ODEs with non-uniform time spans in parallel for efficiently training the ODE-RSSM with irregularly sampled sequences.
+% We also conduct extensive experiments to evaluate the proposed ODE-RSSM and the baselines on three input-output datasets, one of which is a rollout of a private industrial dataset with strong long-term delay and uncertainty.
+Extensive experiments demonstrate that the ODE-RSSM achieves better performance than other baselines in predicting stochastic and uncertain system in open loop when the time spans of predicted points are uneven.
+
+% 针对复杂工业系统控制优化问题，本文提出了一种基于有模型强化学习的启发式评价网络值迭代算法。该方法采用微分方程网络构建系统的预测模型，并采用积分强化学习构建在线控制策略及自适应评价函数。经过尾矿浓缩机仿真模型验证，该方法在非均匀数据采样下能够获得比其他控制算法更优的控制性能，且该算法成功部署应用于某矿场的浓密机控制系统中，获得了较好的浓度控制效果。
+
+For controling complex industrial systems without prior knowledge of mechanism, this paper proposes a novel
+model-based reinforcement learning online control algorithm, heuristic critic network value iteration.
+% Inspired by the traditional heuristic
+% dynamic programming (Heuristic dynamic programming, HDP) algorithm.
+The method models the dynamical system with differential equation neural network and introduces the integral reinforcement learning to train online control policy and adaptive critic function.
+Experiments conducted on thickening simulation system verify that the proposed HCNVI outperforms the other control algorithms.
+In the meanwhile, the method is also deployed in a thickening control system of a real paste backfilling station.
+The algorithm is effective to control the underflow concentration in a stable range.
+
+% the training phase of critic network. 
+% The results show that the
+% proposed method can maintain the concentration of underflow in a
+% stable horizon and performs better than other algorithms in accuracy
+% and time consuming.
 
 \vskip 30bp
 {
     \zihao{-4}
     % 在key words冒号后添加你的关键词，使用半角逗号加空格分割
-    $\mathbf{Key}$ $\mathbf{Words}$: {\LaTeX}, $\mathbf{\degreeen \space Thesis}$, $\mathbf{USTB}$
+    $\mathbf{Key}$ $\mathbf{Words}$: 
+    $\mathbf{Dynamical\ system\ modeling}$, 
+    $\mathbf{Model}$-$\mathbf{based\ reinforcement}$
+    $\mathbf{learning}$,
+    $\mathbf{System\ identification}$, 
+    $\mathbf{Ordinary\ Differential\ Equation\ Neural\ Network}$
+    
 }
+
+    % \textbf{ \heiti \zihao{-4} 关键词：动态系统建模 ，系统辨识，常微分方程网络，有模型强化学习}
