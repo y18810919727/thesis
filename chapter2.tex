@@ -64,6 +64,7 @@ $n\left(s, a, s^{\prime}\right)$ 代表在状态$s$下执行动作 $a$产生状�
 考虑最简单的形式，系统的连续时间模型可以建模为常系数微分方程：
 \begin{equation}
 \frac{\mathrm{d}^{n} y(t)}{\mathrm{d} t^{n}}+a_{1} \frac{\mathrm{d}^{n-1} y(t)}{\mathrm{d} t^{n-1}}+\cdots+a_{n} y(t)=b_{0} \frac{\mathrm{d}^{m} u(t)}{\mathrm{d} t^{m}}+\cdots+b_{m} u(t)+v(t)
+\label{equ:linear_ct_dyn}
 \end{equation}
 $\frac{d^{i} x(t)}{d t^{i}}$代表信号$x(t)$对时间的$i$阶导数，该式表示了在任一时刻系统状态对时间的各阶导数与输入量对时间的各阶导数之间存在线性关系。
 
@@ -77,9 +78,11 @@ $\frac{d^{i} x(t)}{d t^{i}}$代表信号$x(t)$对时间的$i$阶导数，该式�
     \end{aligned}
     \right.
 \end{equation}
-其中$f$为某一未知函数且具有较强的非线性特性，$\boldsymbol h(t)$代表系统的状态表示，$C$为投影矩阵。
-神经网络近似能力的通用性可以作为建模非线性系统的一种手段\cite{funahashi1993approximation}，进而拟合函数$f$。
+对于线性系统\equref{equ:linear_ct_dyn}，$f$可以表示为线性函数，$C$为投影矩阵，$\boldsymbol h(t)$代表系统的隐空间状态。
 
+% 动力学理论驱动的微分方程模型已经普遍存在于经典数学建模中。
+然而，对于许多客观世界中的复杂动力学系统，基于理论驱动的模型在大部分时候无法准确描述系统的细节。
+动态$f$表现为某一未知函数且具有较强的非线性特性，通过将机理模型结构与深度学习等及其高性能函数逼近器\cite{funahashi1993approximation}相结合，可以缩小理论模型与观察数据之间的差距，准确地对函数$f$进行建模。
 % \subsection{基于编解码结构的系统预测}
 % 当系统具有较大时延，即高时滞特性下，模型需要考虑历史数据对未来系统变化的影响。Felipe 等\cite{demeester2020system}利用带有Attention组件的Encoder-Decoder模型对一种名为膏体浓密机系统进行建模识别，Yuan等\cite{Yuan2020}采用一种更复杂的名为双注意力循环神经网络（Dual Attention Recurrent Neural Network， DARNN）的RNN网络对工业系统进行建模，两种方法都考虑了系统变量之间的长期依赖性，利用循环神经网络加Attention机制的强大编码能力，对历史数据、不同维度数据进行信息编码，来辅助输出量的预测，并且利用预测误差对编码器部分进行训练调整。然而两种方法都是针对离散时间系统设计的，不适用于连续时间系统建模问题。
 % \section{深度微分方程网络}
@@ -92,22 +95,62 @@ $\frac{d^{i} x(t)}{d t^{i}}$代表信号$x(t)$对时间的$i$阶导数，该式�
 y(0)=y_0 \quad \frac{\mathrm{d} y}{\mathrm{~d} t}(t)=f_\theta(t, y(t))
 \end{equation}
 其中$\theta$代表可学习的神经网络参数，$f_\theta: \mathbb{R} \times \mathbb{R}^{d_1 \times \cdots \times d_k} \rightarrow \mathbb{R}^{d_1 \times \cdots \times d_k}$代表标准的神经网络结构。$y:[0, T] \rightarrow \mathbb{R}^{d_1 \times \cdots \times d_k}$代表微分方程的解。对于大部分应用，$f_\theta$为简单的前馈神经网络。使用神经微分方程的核心是将微分方程求解器作为可学习微分计算图的一部分。
-
-图\ref{fig:neural_ode}给出了一个简单神经常微分方程的计算图。
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.9\linewidth]{figures/chapter1/simple_ode.pdf}
-    \caption{神经常微分方程的计算图}
-    \label{fig:neural_ode}
-\end{figure}
-
+% 图\ref{fig:neural_ode}给出了一个简单神经常微分方程的计算图。
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.9\linewidth]{figures/chapter1/simple_ode.pdf}
+%     \caption{神经常微分方程的计算图}
+%     \label{fig:neural_ode}
+% \end{figure}
 ODE-Net的主要应用包括Res-Net的替代、时间序列建模以及可逆正则化流\cite{Grathwohl2019}。本文主要围绕ODE-Net在时间序列建模及系统辨识中的应用展开研究。
 因为ODE-Net的连续时间特性，该方法能够将深度网络模型应用于连续时间域下的时间序列建模问题研究中，开辟了时间序列分析、连续时间系统建模研究的新思路。
 % 接下来本节将简单介绍几种常见的微分方程网络及其应用。
 
-在处理时间序列问题时，相比于RNN等离散时间步下的循环神经网络。ODE-Net天然地适用于建模非均匀采样的时间序列。如基于ODE-Net衍生的ODE-RNN\cite{10.5555/3454287.3454765}、GRU-ODE-Bayes\cite{brouwer2019gru}、ODE-LSTM\cite{lechner2020learning}。
-为了求解ODE-Net的初值，Latent ODE\cite{10.5555/3454287.3454765}将ODE-Net的初始状态视为先验分布为标准高斯分布的因变量，利用编码器-解码器结构实现序列的重构、插值、预测，并使用变分贝叶斯方法对模型进行训练。
-文献\cite{Yildiz2019}基于贝叶斯理论，构建了2阶ODE-Net模型用于高维时间序列的建模，同时利用ODE-Net连续正则化流的特性估计待预测时间点隐变量的后验分布并引入分布正则化对隐状态的范围作出限定。
+以建模捕食者物种和被捕食物种之间相互作用的Lotka-Volterra模型为例，可以采用带有未知参数的常微分方程表示：
+\begin{equation}
+    \begin{gathered}
+    \frac{\mathrm{d} x}{\mathrm{~d} t}(t)=\alpha x(t)-\beta x(t) y(t) \in \mathbb{R} \\
+    \frac{\mathrm{d} y}{\mathrm{~d} t}(t)=-\gamma x(t)+\delta x(t) y(t) \in \mathbb{R} .
+    \end{gathered}
+    \label{equ:2_ode}
+\end{equation}
+
+其中$x(t)$和$y(t)$分别表示被捕食者和捕食者的种群大小。在每个时间t，右侧是理论经验公式，表示物种之间的交互作用。
+但是在一般情况下，尽管上述经验公式中的模型参数可以通过经典系统辨识方法进行估计，但是模型结构本身过于理想化，难以保证精确性。因此模型的理论预测值相对于实际观测数据会有明显差距。为了纠正该偏差，可以在模型中引入神经网络$f_\theta, g_\theta: \mathbb{R}^2 \rightarrow \mathbb{R}$，并构建如下模型：
+\begin{equation}
+    \begin{aligned}
+    \frac{\mathrm{d} x}{\mathrm{~d} t}(t) &=\alpha x(t)-\beta x(t) y(t)+f_\theta(x(t), y(t)) \in \mathbb{R} \\
+    \frac{\mathrm{d} y}{\mathrm{~d} t}(t) &=-\gamma x(t)+\delta x(t) y(t)+g_\theta(x(t), y(t)) \in \mathbb{R}
+    \end{aligned}
+    \label{equ:2_node}
+\end{equation}
+理论模型能够在神经网络的帮助下被补充与增强。
+该方法也称为普适微分方程（Universal Differential Equation，UDE）。
+
+假设观察数据为$x_i\left(t_j\right) \in \mathbb{R}, y_i\left(t_j\right) \in \mathbb{R}$，其中$i=1, \ldots, N$表示目标过程的独立观测值，每个序列来自于不同的初始条件，以及$j=1, \ldots, M$对应于不同的时间$t_j \in[0, T]$且$t_1=0$。实际问题中，往往$N=1$且$M$较长。
+
+对于\equref{equ:2_ode}或\equref{equ:2_node}，假设$x_{x_0, y_0}(t)$表示给定初始条件$x(0)=x_0$和$y(0)=y_0$下$x(t)$和$y(t)$的解，$y_{x_0, y_0}(t)$同理。
+进而可以采用随机梯度下降法优化如下损失函数以拟合\equref{equ:2_ode}和\equref{equ:2_node}:
+\begin{equation}
+    \frac{1}{N M} \sum_{i=1}^N \sum_{j=1}^M\left(x_{x_i(0), y_i(0)}\left(t_j\right)-x_i\left(t_j\right)\right)^2+\left(y_{x_i(0), y_i(0)}\left(t_j\right)-y_i\left(t_j\right)\right)^2 .
+\end{equation}
+通过将\equref{equ:2_ode}中的经验模型替换为\equref{equ:2_node}，充分利用了神经网络较强的函数近似能力，
+以建模理论模型与观测数据之间的残差，
+进而弥补了理论模型与实际模型之间的差距。
+用于动态系统建模的网络通常较小，\cite{ling2016reynolds}，使用了宽度为10，层数为10的前向神经网络，Rac采用宽度为32的单隐层神经网络。
+
+对于难以利用第一性原理进行分析建模的复杂动态系统，在拥有足够数据时，使用微分方程网络进行建模是一种极其自然的方法。
+在这种情况下，微分方程中的某一项缺乏精确的理论描述，因此可以采用神经网络进行近似，并从数据中学习。
+比如湍流建模问题，在雷诺平均Navier-Stokes模型中，Ling等\cite{ling2016reynolds}使用神经网络近似系统的雷诺应力，以满足某些物理不变性。同时，在海洋气候模型领域，Ramadhan等\cite{ramadhan2020capturing}使用一个小型的MLP对湍流垂直热通量进行建模。
+在系统辨识领域，
+在许多真实的工业场景中，从被识别系统采样得到的序列数据经常是间隔非均匀的。利用微分方程网络模型能够有效建模系统输出或隐空间状态在外部输入影响下的瞬时变化。
+Zhong等\cite{zhong2019symplectic}采用ODE-Net对符合哈密尔顿特性的动态系统进行建模学习，巧妙地将物理先验知识融入到学习模型的设计中。并有效地应用于符合哈密尔顿性质的刚体系统建模与控制问题中。
+Ayed等\cite{ayed2019learning}采用ODE-Net模型从系统状态的部分可观测信息学习复杂非线性时空过程。该方法有效应用于水流动预测、Navier Stokes方程、海洋温度分析。
+SNODE\cite{Quaglino2019}使用谱方法用于快速和准确地训练神经常微分方程模型以辨识低维输入输出系统。
+ODE-RNN~\cite{Rubanova2019}在RNN网络相邻状态更新处插入ODE-Net模块，用于建模网络隐状态的连续时间演化。
+为了改善辨识模型在长期预测时的稳定性，如本文第三章所述的稳定性模型，现有研究\cite{Demeester2019,Yuan2022}将递归神经网络的稳定性融入到微分方程的导数网络设计中以解决单位根问题，并提出了一种连续时间系统辨识模型——时间感知的RNN模型。
+
+
 
 % \subsection{常微分方程网络}
 在常微分方程网络求解器效率的优化方面，
@@ -117,45 +160,36 @@ Zhuang等\cite{Zhuang2020}提出了自适应检查点联合状态方法以改进
 除此之外，对ODE方程的高阶导数正则化\cite{kelly2020}对求解时间点添加随机扰动\cite{Ghosh2020}等方案也能够起到正则化作用，加速ODE-Net的求解效率。
 
 
-% \subsection{受控微分方程网络}
-由于常微分方程的解仅由初始状态决定，无法基于后续的观测对轨迹进行调节，使得诸如latent-ode、ODE2VAE等模型将序列观测信息全部压缩至初始状态中，有可能造成观测信息的信息损失。
-神经受控微分方程（Neural Controlled Differential Equation）\cite{kidger2020neural}将受控信号的微分项融入在ODE网络的求解中。相比于在求解时间区间的间隔点处利用观测数据对隐状态进行更新的方法（如ODE-RNN、ODE-LSTM等），获得了更好的序列信息提取与表示能力。
-为了解决神经受控微分方程在长时间序列场景下难以训练的问题，基于对数签名变换（Log signature transform）的Log-signature/NCDE方法\cite{morrill2021neural}通过签名变换对受控信号进行转换，能够增加模型训练速度、减少存储开销、改进模型预测性能。
-针对常规的受控微分方程需要对离散序列进行样条插值，无法实现在线预测的情况，Morrill等\cite{morrill2021online}描述了受控微分方程中连续控制信号应满足的性质，并给出了三次埃尔米特直线插值方法，使受控微分方程网络能够类似于RNN一样，实现在线的时间序列数据处理，而不需要预先对完整的序列数据进行插值。
 % \subsection{随机微分方程网络}
 
-在常微分方程网络及受控微分方程网络的基础上，随机微分方程网络相比于常微分方程添加了扩散项（Diffusion process）。
-对于随机微分方程的训练也可以采用联合敏感度法（Adjoint Sensitibity）进行训练\cite{li2020scalable}。由于随机微分方程网络的前向传播过程依赖于带有随机性的Wiener过程，为了避免存储完整的计算图，需要保证反向求解SDE时对Wiener过程的采样与前向传播保持一致。文献\cite{li2020scalable}利用基于虚拟布朗树（Virtual Brownian Tree）的伪随机数生成策略，仅需常数级存储$\mathcal{O}(1)$即可对的SDE网络前向传播的Wiener过程采样结果进行存储。节约存储空间的代价为对特定时间点下的wiener过程采样时间复杂度为$\mathcal{O}(\log n)$。
-将微分方程网络作为Res-Net的替代品处理图像领域问题时，有研究表明将ODE-Net替代为SDE-Net，在ODE-Net中增加随机扩散项，也能够起到随机正则化的作用，提升网络的泛化能力\cite{Oganesyan2020}。
-神经跳变随机微分方程（Neural Jump Stochastic Differential Equations，NJSDE）\cite{Jia2019}将扩散项中对时间的微分替换为观测点次数的微分，能够在建模系统隐空间连续时间动态的同时对观测点出现事件本身以及时刻进行建模，该模型有效地应用于地震预测及药物预测。
 
 % \subsection{受控微分方程网络}
 % \section{深度微分方程网络的应用}
 % \subsection{}
 % ODE-Net作为Res-Net的替代，可以应用于图像处理问题中：如图像超分问题\cite{OISR,jia2019focnet}。
-在系统辨识领域，
-在许多真实的工业场景中，从被识别系统采样得到的序列数据经常是间隔非均匀的。利用微分方程网络模型能够有效建模系统输出或隐空间状态在外部输入影响下的瞬时变化。
-Zhong等\cite{zhong2019symplectic}采用ODE-Net对符合哈密尔顿特性的动态系统进行建模学习，巧妙地将物理先验知识融入到学习模型的设计中。并有效地应用于符合哈密尔顿性质的刚体系统建模与控制问题中。
-Ayed等\cite{ayed2019learning}采用ODE-Net模型从系统状态的部分可观测信息学习复杂非线性时空过程。该方法有效应用于水流动预测、Navier Stokes方程、海洋温度分析。
-% SNODE\cite{Quaglino2019}模型基于勒让德多项式构建ODE-Nets的压缩表示并应用于系统辨识。
-SNODE\cite{Quaglino2019}使用谱方法用于快速和准确地训练神经常微分方程模型以辨识低维输入输出系统。
-ODE-RNN~\cite{Rubanova2019}在RNN网络相邻状态更新处插入ODE-Net模块，用于建模网络隐状态的连续时间演化。
-为了改善辨识模型在长期预测时的稳定性，如本文第三章所述的稳定性模型，现有研究\cite{Demeester2019,Yuan2022}将递归神经网络的稳定性融入到微分方程的导数网络设计中以解决单位根问题，并提出了一种连续时间系统辨识模型——时间感知的RNN模型。
 
+
+% \subsection{非马尔科夫系统建模及系统长时延特性}
+\subsection{非马尔科夫系统及长时延系统建模}
+由于常微分方程的解仅由初始状态决定，
+如果直接用NDE对系统输出的连续时间演化进行建模，这要求目标系统或时间序列遵循马尔科夫特性。由于大部分客观物理过程往往是不完全观测的，这样的假设对于难以成立，因此原始的神经微分方程结构难以处理长时关联性问题。
+一种较为直观的解决方案是将微分方程网络与循环神经网路相互结合，在状态循环更新的间隙，插入微分方程网络的求解过程以处理非均匀的采样序列。
+如基于ODE-Net衍生的ODE-RNN\cite{10.5555/3454287.3454765}、GRU-ODE-Bayes\cite{brouwer2019gru}、ODE-LSTM\cite{lechner2020learning}。
+
+神经受控微分方程（Neural Controlled Differential Equation）\cite{kidger2020neural}将受控信号的微分项融入在ODE网络的求解中。相比于在求解时间区间的间隔点处利用观测数据对隐状态进行更新的方法（如ODE-RNN、ODE-LSTM等），获得了更好的序列信息提取与表示能力。
+为了解决神经受控微分方程在长时间序列场景下难以训练的问题，基于对数签名变换（Log signature transform）的Log-signature/NCDE方法\cite{morrill2021neural}通过签名变换对受控信号进行转换，能够增加模型训练速度、减少存储开销、改进模型的长期序列处理能力。
+针对常规的受控微分方程需要对离散序列进行样条插值，无法实现在线预测的情况，Morrill等\cite{morrill2021online}描述了受控微分方程中连续控制信号应满足的性质，并给出了三次埃尔米特直线插值方法，使受控微分方程网络能够类似于RNN一样，实现在线的时间序列数据处理，而不需要预先对完整的序列数据进行插值。
+
+另一种向ODE-Net中引入长时序特征的方式是将历史序列特征编码至常微分方程的初始状态中。
+Latent ODE\cite{10.5555/3454287.3454765}将ODE-Net的初始状态视为先验分布为标准高斯分布的因变量，利用编码器-解码器结构实现序列的重构、插值、预测，并使用变分贝叶斯方法对模型进行训练。
+文献\cite{Yildiz2019}基于贝叶斯理论，构建了2阶ODE-Net模型用于高维时间序列的建模，同时利用ODE-Net连续正则化流的特性估计待预测时间点隐变量的后验分布并引入分布正则化对隐状态的范围作出限定。
 为了建模来自于多智能体系统的非均匀采样数据，LG-ODE模型\cite{Huang2020}将图神经网络、自注意力以及ODE-Net进行结合，利用时序自注意力模型构建微分方程求解的初态，采用图神经网络建模观测点的时序依赖关系和不同观测项之间的空间依赖关系，并以此为基础估计常微分方程中的隐状态导数。模型有效地应用于稀疏序列的插值预测与外推预测。
 
-
-对于Transformer、AttentionSeq2Seq等基于注意力的序列处理模型，利用ODE-Net的连续时间特性可以构建连续时间注意力模型\cite{chen2021continuous}，并将注意力机制应用于非均匀采样的时间序列。
-近年来，Transformer模型\cite{Vaswani2017}因在序列数据处理问题上的优异表现受到了学者的广泛关注，基于Transformer的长序列预测模型，如Informer\cite{Zhou2020}、Autoformer\cite{Wu2021}等均获得比传统时序预测算法更优的预测精度。
-得益于ODE-Net的连续时间特性，该模型能够与Transformer进行结合，处理非均匀采样数据或长序列预测及建模问题，如构建连续时间注意力\cite{chen2021continuous}、辅助位置编码（position embedding）\cite{Liu2020}。
-正因为ODE-Net模型能够利用非均匀采样数据拟合动态系统，因此可用于有模型强化学习\cite{Yildiz2021}领域，构建可微分的系统状态演化估计器，进而辅助策略模块的学习。
-对于系统动态已知的连续时间系统，利用ODE-Net可以为策略网络构建连续时间梯度估计器\cite{Ainsworth2020}，使控制和仿真任务的学习更高效、更鲁棒。
-
-\subsection{系统长时延特性建模}
 近年来，Transformer模型\cite{Vaswani2017}因在序列数据处理问题上的优异表现受到了学者的广泛关注，基于Transformer的长序列预测模型，如Informer\cite{Zhou2020}、Autoformer\cite{Wu2021}等均获得比传统时序预测算法更优的预测精度。
 对于Transformer、AttentionSeq2Seq等基于注意力的序列处理模型，利用ODE-Net的连续时间特性可以构建连续时间注意力模型\cite{chen2021continuous}，并将注意力机制应用于非均匀采样的时间序列。
-
 得益于ODE-Net的连续时间特性，该模型能够与Transformer进行结合，处理非均匀采样数据或长序列预测及建模问题，如构建连续时间注意力\cite{chen2021continuous}、辅助位置编码（position embedding）\cite{Liu2020}。
+
+
 \subsection{跳变系统辨识}
 连续时间跳变系统包含多个连续时间子系统，且受到隶属有限状态集的内部阶段变量控制\cite{8709809}。
 以最简单的连续时间跳变线性系统\cite{fang2002stabilization}为例：
@@ -194,15 +228,75 @@ Opper等\cite{opper2007variational}提出采用平均场理论，在给定有噪
 
 此类模型通过引入时序的随机隐变量学习序列的随机性。
 类似地，PR-SSM~\cite{doerr2018probabilistic}和PILCO~\cite{deisenroth2011pilco}采用高斯过程来学习输入/输出系统的概率状态空间模型。
-
 利用上述方法构建的序列生成模型能够极为便捷地在给定条件序列输入的情况下，预测输出分布并从中采样。这种性质也使得这些方法广泛应用于缺失数据填充\cite{Fraccaro2017}、开环预测\cite{Hafner2019}、基于模型的强化学习等任务\cite{Hafner2019}。
 
-以往的一些工作尝试将时序变分推理框架与微分方程网络相结合，用于学习随机的连续时间过程处理非均匀采样的序列数据。
-LatentODE\cite{Rubanova2019}、 ODE2VAE\cite{Yildiz2019} 和 LatentSDE\cite{Li2020}利用非均匀观测数据推理隐状态的近似后验分布。
-通过从近似后验中采样状态并求解参数化的微分方程网络，模型能够从连续时间域角度对给定时间区间上的任一点进行插值或预测，进而有效地解决非均匀采样观测下的随机系统预测问题。
+普通的常微分方程网络以及受控微分方程网络的状态演化过程是不包含随机性的。
+相比于常微分方程，随机微分方程网络（Stochastic Differential Neural Network, SDE）在状态转移的向量域中添加了扩散项（Diffusion process）：
+\begin{equation}
+    d \mathbf{x}_t=\mathbf{f}\left(\mathbf{x}_t\right) d t+\sigma\left(\mathbf{x}_t\right) d W_t
+    \label{equ:sde}
+\end{equation}
+其中$\mathbf{f}(\b x)\in \mathbb{R}^D$是系统的确定性状态演化，也称为漂移项（Drift process）。$\sigma(\mathbf x)\in mathbb{R}$是一标量系数。$W_t \in \mathbb{R}^D$是多变量维纳过程，其初始状态为$W_0 =\mathbf{0}$，独立的增量成分$W_{t+s}-W_t \sim \mathcal{N}(\mathbf{0}, s I)$服从标准差为$\sqrt{S}$的高斯分布。
 
-然而，由于这些模型在预测或插值前必须输入完整的采样序列以用于隐状态的推理，因此这些模型均是离线模型\cite{Liu2020}。
-在某些特定任务中，如本文关注的在线控制，预测模型需要能够运行在在线模式下以处理流式数据。如循环神经网络，可以支持递归地输入单点数据并更新其内部状态。
+随机微分方程网络即采用神经网络建模\equref{equ:sde}中的$\mathbf{f}(\b x)$和$\mathbf{f}(\b x)$。
+网络参数也可以采用联合敏感度法（Adjoint Sensitibity）进行训练\cite{li2020scalable}。由于随机微分方程网络的前向传播过程依赖于带有随机性的Wiener过程，为了避免存储完整的计算图，需要保证反向求解SDE时对Wiener过程的采样与前向传播保持一致。文献\cite{li2020scalable}利用基于虚拟布朗树（Virtual Brownian Tree）的伪随机数生成策略，仅需常数级存储$\mathcal{O}(1)$即可对的SDE网络前向传播的Wiener过程采样结果进行存储。节约存储空间的代价为对特定时间点下的wiener过程采样时间复杂度为$\mathcal{O}(\log n)$。
+将微分方程网络作为Res-Net的替代品处理图像领域问题时，有研究表明将ODE-Net替代为SDE-Net，在ODE-Net中增加随机扩散项，也能够起到随机正则化的作用，提升网络的泛化能力\cite{Oganesyan2020}。
+神经跳变随机微分方程（Neural Jump Stochastic Differential Equations，NJSDE）\cite{Jia2019}将扩散项中对时间的微分替换为观测点次数的微分，能够在建模系统隐空间连续时间动态的同时对观测点出现事件本身以及时刻进行建模，该模型有效地应用于地震预测及药物预测。
+
+% 以往的一些工作尝试将时序变分推理框架与微分方程网络相结合，用于学习随机的连续时间过程处理非均匀采样的序列数据。
+% LatentODE\cite{Rubanova2019}、 ODE2VAE\cite{Yildiz2019} 和 LatentSDE\cite{Li2020}利用非均匀观测数据推理隐状态的近似后验分布。
+% 通过从近似后验中采样状态并求解参数化的微分方程网络，模型能够从连续时间域角度对给定时间区间上的任一点进行插值或预测，进而有效地解决非均匀采样观测下的随机系统预测问题。
+
+% 然而，由于这些模型在预测或插值前必须输入完整的采样序列以用于隐状态的推理，因此这些模型均是离线模型\cite{Liu2020}。
+% 在某些特定任务中，如本文关注的在线控制，预测模型需要能够运行在在线模式下以处理流式数据。如循环神经网络，可以支持递归地输入单点数据并更新其内部状态。
+\section{强化学习及其在控制优化中的应用}
+在控制理论与应用领域中，强化学习\cite{Sutton2018}和自适应动态规划\cite{powell2007approximate,zhang2012adaptive}是解决最优控制问题的常见解决方法。其中强化学习技术衍生于最优控制以及人工智能领域，用来解决马尔科夫决策问题。
+在连续时间系统系统中，引入强化学习解决最优控制问题也存在大量的研究先例。对于一般的连续时间系统：
+\begin{equation}
+    \dot{\mathbf{x}}(t)=f(\mathbf{x}(t), \mathbf{u}(\mathbf{t}))
+\end{equation}
+将强化学习用于解决连续时间系统决策问题一般采用积分强化学习方法，积分折扣累积奖赏定义为如下形式：
+\begin{equation}
+    V^\mu(x(t))=\int_t^{\infty} e^{-\gamma(\tau-t)} r(x(\tau), u(\tau)) d \tau
+ \end{equation}
+其中奖赏函数一般由人为给定且一般为二次形式：
+ \begin{equation}
+    r(x(\tau), u(\tau))=X^{\mathrm{T}} Q X+u^{\mathrm{T}} R u
+\end{equation}
+将积分过程在时间点T处分割，可以获得递归式：
+\begin{equation}
+    V^\mu(x(t))=\int_t^{t+T} \gamma^{\tau-t} r(x(\tau), u(\tau)) d \tau+\gamma^T V^\mu(x(t+T))
+    \end{equation}
+
+其中，$\mu(x(t))$代表控制策略，$V^{\mu}$代表对策略$\mu$的评价，是奖励函数，$\gamma$是折扣因子。上式以自举的形式给出了评价函数的定义，该方法可以很容易地将离散系统强化学习方法中对于值函数的评估策略应用于连续系统中。
+对于控制量的求解可以通过对式的两侧求微分得：
+\begin{equation}
+    \nabla V_x^{\mathrm{T}} f(x(t), u(t))-\gamma V+r(x(t), u(t))=0
+\end{equation}
+其中$\nabla V_x$代表评价函数对系统状态的导数，上式揭示了任一控制策略与其策略评价函数之间的等式约束。定义哈密尔顿函数：
+\begin{equation}
+    H(X, V, u)=\nabla V_x^{\mathrm{T}} f(x(t), u(t))-\gamma V+r(x(t), u(t))
+\end{equation}
+根据稳态条件，可以推导出最优的追踪控制策略隐式表达：
+\begin{equation}
+    \frac{\partial H}{\partial u}\left(X, V^*, u\right)=0 \Rightarrow \frac{\partial r}{\partial u^*(t)}+\frac{\partial f}{\partial u^*(t)} \nabla V_x^*(X)=0
+\end{equation}
+利用上式对最优控制策略$u^*(t)$求解的前提是已知$\frac{\partial f}{\partial u^*(t)}$和$\frac{\partial r}{\partial u^*(t)}$。但是由于实际问题中连续时间系统函数$f$未知且往往带有一定的非线性，想要求得控制律的解析解是极其困难的。
+为了实现无模型非线性系统的强化学习控制，Abu-Khalaf等\cite{abu2005nearly}采用策略迭代算法求解连续时间非线性系统的饱和控制器。为了避免解决非线性系统CT控制问题中对时间导数的计算，Vrabie and Lewis\cite{vrabie2009neural}提出了积分强化学习技术，该方法可以在模型未知的情况仅依靠系统运行数据实现对模型控制率的自学习。
+Vamvoudakis等\cite{vamvoudakis2014online}采用actor-critic算法结构构建同步策略迭代算法，同时调节利用神经网络构建的值函数与策略函数。最优控制领域的追踪控制问题旨在于最小化控制系统指标与目标轨迹之间的距离，基于强化学习或自适应动态规划方法解决追踪控制问题的工作包括\cite{zhang2008novel,kamalapurkar2015approximate}。然而此类方法要求已知目标轨迹的变化过程且对于系统形式具有较强限制，无法应用于复杂连续时间系统。
+得益于积分强化学习理论的发展，Modare等\cite{modares2014linear}利用基于积分强化学习的策略迭代算法实现了对连续时间系统的最优追踪控制。Lewis等\cite{modares2014optimal}扩展了同策略迭代至连续时间非线性系统，并且保证了系统的稳定特性。上述算法均要求系统动态增益矩阵已知。为了打破限制，Jiang等\cite{jiang2012computational}提出了一种免模型的，仅基于系统观测下迭代地学习最优追踪控制策略的方法，且该方法可以在执行策略与学习策略不同的情况下实现异策略学习。Modares等\cite{modares2015h}考虑了在系统存在扰动下，采用$H_{\infty}$控制削减负效应，并利用离线迭代对策略进行更新。
+
+上述强化学习研究大多使用简单的线性模型或者感知机模型建模策略函数和评价函数。深度强化学习作为深度神经网络与强化学习的结合体，是近年来人工智能领域的研究热点。
+DeepMind发表在Nature上的两篇论文，AlphaGo\cite{silver2017mastering}和深度Q学习（Deep Q-Learning Network，DQN）\cite{mnih2015human}大幅度推动了DRL的发展。
+AlphaGo在围棋领域横扫人类选手。
+DQN模型成功玩通Atari上大部分游戏并且获得比人类玩家更优的成绩。
+学界以及工业界对于利用深度强化学习实现通用人工智能抱有期待。
+
+对于部分复杂控制系统而言，系统的高时滞特性与复杂非线性不满足传统控制理论的研究假设。而深度学习方法在处理复杂非线性映射、长序列编码方面具有极大优势，因此有部分学者提出了基于深度强化学习的过程控制研究思路。Spielberg等\cite{7983780}首先提出采用DDPG模型学习系统的过程追踪控制，将系统偏离目标值的L1距离作为惩罚函数，在仿真实验中测试了模型具有收敛能力。Yu等\cite{yu2017deep}采用确定性策略梯度算法思想解决自动潜航器的最优追踪控制问题。仿真实验验证了该方法的性能由于PID算法。Kim等\cite{kim2018deep}提出采用深度强化学习方法解决非线性系统有穷时间范围最优追踪控制问题，以ADP算法体系中的全局双启发式动态规划（Globalized Dual Heuristic Programming, GDHP）为模型总体结构，利用深度强化学习的模型训练方法来对协状态评价网络和动作网络进行训练，在一个通用的非线性系统控制仿真模型连续搅拌反应器上进行了实验测试，控制效果较好。Kim等\cite{kim2020model}后续又开展了有模型情况下，利用深度强化学习方法解决有穷时间范围非线性仿射系统的最优控制问题，模型结构同样是遵循GDHP的架构。
+由于ODE-Net模型能够利用非均匀采样数据拟合动态系统，
+因此可以构建可微分的系统状态演化估计器，
+配合连续时间强化学习辅助策略模块的学习，进而解决非均匀采样数据下的决策控制问题\cite{Yildiz2021}。
+对于系统动态已知的连续时间系统，利用ODE-Net可以为策略网络构建连续时间梯度估计器\cite{Ainsworth2020}，使控制和仿真任务的学习更高效、更鲁棒。
 
 
 \section{本章小结}
