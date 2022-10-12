@@ -30,9 +30,15 @@
 \setCJKmainfont[AutoFakeBold = {5.17}]{SimSun}
 % \setCJKmainfont{SimSun}[BoldFont=FZCuSong-B09S]
 \setCJKfamilyfont{kt}[AutoFakeBold = {2.17}]{KaiTi}  
+% \setCJKfamilyfont{ht}[AutoFakeBold = {2.17}]{Heiti}  
+% \setCJKfamilyfont{bfht}[AutoFakeBold = {2.17}]{Heiti}  
+\setCJKfamilyfont{bfht}[AutoFakeBold = {4.17}]{SimHei}  
 % \newCJKfontfamily\songbf{FZCuSong-B09S}[BoldFont=FZCuSong-B09S]
 
 \newcommand{\kaiti}{\CJKfamily{kt}}
+\newcommand{\bht}{\CJKfamily{bfht}}
+% \newcommand{\bfheiti}{\CJKfamily{ht}}
+
 
 \RequirePackage[pdfstartview=FitH, CJKbookmarks=true, bookmarksnumbered=true,bookmarksopen=true, colorlinks=false, colorlinks=black,pdfborder=100, citecolor=black ]{hyperref}		% 书签设置
 \RequirePackage[super,square,numbers,sort&compress]{natbib}	%参考文献设置
@@ -68,6 +74,7 @@
 \RequirePackage{titlesec}	%章节
 \RequirePackage{listings}   %插入代码
 \RequirePackage{texnames}   %TeX家族标识符
+\RequirePackage{enumitem}   %中括号的enumerate
 \RequirePackage{float}      %表格位置
 % \RequirePackage{xcolor}      %表格位置
 \RequirePackage{colortbl}      %表格位置
@@ -76,7 +83,7 @@
 \RequirePackage{setspace}   %调整行距
 \RequirePackage{lastpage}   %得到论文页数
 % \RequirePackage{subfig}
-\RequirePackage{enumerate}	%自定义列表编号
+% \RequirePackage{enumerate}	%自定义列表编号
 \RequirePackage{ctex}	%中文字体
 
 \RequirePackage{listings}   %插入程序代码
@@ -297,3 +304,16 @@
 %%%%定义摄氏度单位符号 \celsius ，在公式和文本中都可使用%%%%
 \def\celsius{\ensuremath{^\circ\hspace{-0.09em}\mathrm{C}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% 定义itemize间距
+\setenumerate[1]{itemsep=0pt,partopsep=0pt,parsep=0,topsep=0pt}
+\setitemize[1]{itemsep=0pt,partopsep=0pt,parsep=0pt,topsep=0pt,parskip=0pt}
+\setdescription{itemsep=0pt,partopsep=0pt,parsep=0,topsep=0pt}
+
+
+% \setlength{\itemsep}{0pt}
+% \setlength{\parsep}{0pt}
+% \setlength{\parskip}{0pt}
+% \setlength{\topsep}{0pt}
+% \setlength{\partopsep}{0pt}

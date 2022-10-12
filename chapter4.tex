@@ -1,100 +1,113 @@
 
-
-\chapter{基于自跳跃常微分方程网络的连续时间跳变系统建模}
-周期性跳变系统在现实生活中随处可见，其运行过程具有周期循环性。每个周期内，各阶段之间按特定顺序进行切换。系统在不同阶段会呈现明显不同的动态特性。
-例如，洗衣机启动后将按程序设定，周期性地在进水，洗涤，排水，甩干各个阶段之间循环运行，直至最后关机。
-冰箱和空调在工作期间会在运行（压缩机开启）和待机（压缩机关闭）两种状态之间不断进行切换。
-在一些自然界中其他的物理过程，也存在类似的系统，例如建筑物内的空调制冷系统、交通流量和季节变化等。
-% 在使用自回归模型对具有周期多阶段特性的系统进行预测时，我们希望模型能够自动地在特定时刻进行状态转移。
-例如，在对城市交通流量或某产品销量进行预测时，流量或销量通常伴随着特定的日期和季节变化而改变，并且其周期长度相对稳定，模型能够较容易地识别各预测时刻被预测对象所处的阶段。
-相反，对于一些复杂工业系统，其周期长度可能受到系统内部和外部多个变量的影响。
-例如系统的外部输入、当前内部状态、环境条件等。
-利用历史运行数据识别以及建模此类跳变系统对于理解和优化系统运行过程是极其重要的。
+\chapter{基于自跳跃常微分方程网络的连续时间周期跳变系统建模}
+周期跳变系统在现实生活中随处可见，其运行过程具有周期循环性。
+连续时间周期跳变系统指各阶段依周期转换，
+% 且每个周期内，各阶段之间按特定顺序进行切换。
+且系统在不同阶段会呈现不同动态特性的连续时间跳变系统。
+例如，洗衣机启动后将按程序设定，周期性地在进水，洗涤，排水，甩干等各个阶段之间循环运行，直至最后关机。
+冰箱和空调在工作期间会在运行（压缩机开启）和待机（压缩机关闭）两种状态之间不断切换。
+% 在一些自然界中其他的物理过程，也存在类似的系统，例如建筑物内的空调制冷系统、交通流量和季节变化等。
+% 生产生活中的一些其他过程也存在类似特性，例如交通流量和季节变化等。
+% % 在使用自回归模型对具有周期多阶段特性的系统进行预测时，我们希望模型能够自动地在特定时刻进行状态转移。
+% 在对城市交通流量或某产品销量进行预测时，其流量或销量通常伴随着特定的日期和季节进行改变，并且其周期长度相对稳定，模型能够较容易地识别各时刻下被预测对象所处的当前阶段。
+% 而对于一些复杂工业系统，其各阶段的持续时间可能受到系统内部和外部多个变量的影响。
+% 例如系统的外部输入、当前内部状态、环境条件等。
+% 为了优化此类系统的运行参数与运转模式，
+利用历史数据建模其阶段跳变过程与各阶段内的动态模型参数对于优化此类系统的运行参数与运转模式是极其重要的。
 % 对于此类带有多阶段特性的复杂工业系统，想要采用单一模型学习具有不同阶段特性的动态并且实现精确的系统预测与仿真是极其困难的。
-然而，在面向跳变系统进行建模时面临两大技术难题。首先，
-跳变系统通常有多个阶段，每个阶段呈现不同的非线性特性。各个阶段的持续时间可能同时受到内部因素和外部因素的影响\cite{WANG2022111790}。目前，面向跳变系统参数估计方法\cite{balenzuela2022parameter}通常依赖于对系统结构以及持续时间分布的先验认知，这需要大量的领域专家知识作为支撑。
-另外，对于带有多输出项的工业系统，其输出过程可能由
-多个不同的物理特性共同影响。这会导致多输出项中同时存在稳定和非稳定过程\cite{nason2006stationary}。
-据我们所知，对于现有的未经过特定设计的现存模型，难以解决此类带有混合时序特性的系统学习任务。
 
-为了实现上述目标，模型需要解决两个问题。
-首先，模型需要根据系统的外部输入以及系统状态，识别在当前时刻系统所处的阶段。
-另外，模型需要能够准确地识别系统在各阶段内的独立动态特性。
-针对上述挑战和问题，本章提出了一种新颖的自跳跃常微分方程网络（Autonomous jump ordinary differential equation net, AJ-ODEnet）以学习连续时间周期跳变系统。
+然而，在对复杂跳变系统进行建模时会面临两大技术难题。
+首先，跳变系统通常有多个阶段，每个阶段内系统将呈现完全不同的非线性特性，且各个阶段的持续时间可能同时受到内部因素和外部因素的影响\cite{WANG2022111790}。现有的跳变系统参数估计方法\cite{balenzuela2022parameter}通常依赖于对系统结构以及持续时间分布的先验认知，这需要大量的领域专家知识作为支撑。
+另外，对于带有多输出项的工业系统，其输出项中可能同时存在稳定和非稳定过程\cite{nason2006stationary}。
+目前为止，现有的未经过特定设计的辨识模型难以解决此类带有混合时序特性的系统学习任务。
+
+% 为了实现上述目标，模型需要解决两个问题。
+% 首先，模型需要根据系统的外部输入以及系统状态，识别在当前时刻系统所处的阶段。
+% 另外，模型需要能够准确地识别系统在各阶段内的独立动态特性。
+针对上述技术难题，本章提出了自跳跃常微分方程网络（Autonomous jump ordinary differential equation net, AJ-ODE-Net）以学习同时带有稳定和非稳定输出的连续时间周期跳变系统。
 该模型是一种新颖的连续时间深度学习模型，能够从非均匀采样的系统历史轨迹进行学习。
 % 该框架主要用于建模具有周期性多阶段转换的多输入输出系统，利用数据驱动的方式从系统输出序列中学习系统不同阶段的动态特性。
-训练完成后，对于给定的系统外部输入模型能够实现实时在线预测。
-为了学习系统在不同阶段的动态特性，模型包含多个层次常微分方程网络（Hierarchical ODENets ，H-ODENets）
-层次常微分网络是一种双层扩展的常微分方程网络，能够同时学习系统的稳定过程和非稳定过程。
-为了学习阶段转换，本章对原始训练数据进行了阶段类别标注，并在模型中引入阶段转换预测器学习每个阶段的持续时间。
-阶段转换预测器由多个持续时间预测器构成，在开环预测和仿真中，阶段转换预测器能够作为H-ODENets的调节器，在每个时间点指派合适的H-ODENet进行系统输出的预测，并预估当前所处阶段的持续时间，进而实现自发的阶段转移。
+训练完成后，对于给定的系统外部输入，模型能够给出开环的仿真预测结果。
+为了学习系统在不同阶段的动态特性，模型包含多个层次常微分方程网络（Hierarchical ODE-Nets ，H-ODE-Nets）。
+该网络是一种双层扩展的常微分方程网络，能够建模同时带有稳定输出和非稳定输出的动态系统。
+为了实现开环预测时的阶段自转移，本章对原始训练数据进行了阶段类别标注，并在模型中引入阶段转换预测器学习每个阶段的持续时间。
+阶段转换预测器由多个持续时间预测器构成，每个预测器能够预估当前所处阶段的持续时间。在开环预测和仿真中，阶段转换预测器能够作为H-ODE-Nets的调节器，在每个时间点指派合适的H-ODE-Net进行系统输出的预测，并自发地转移至下一阶段。
 
 % 为了使模型能够从数据中自动地学习各阶段内的系统动态特性，针对待预测系统输出同时存在非稳定过程和稳定过程的问题，引入分层常微分方程网络。
-% （hierarchical ODEnets, H-ODEnets）实现对系统多维输出的混合学习。
+% （hierarchical ODE-Nets, H-ODE-Nets）实现对系统多维输出的混合学习。
 
-% 因此，在本章提出的AJ-ODEnets模型中，参考了有限状态机的基本思想，构建了可学习的阶段转换模块。
-同时为了给定求解AJ-ODEnet的状态初值，本章遵循编码器解码器（Encoder-Decoder）范式，构建了两个AJ-ODEnet分别用于历史数据的编码以及在给定的系统输入序列下以开环的方式预测系统的未来输出。
-除此之外，本章引入样条插值算法，以连续化离散的输入序列并作为AJ-ODEnet模型的输入。
-最后，本章将所属模型及框架应用于某一具有典型周期多阶段特性的工业制冷系统的预测与仿真问题中。
-通过给定系统的多变量运行数据，包括热负载以及环境温度，模型能够仿真系统的运行过程并准确地预测系统能耗（能耗预测误差小于5\%）。
-进一步地，通过模型的仿真功能能够优化系统的制冷温度设定参数，通过仿真实验表明利用优化之后的温度设定值能够显著改善能源利用效率并且节省超过25\%的制冷能耗。
+% 因此，在本章提出的AJ-ODE-Nets模型中，参考了有限状态机的基本思想，构建了可学习的阶段转换模块。
+同时为了给定AJ-ODE-Net的状态初值，
+本章基于编码器解码器（Encoder-Decoder）框架，构建了两个AJ-ODE-Net分别用于历史数据的编码以及在给定的系统输入序列下以开环的方式预测系统的未来输出。
+本章提出了基于编码器解码器（Encoder-Decoder）框架的预测模型。该模型包含两个AJ-ODE-Net，编码AJ-ODE-Net用于编码历史数据以给定解码AJ-ODE-Net的初态，解码AJ-ODE-Net能够在给定的系统输入序列下以开环的方式预测系统的未来输出。
+
+% 除此之外，本章引入样条插值算法，以连续化离散的输入序列并作为AJ-ODE-Net模型的输入。
+最后，本章将所述模型及编解码预测框架应用于某一具有典型周期多阶段特性的工业制冷系统的预测与仿真问题中。
+在给定系统的多变量输入数据下，包括热负载以及环境温度，模型能够仿真系统的运行过程并准确地预测系统能耗，能耗预测误差小于5\%。
+进一步地，利用模型的仿真功能能够优化系统的制冷温度设定参数，仿真实验表明利用优化之后的温度设定值能够显著节省超过6-25\%的制冷能耗。
 % 本章所述模型能够有效地模拟制冷系统的运行，预测其功率消耗以及服务器进气口温度。
 
-% Addressing the challenges and problems mentioned above, we propose AJ-ODEnets, a novel framework for modeling and identifying the non-linear dynamics at different stages in periodic operational systems. The framework is specifically capable of capturing physical dynamics thanks to the implementation of ODEnet, a neural network based on ODE. The framework is expected to learn the multivariate inputs-ouputs system in a data-driven way, by feeding several sequences of sensory data as training data. Once trained, the model is able to realize real time predictions according to the multivariate inputs. Modeling multi-stage periodic systems requires two principal realizations, one for the stages prediction, one for dynamical characteristics identifications of different stages. 
+% Addressing the challenges and problems mentioned above, we propose AJ-ODE-Nets, a novel framework for modeling and identifying the non-linear dynamics at different stages in periodic operational systems. The framework is specifically capable of capturing physical dynamics thanks to the implementation of ODE-Net, a neural network based on ODE. The framework is expected to learn the multivariate inputs-ouputs system in a data-driven way, by feeding several sequences of sensory data as training data. Once trained, the model is able to realize real time predictions according to the multivariate inputs. Modeling multi-stage periodic systems requires two principal realizations, one for the stages prediction, one for dynamical characteristics identifications of different stages. 
 
 
 
 
 
-% With this purpose, in the design of AJ-ODEnets, a selective structure is considered.
+% With this purpose, in the design of AJ-ODE-Nets, a selective structure is considered.
 % In terms of learning dynamical characteristics at different stages,
-% the framework contains several hierarchical ODEnets (H-ODEnets), and the number depends on the observed system stages. H-ODEnets can be seen as an extension of ODEnet, which can deal with both stationary and non-stationary sequences. 
-% In terms of learning the system transitions during operation, a stage transition predictor is included in the AJ-ODEnet module, which can infer the transfer actions from a sequence of observation data, specifically, when and how to change to other tendency during system operation. In order to train the stage transition predictor, the observation data has been labeled previously in a conditional data range, based on prior knowledge of the system operational specifications. During predictive range, the stage transition predictor serves as the governor to appoint to the suitable H-ODEnet, so as to let the system run across different working stages periodically. Adaptive smoothing algorithm is introduced to impute missing data as well, it can handle nonlinear and irregularly sampling data, which is practical in dealing with sensory data from IoT systems. The AJ-ODEnets framework has been further implemented in a running data center with contained structure, to simulate the cooling system operations. 
+% the framework contains several hierarchical ODE-Nets (H-ODE-Nets), and the number depends on the observed system stages. H-ODE-Nets can be seen as an extension of ODE-Net, which can deal with both stationary and non-stationary sequences. 
+% In terms of learning the system transitions during operation, a stage transition predictor is included in the AJ-ODE-Net module, which can infer the transfer actions from a sequence of observation data, specifically, when and how to change to other tendency during system operation. In order to train the stage transition predictor, the observation data has been labeled previously in a conditional data range, based on prior knowledge of the system operational specifications. During predictive range, the stage transition predictor serves as the governor to appoint to the suitable H-ODE-Net, so as to let the system run across different working stages periodically. Adaptive smoothing algorithm is introduced to impute missing data as well, it can handle nonlinear and irregularly sampling data, which is practical in dealing with sensory data from IoT systems. The AJ-ODE-Nets framework has been further implemented in a running data center with contained structure, to simulate the cooling system operations. 
 
 本章研究主要包含三方面贡献，概括如下:
 \begin{itemize}
-    % \item 首先，本章将原始的ODE-net模型扩展到H-ODEnet模型，能够学习同时带有稳定和非稳定时间序列输出的动态过程。
+    % \item 首先，本章将原始的ODE-Net模型扩展到H-ODE-Net模型，能够学习同时带有稳定和非稳定时间序列输出的动态过程。
     \item 为了辨识连续时间跳变系统，本章提出了一种新颖的深度学习模型——自跳跃常微分方程网络模型。该模型能够实现
-    （1）在一个集成化的网络中学习系统的多阶段动态，（2）在长序列开环预测中实现阶段自转移。
-    % \item 其次，本章针对具有周期多阶段特性的动态系统，开创性地提出了AJ-ODEnets模型，该模型通过引入阶段转换预测器学习系统的周期性阶段转换以及采用多个H-ODEnets学习不同阶段内的系统动态特性。
-    \item 为了学习同时包含稳定和非稳定项的多输出系统，本章结合每个输出项的统计特性，引入H-ODENet以改善两种输出项在长期预测中精度。
-    \item 本章所述模型成功应用于某一工业制冷系统的预测与仿真问题中，该模型能够在给定热负载功率下，准确地预测制冷系统的功率消耗以及制冷气温度变化，依托于该仿真模型能够优化制冷系统的工作温度设定值，进而优化制冷系统的整体能耗约25\%。
-    
+    （1）在集成化的网络中学习系统的多阶段动态，（2）在长序列开环预测中实现阶段自转移。
+    % \item 其次，本章针对具有周期多阶段特性的动态系统，开创性地提出了AJ-ODE-Nets模型，该模型通过引入阶段转换预测器学习系统的周期性阶段转换以及采用多个H-ODE-Nets学习不同阶段内的系统动态特性。
+    \item 为了学习同时包含稳定和非稳定项的多输出系统，本章结合每个输出项的统计特性，引入H-ODE-Net以改善长期预测中两种输出项的预测精度。
+    \item 本章所述模型成功应用于某一工业制冷系统的预测与仿真问题中，该模型能够在给定热负载功率下，准确地预测制冷系统的功率消耗以及冷气温度变化，利用该仿真模型能够优化制冷系统的工作温度设定值，进而优化制冷系统整体能耗约6-25\%。
 \end{itemize}
 % Two main contributions are devoted to this study, summarized as follows::
 % \begin{itemize}
-%     \item First, we extent the original vanilla ODE-net to the Hierarchical ODEnet (H-ODEnet), which is able to learn the stationary and non-stationary time series data simultaneously.
-%     \item Second, we propose AJ-ODEnets framework, targeting at learning periodic multi-states systems in data-driven way. AJ-ODEnets disposes of several H-ODEnets to automatically learn dynamic characteristics at different states, along with a stage transition predictor to learn the transition actions during operation. 
+%     \item First, we extent the original vanilla ODE-Net to the Hierarchical ODE-Net (H-ODE-Net), which is able to learn the stationary and non-stationary time series data simultaneously.
+%     \item Second, we propose AJ-ODE-Nets framework, targeting at learning periodic multi-states systems in data-driven way. AJ-ODE-Nets disposes of several H-ODE-Nets to automatically learn dynamic characteristics at different states, along with a stage transition predictor to learn the transition actions during operation. 
 % \end{itemize}
 
 本章的结构组织如下:
-本章\ref{sec:notations}节给出了变量符号定义以及描述了周期性多阶段系统预测问题的形式化描述。
-本章\ref{sec:h-ode}节介绍了分层常微分方程网络的定义及结构，以及如何将其用于学习同时带有稳定和非稳定时间序列输出的动态过程。
-本章\ref{sec:dfa-odenet}介绍了AJ-ODEnet框架，并详细阐述了连续时间域下的状态转移方程、关键模块结构和持续时间预测器的损失函数定义等内容。
-本章\ref{sec:encoder_decoder}给出了基于AJ-ODEnet模型的编码器解码器框架及其训练方法。
-本章\ref{sec:evalutaion}节介绍了将所述框架应用于模拟某实际工业制冷系统。模型能够根据制冷系统的热负载输入对其功耗以及出气口气体温度变化进行模拟预测，同时能够实现不同制冷启动温度配置下的功耗仿真与优化。
-最后，\ref{sec:conclusion}节对本章工作做出了总结，并对AJ-ODENet模型的潜在应用以及未来的研究方向做出了讨论。
+本章\ref{sec:4_notations}节给出了周期性多阶段系统预测问题中的变量符号定义以及形式化描述。
+% 本章\ref{sec:h-ode}节介绍了分层常微分方程网络的定义及结构，以及如何将其用于学习同时带有稳定和非稳定时间序列输出的动态过程。
+本章\ref{sec:4_ajode}节介绍了AJ-ODE-Net模型的基本结构，并详细阐述了
+如何采用分层常微分方程网络学习同时带有稳定和非稳定时间序列输出的动态过程，以及如何构建连续时间域下的跳变系统状态转移方程、
+
+% 最后给出了基于AJ-ODE-Net模型的编码器解码器框架及其训练方法
+\ref{sec:4_encoder_decoder}节介绍了基于双AJ-ODE-Net模型的编码器解码器框架，并详细介绍了AJ-ODE-Net的初态求解方法。
+\ref{sec:4_loss_function}节给出了用于训练持续时间预测器和预测模型的损失函数。
+% 关键模块结构和持续时间预测器的损失函数定义等内容。
+% 本章\ref{sec:4_encoder_decoder}给出了基于AJ-ODE-Net模型的编码器解码器框架及其训练方法。
+\ref{sec:evalutaion}节将所述框架应用于模拟某实际工业制冷系统。模型能够根据制冷系统的热负载输入对其功耗以及出气口气体温度变化进行模拟预测，同时能够实现不同制冷启动温度配置下的功耗仿真与优化。
+最后，\ref{sec:conclusion}节对本章工作进行总结，并对AJ-ODE-Net模型的未来研究方向以及在其他领域的应用做出了展望。
 
 
-% The paper is organized as follows: related work on time series prediction for industrial systems, and for multi-state systems are summarized in Sec.~\ref{sec:review}. Then, preliminary in Sec.~\ref{sec:preliminary} describes the basic theory used in this study. After that, in Sec.~\ref{sec:methodology_dfaode}, the proposed framework AJ-ODEnet is detailed in terms of data processing, structure of key modules and training for loss functions. In practice, the proposed framework is applied to simulate several working variables of a cooling system in real data centers. Two use cases are included, one for real time estimation of the energy consumption based on system inputs and environmental condition, and the other takes advantage of the integrated prior knowledge, simulations are conducted to optimize the consumption by varying configurations. In the end, Sec.~\ref{sec:conclusion} concludes the entire work and discuss the potential future work.
+% The paper is organized as follows: related work on time series prediction for industrial systems, and for multi-state systems are summarized in Sec.~\ref{sec:review}. Then, preliminary in Sec.~\ref{sec:preliminary} describes the basic theory used in this study. After that, in Sec.~\ref{sec:methodology_dfaode}, the proposed framework AJ-ODE-Net is detailed in terms of data processing, structure of key modules and training for loss functions. In practice, the proposed framework is applied to simulate several working variables of a cooling system in real data centers. Two use cases are included, one for real time estimation of the energy consumption based on system inputs and environmental condition, and the other takes advantage of the integrated prior knowledge, simulations are conducted to optimize the consumption by varying configurations. In the end, Sec.~\ref{sec:conclusion} concludes the entire work and discuss the potential future work.
 \section{问题形式化描述}
-\label{sec:notations}
-在本文中，标量和向量在形式上分别用小写字母和粗体小写字母表示，例如$y, \boldsymbol y$。假设输入输出数据由传感器观测得到，并带有时间戳$t_i\in \mathbb{R}$。
+\label{sec:4_notations}
+% 在本章中，标量和向量在形式上分别用小写字母和粗体小写字母表示，例如$y, \boldsymbol y$。
+假设输入输出数据由传感器观测得到，并带有时间戳$t_i\in \mathbb{R}$。
 因此，从系统中采集的带有非均匀采样间隔的离散输入序列和输出序列可表示为：
-$\boldsymbol X_{1:I},\boldsymbol Y_{1:I}= ((t_1,\boldsymbol x_1,\boldsymbol y_1),(t_2,\boldsymbol x_2, \boldsymbol y_2),\cdots,(t_I,\boldsymbol x_I,\boldsymbol y_I))$. 
+$\boldsymbol X_{1:I},\boldsymbol Y_{1:I}= ((t_1,\boldsymbol x_1,\boldsymbol y_1),(t_2,\boldsymbol x_2, \boldsymbol y_2),\cdots,(t_I,\boldsymbol x_I,\boldsymbol y_I))$。
 %with each $t_i\in \mathbb{R}$ the timestamp of the system input and output, and $t_{0}<\cdots<t_{n}$.
 % we define $\boldsymbol y_i$ as the $i$-th vectorial variable in a discrete sequence. 
 相应的，定义$\boldsymbol x(t_i)=\boldsymbol x_i$ 以及 $\boldsymbol y(t_i)=\boldsymbol y_i$。
-其连续时间过程可表示为$\boldsymbol x:\left[t_{1}, t_{I}\right] \rightarrow \mathbb{R}^{M}$ 和 $\boldsymbol y:\left[t_{1}, t_{I}\right] \rightarrow \mathbb{R}^{N}$.
+其连续时间过程可表示为$\boldsymbol x:\left[t_{1}, t_{I}\right] \rightarrow \mathbb{R}^{M}$ 和 $\boldsymbol y:\left[t_{1}, t_{I}\right] \rightarrow \mathbb{R}^{N}$。
 为了便于后文描述，本章将$\boldsymbol y:\left[t_{1}, t_{I}\right]$简化为$\boldsymbol Y_{t_1:t_I}$。
 
 
-连续时间跳变系统（Continuous-time Jump System，CTJS）由多个连续时间子系统组成，其内部阶段转换由一个有限状态过程支配\cite{8709809}。
+连续时间跳变系统（Continuous-time Jump System，CTJS）由多个连续时间子系统组成，其内部阶段转换受有限状态过程控制\cite{8709809}。
+典型的连续时间跳变系统定义如下：
 % As an important class of dynamical systems, CTJS arises in many applications, such as failure prediction\cite{9165930}, control applications\cite{pmlr-v120-jansch-porto20a}, and state estimation\cite{8709809}.
-作为一种特殊的动态系统，CTJS系统广泛应用于各类应用中，如故障预测\cite{9165930}、系统控制\cite{pmlr-v120-jansch-porto20a}，以及状态估计\cite{8709809}。
-典型的连续时间跳变系统定义形式如下：
+% 作为一种特殊的动态系统，CTJS系统广泛应用于各类应用中，如故障预测\cite{9165930}、系统控制\cite{pmlr-v120-jansch-porto20a}，以及状态估计\cite{8709809}。
 \begin{equation}
-    \dot{\boldsymbol h}(t)=\mathcal{F}_\sigma(t)(\boldsymbol h(t), \boldsymbol x(t),
+    \dot{\boldsymbol h}(t)=\mathcal{F}_{\sigma(t)}(\boldsymbol h(t), \boldsymbol x(t),
     \label{equ:ctjls}
 \end{equation}
 % where $\sigma(t)\in\{0,1\cdots N-1\}$ is a finite-state step process and $\boldsymbol{x}(t)$ is system inputs with the Lipschitz continuity.
@@ -102,28 +115,33 @@ $\boldsymbol X_{1:I},\boldsymbol Y_{1:I}= ((t_1,\boldsymbol x_1,\boldsymbol y_1)
 % Compared to a general continuous-time markov jump system whose state $\sigma(t)$ is a markov process, this study assumes that the transition of $\sigma(t)$ is deterministic and circular.
 % Specifically, in a continuous-time periodic jump non-linear system, the piece wise constant state $\sigma(t)$ jumps in a cycle order $\{0,1,\cdots,N-1,0 \cdots\}$.
 % The sojourn time between jumps depends on the trigger thresholds according to prior knowledge about the system.
-% To distinguish between the state in a system and the hidden state in a recurrent neural network, we name the system state $\sigma(t)$ as the \textbf{\textit{stage}} in this paper.
-其中$\sigma(t)\in\{0,1\cdots N-1\}$为一有限状态集下的跳变状态，$\boldsymbol{x}(t)$为满足利普希茨连续的系统输入。
-在一般的连续时间马尔科夫跳变系统中，系统状态$\sigma(t)$的变化遵循马尔科夫过程。相比之下，本章假设阶段变量$\sigma(t)$的转移是确定性地且循环的，并将此系统定义为连续时间周期跳变非线性系统中(Continuous-time periodic jump non-linear system)，分段恒定的状态$\sigma(t)$在循环$\{0,1,\cdots,N-1,0 \cdots\}$中不断变化。
-状态跳跃之间的停留时间取决于由系统先验属性决定的触发条件。
-为了明确区分跳变系统中的状态变量$\sigma(t)$以及以及循环神经网络中的隐状态，本章将跳变系统状态$\sigma(t)$命名为阶段。
+% To distinguish between the state in a system and the hidden state in a recurrent neural network, we name the system state $\sigma(t)$ as the \textbf{\textit{stage} in this paper.
+其中$\sigma(t)\in\{0,1\cdots,N-1\}$为一有限状态集下的跳变状态，$\boldsymbol{x}(t)$为满足利普希茨连续的系统输入。
+为了明确区分跳变系统中的状态变量$\sigma(t)$以及循环神经网络中的隐状态，本章将跳变系统状态$\sigma(t)$命名为阶段。
+在一般的连续时间马尔科夫跳变系统中，系统阶段$\sigma(t)$的变化遵循马尔科夫过程。
+而本章假设阶段变量$\sigma(t)$的转移过程是依周期的且循环过程是确定的，
+分段恒定的$\sigma(t)$在循环$\{0,1,\cdots,N-1,0 \cdots\}$中不断变化。
+阶段跳跃之间的停留时间取决于由系统本体属性决定的触发条件。
+因此本文所关注的系统也称为连续时间周期跳变系统(Continuous-time periodic jump system)。
 % 基于模型驱动的参数估计或系统辨识方法有时很难被应用于复杂的跳跃系统中，因为实际的动态行为很难被识别。为了从现有的输入输出数据中学习CTJS，以前的研究假设了系统的先验结构，并采用了EM算法（balenzuela2022parameter}、顺序蒙特卡洛（SMC）（6859280）和变异推理（opper2007variational）等方法来估计模型参数。
 
-本章所关注的问题为根据系统的历史数据信息和以及系统的未来序列输入，预测系统的未来输出。具体地本章对于给定数据的时间范围$[t_1:t_{I+L}]$分为两部分，分别作为条件范围$[t_1:t_{I}]$ 和预测范围$[t_{I}:t_{I+L}]$。
+同本文第三章，本章要解决的问题仍为根据系统的历史数据信息和以及系统的未来序列输入，开环地预测系统的未来输出。
+具体地，本章将给定数据的时间范围$[t_1:t_{I+L}]$分为两部分：条件范围$[t_1:t_{I}]$和预测范围$[t_{I}:t_{I+L}]$。
 %Given $\{{\boldsymbol{X}}_{t_{1}:t_{I+L}}, {\boldsymbol {Y}}_{t_{1}:t_{I+O}}\}$, the system inputs and system outputs in time range $[t_1:t_{I+O}]$,
 % , where ${\boldsymbol y}^i_{1:I+O}=[{\boldsymbol y}^i(t_1),\boldsymbol y^i(t_2),\dots,{\boldsymbol y}^i(t_{I+O})]$ and ${\boldsymbol y}^i(t_j)$ is the $j-th$ value in $i-th$ system outputs series collected at time $t_j$ . 
-模型通过给定条件范围$[t_1, t_I]$下的系统输入和系统输出生成初始状态，然后利用学得的跳变模型\equref{equ:ctjls}对预测范围$[t_{I}, t_{I+L}]$下的系统输出进行预测，如式~\ref{equa:problematique}所示：
+模型通过给定条件范围$[t_1, t_I]$下的系统输入和系统输出生成初始状态，然后利用训练得到的跳变模型\equref{equ:ctjls}对预测范围$[t_{I}, t_{I+L}]$下的系统输出进行预测，如式~\ref{equa:problematique}所示：
 
 \begin{equation}
 \label{equa:problematique}
     \hat{\boldsymbol Y}_{t_{I}:t_{I+L}} = f(\boldsymbol Y_{t_{1}:t_{I}}, \boldsymbol X_{t_{1}:t_{I+L}};\boldsymbol \zeta) 
 \end{equation}
-公式中$\hat{\boldsymbol Y}_{t_{I}:t_{I+L}}$表示在预测范围内估计的输出。 
+公式中$\hat{\boldsymbol Y}_{t_{I}:t_{I+L}}$表示预测范围内的模型输出。 
 $\boldsymbol Y_{t_{1}:t_{I}}$表示在条件范围内系统的历史输出。
-$\boldsymbol X_{t_{1}:t_{I+L}}$表示完整时间范围内的系统输入，包括历史部分和预测序列部分。该系统输入在时间序列预测领域经常被称为协变量\cite{Wu2020}。
+$\boldsymbol X_{t_{1}:t_{I+L}}$表示完整时间范围内的系统输入，包括历史输入和未来输入部分，其未来输入也被称为协变量\cite{Wu2020}。
+% 该系统输入在时间序列预测领域经常被称为协变量\cite{Wu2020}。
 $\boldsymbol \zeta$表示利用数据集训练的模型可学习参数。
 本章的目标为通过优化$\boldsymbol \zeta$以最小化$||\hat{\boldsymbol Y}_{t_{I}:t_{I+L}}-\boldsymbol {Y}_{t_{I}:t_{I+L}}||^2$。
-值得注意的是，本章仍关注开环预测问题，模型预测过程中无法收到来自系统输出的反馈。
+值得注意的是，上述过程仍为开环预测，模型预测过程中无法收到来自系统输出的反馈。
 % Where $\hat{\boldsymbol Y}_{t_{I}:t_{I+L}}$ is the estimated outputs in predictive range. $\boldsymbol Y_{t_{1}:t_{I}}$ represents the historical system outputs in conditional range.
 % $\boldsymbol X_{t_{1}:t_{I+L}}$ is the system inputs of whole range that involve both historical and predictive parts.
 % $\boldsymbol \zeta$ is the learnable parameters of model trained jointly from all available datasets. \\
@@ -145,45 +163,50 @@ $\boldsymbol \zeta$表示利用数据集训练的模型可学习参数。
 % we considered the accumulated estimated error of phases positions and give up the point-to-point evaluation and seek other evaluation indicators
 
 
-\section{自跳跃常微分方程网络及编码器-解码器预测架构}
-\subsection{基于层次ODE-Net模型的复杂系统稳定及非稳定输出混合建模}
-\label{sec:h-ode}
-大部分工业系统的输出是多维度的，不同维度输出的时序统计特性存在一定差异，某些输出量为均值方差恒定的稳定过程，某些输出为均值方差不断变化的非稳定过程。
+% \section{自跳跃常微分方程网络及编码器-解码器预测架构}
+\section{自跳跃常微分方程网络}
+\label{sec:4_ajode}
+\subsection{基于分层ODE-Net的稳定及非稳定输出混合建模}
+大部分工业系统的输出是多维度的，不同维度输出的时序统计特性存在一定差异，某些输出项为均值、方差恒定的稳定过程，某些输出项为均值、方差不断变化的非稳定过程。
 对于同时含有稳定和非稳定输出的混合过程进行建模学习具有一定难度，当前主流的基于深度学习的序列预测领域并未针对该类系统开展研究。
-针对该问题，本章提出了分层常微分方程网络（Hierarchical ODENet, H-ODEnet），用于建模同时包含稳定过程和非稳定过程的系统。
+针对该问题，本章提出分层常微分方程网络（Hierarchical ODE-Net, H-ODE-Net）以建模同时包含稳定过程和非稳定过程的复杂系统。
 
-具体地，H-ODEnet将三个ODEnet集成为双层结构(L-1和L-2)。
-% Modeling hybrid processes with both stationarity and non-stationarity properties is another challenge for industrial systems, as existing methods normally target one situation. With this in mind, Hierarchical ODE-net (H-ODE) is proposed to model a system containing non-stationary and stationary processes simultaneously. In 图.~\ref{fig:AJ_ODEs}, there are $N$ number of H-ODEnet embedded in the AJ-ODEnet module, and only one will active at specific time point $t$, based on state variable $\sigma(t)$. In detail, H-ODE hierarchically integrates a two-level structure (L-1 and L-2) with three ODEnets.
+具体地，H-ODE-Net将三个ODE-Net集成为双层结构(L-1和L-2)。
+% Modeling hybrid processes with both stationarity and non-stationarity properties is another challenge for industrial systems, as existing methods normally target one situation. With this in mind, Hierarchical ODE-Net (H-ODE) is proposed to model a system containing non-stationary and stationary processes simultaneously. In 图.~\ref{fig:AJ_ODEs}, there are $N$ number of H-ODE-Net embedded in the AJ-ODE-Net module, and only one will active at specific time point $t$, based on state variable $\sigma(t)$. In detail, H-ODE hierarchically integrates a two-level structure (L-1 and L-2) with three ODE-Nets.
 % to deal with the mixed situations mentioned above.
-%The learned continuous-time predictive model is named Hierarchical ODE-net which hierarchically integrates a two-level ODE-net.
-图~\ref{fig:H_ode}展示了H-ODE中三个ODE-net之间的连接方式。
+%The learned continuous-time predictive model is named Hierarchical ODE-Net which hierarchically integrates a two-level ODE-Net.
+图~\ref{fig:H_ode}展示了H-ODE-Net中三个ODE-Net之间的连接方式。
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figures/chapter4/Hode.pdf}
-    \caption{H-ODEnet结构图示}
-    %\caption{An H-ODEnets consists of three ODE-net. The high-level ODE-net estimates the derivative of latent state according to external inputs. By integrating the ODE equation with high-level ODE-net, the solved $\boldsymbol h(t)$, accompanied with external inputs $\boldsymbol x(t)$ and duration time of current stage $T(t)$, is fed into two low-level ODE-nets to estimate the derivatives of system outputs. The predictions of system outputs at arbitrary time points $t_x$ can be solved by integrating the low-level ODE-nets.}
+    \caption{H-ODE-Net结构图示}
+    %\caption{An H-ODE-Nets consists of three ODE-Net. The high-level ODE-Net estimates the derivative of latent state according to external inputs. By integrating the ODE equation with high-level ODE-Net, the solved $\boldsymbol h(t)$, accompanied with external inputs $\boldsymbol x(t)$ and duration time of current stage $T(t)$, is fed into two low-level ODE-Nets to estimate the derivatives of system outputs. The predictions of system outputs at arbitrary time points $t_x$ can be solved by integrating the low-level ODE-Nets.}
     \label{fig:H_ode}
 \end{figure}
-在L-1层中，包含一个ODEnet，用于根据外部输入对隐状态的导数进行建模。利用实时求解出的$\boldsymbol h(t)$、外部输入$\boldsymbol x(t)$和当前阶段持续时间$T(t)$，对由L-1中的ODE-net定义的常微分方程进行积分。解出的$\boldsymbol h(t)$作为L-2中两个ODE-net的输入，并分别用于求解稳定系统输出项和非稳定系统输出项的导数，表示为$\boldsymbol y(t)=[\boldsymbol y_s(t), \boldsymbol y_{ns}(t)]$。
-最终，可以解出任一时间点$t_x$下的预测结果。
+在L-1层中的一个ODE-Net用于根据外部输入对隐状态的导数进行建模。利用实时求解出的$\boldsymbol h(t)$、外部输入$\boldsymbol x(t)$和当前阶段持续时间$T(t)$，对由L-1中的ODE-Net定义的常微分方程进行积分。
+在L-1层中的一个ODE-Net
+用于根据外部输入对隐状态的导数进行建模。
+利用实时求解出的$\boldsymbol h(t)$、外部输入$\boldsymbol x(t)$和当前阶段持续时间$T(t)$对隐状态导数进行建模。
+% 由L-1中的ODE-Net定义的常微分方程进行积分。
+对L-1中定义的常微分方程进行积分解出的$\boldsymbol h(t)$将作为L-2中两个ODE-Net的输入，并分别用于求解稳定系统输出项和非稳定系统输出项，表示为$\boldsymbol y(t)=[\boldsymbol y_s(t), \boldsymbol y_{ns}(t)]$。
+% 最终，可以解出任一时间点$t_x$下的预测结果。
 
-% 图.~\ref{fig:H_ode} illustrates the connections between three ODE-nets within H-ODE. The L-1 contains one ODEnet to model the derivative of
-% %The high level part of H-ODEnet is an ODE-net that 
-% latent state according to external inputs. By integrating the ODE equation with ODE-net of L-1, the solved $\boldsymbol h(t)$, combined with external inputs $\boldsymbol x(t)$ and duration of current stage $T(t)$, are fed into L-2 ODE-nets to model the derivatives of stationary and
+% 图.~\ref{fig:H_ode} illustrates the connections between three ODE-Nets within H-ODE. The L-1 contains one ODE-Net to model the derivative of
+% %The high level part of H-ODE-Net is an ODE-Net that 
+% latent state according to external inputs. By integrating the ODE equation with ODE-Net of L-1, the solved $\boldsymbol h(t)$, combined with external inputs $\boldsymbol x(t)$ and duration of current stage $T(t)$, are fed into L-2 ODE-Nets to model the derivatives of stationary and
 % %the stationary system outputs and 
 % non-stationary system outputs, denoted as $\boldsymbol y(t)=[\boldsymbol y_s(t), \boldsymbol y_{ns}(t)]$ respectively. The predictions at arbitrary time points $t_x$ are solved in the end. 
 %and the low-level part consists of 
-%and only one particular H-ODEnet corresponding to $s(t)$ may be utilized to make prediction at time point $t$.
-%To utilize one model to predict a system involving the non-stationary and stationary process simultaneously, we propose a hierarchical ODE-net whose three ODE-nets predict the derivative of latent state, the derivative of stationary system outputs and the derivative of non-stationary system outputs respectively.
+%and only one particular H-ODE-Net corresponding to $s(t)$ may be utilized to make prediction at time point $t$.
+%To utilize one model to predict a system involving the non-stationary and stationary process simultaneously, we propose a hierarchical ODE-Net whose three ODE-Nets predict the derivative of latent state, the derivative of stationary system outputs and the derivative of non-stationary system outputs respectively.
 
-其中，L-1中的ODEnet为稳定结构，由门控循环单元(GRU)网络实现\cite{Demeester2019}:
-
-% The ODEnet in L-1
+其中，L-1中的ODE-Net为第三章所述的稳定结构，由门控循环单元(GRU)网络实现:
+% The ODE-Net in L-1
 % %for modeling latent state 
 % is stationary and implemented by stationary Gate Recurrent Unit (GRU) network\cite{Demeester2019}:
 \begin{equation}
     \label{equ:dh}
-    \frac{d \boldsymbol{h}(t)}{\tau} = \frac{1}{\mu(t)}*\left[\text{GRU}(\boldsymbol{x}(t), \boldsymbol{h}(t),\text{sigmoid}(T(t)), \theta^\mathcal{H}_{\sigma(t)}) - \boldsymbol{h}(t)\right]
+    \frac{d \boldsymbol{h}(t)}{dt} = \frac{1}{\mu(t)}*\left[\text{GRU}(\boldsymbol{x}(t), \boldsymbol{h}(t),\text{sigmoid}(T(t)), \theta^\mathcal{H}_{\sigma(t)}) - \boldsymbol{h}(t)\right]
 \end{equation}
 其中$\mu(t)$表示原始数据集的平均采样间隔均值。
 稳定的GRU网络将预测的隐状态变量$\boldsymbol{h}(t)$的变化表示为稳定过程，并将其上下界限制在$(-1,1)$范围内。
@@ -195,81 +218,83 @@ $\boldsymbol \zeta$表示利用数据集训练的模型可学习参数。
 
 % unit root problem and bring in long-term prediction.
 % potentially linearly growing state is ill-suited for modeling stationary time series
-%The low-level ODE-nets
+%The low-level ODE-Nets
 
-L-2中的两个ODEnet被分别设计用于建模稳定和非稳定的系统输出。
-其中用于建模非稳定输出的网络采用非稳定增量形式预测输出$y_{ns}(t)$ :
+L-2中的两个ODE-Net被分别用于建模稳定和非稳定的系统输出。
+其中被用于建模非稳定输出的导数网络采用非稳定增量形式预测输出$y_{ns}(t)$ :
 
-% The two ODEnets in L-2 are designed to %is utilized to model the instant derivatives for system outputs in using two ODEnets 
+% The two ODE-Nets in L-2 are designed to %is utilized to model the instant derivatives for system outputs in using two ODE-Nets 
 % cover both stationary and non-stationary cases.
 % % In this study, consumed power of cooling system $y_1(t)$ and cooling capacity $y_2(t)$ are categorized as stationary outputs, $\boldsymbol{y}_{s}(t)=[y_1(t), y_2(t)]^T$.
 % % The inlet temperature of cooling system $y_3(t)$ is categorized as non-stationary outputs, $\boldsymbol{y}_{ns}(t)=[y_3(t)]^T$. 
 % The one for $y_{ns}(t)$ is employed by implementing non-stationary incremental neural network:
-% %One of low-level ODE-nets, implemented by an non-stationary incremental neural network, is employed to model non-stationary outputs:
+% %One of low-level ODE-Nets, implemented by an non-stationary incremental neural network, is employed to model non-stationary outputs:
 \begin{equation}
     \label{equ:dyns}
-    \frac{d \boldsymbol{y}_{ns}(t)}{\tau} = \text{NN}(\boldsymbol{x}(t), \boldsymbol{h}(t), \text{sigmoid}(T(t)), \theta^{\mathcal{Y}^{ns}}_{\sigma(t)})
+    \frac{d \boldsymbol{y}_{ns}(t)}{dt} = \text{NN}(\boldsymbol{x}(t),\boldsymbol{y}_{ns}(t), \boldsymbol{h}(t), \text{sigmoid}(T(t)), \theta^{\mathcal{Y}^{ns}}_{\sigma(t)})
 \end{equation}
 
-另一个ODEnet类似于L-1中的ODEnet，由一个稳定的GRU模型构建，用于预测系统的稳定输出$y_s$：
-% Another ODEnet for $y_s$ is similar with the one in L-1, which is implemented by a stationary GRU module
+另一个ODE-Net类似于L-1中的ODE-Net，由稳定的GRU模型构建，用于预测系统的稳定输出$y_s(t)$：
+% Another ODE-Net for $y_s$ is similar with the one in L-1, which is implemented by a stationary GRU module
 % to model stationary outputs:
 \begin{equation}
     \label{equ:dys}
-    \frac{d \boldsymbol{y}_{s}(t)}{\tau} = \frac{1}{\mu(t)}*\left[\text{GRU}(\boldsymbol{x}(t), \boldsymbol{h}(t), \text{sigmoid}(T(t)), \theta^{\mathcal{Y}^{s}}_{\sigma(t)}) - \boldsymbol{y}_\sigma(t)\right]
+    \frac{d \boldsymbol{y}_{s}(t)}{dt} = \frac{1}{\mu(t)}*\left[\text{GRU}(\boldsymbol{x}(t),\boldsymbol{y}_s(t), \boldsymbol{h}(t), \text{sigmoid}(T(t)), \theta^{\mathcal{Y}^{s}}_{\sigma(t)}) - \boldsymbol{y}_s(t)\right]
 \end{equation}
 
-对于L-1和L-2中的ODE-net，均利用系统处于当前阶段的持续时间$T(t)$作为特征输入，辅助估计 $\boldsymbol{y}(t)$的导数。
+对于L-2中的两个ODE-Net，均将系统处于当前阶段的持续时间$T(t)$作为特征输入，辅助估计 $\boldsymbol{y}(t)$的导数。
 $\{\theta_i^{\mathcal{Y}^{ns}},\theta_i^{\mathcal{Y}^{ns}},\theta_i^{\mathcal{H}}\}_{i=1}^N$是模型中的可学习参数。
 % In both L-1 and L-2, duration of current stage $T(t)$, accumulated since the start of each stage, is chosen as a feature to estimate the derivatives of $\boldsymbol{y}(t)$. 
 % $\{\theta_i^{\mathcal{Y}^{ns}},\theta_i^{\mathcal{Y}^{ns}},\theta_i^{\mathcal{H}}\}_{i=1}^N$ are learnable parameters.
 %because the periodic system has similar behaviors in the same stages and similar time points.
 % employed to model stationary outputs and non-stationary outputs separately:
 % hypothesize that it is there- fore more naturally suited to deal with stationary data.
-% Two low-level ODE-nets are 
+% Two low-level ODE-Nets are 
 
-一般情况下，从传感器测量得到的数据通常是离散的、带有一定比例的不规则分布的缺失值。例如可能存在一个时刻$i$，两区间$t_i-t_{i-1} \neq t_{i+1}-t_{i}$, or $\boldsymbol x(t_i)$i, 或者存在$\boldsymbol x(t_i)$存在，而$\boldsymbol y(t_i)$缺失，并在数据集中表示为\textit{Null}。
-本章遵循\cite{zhong2019symplectic,kidger2020neural}中的形式，将离散的控制输入序列连续化并作为ODEnet的输入。
-因此需要实现面向离散序列输入的连续化插值方法，将离散和采样不规则的数据格式转换为连续时间格式。
-为了实现该目标，有多种方法可以实现，如高斯过程\cite{li2016scalable}，核方法\cite{shukla2018interpolation}或样条插值\cite{kidger2020neural}。本章参考\cite{kidger2020neural}采用三次样条插值方法。
+一般情况下，从传感器测量得到的数据通常是离散的且带有不规则分布的缺失值。例如可能存在某一时刻$i$，两区间$t_i-t_{i-1} \neq t_{i+1}-t_{i}$或者存在$\boldsymbol x(t_i)$存在，而$\boldsymbol y(t_i)$缺失的情况。
+本章采用第三章\ref{sec:3_interpolation_training}中介绍的并行可微插值方法，将离散的控制输入序列插值为连续时间信号并作为ODE-Net的输入。
+% 因此需要实现面向离散序列输入的连续化插值方法，将离散和采样不规则的数据格式转换为连续时间格式。
+% 为了实现该目标，有多种方法可以实现，如高斯过程\cite{li2016scalable}，核方法\cite{shukla2018interpolation}或样条插值\cite{kidger2020neural}。本章参考\cite{kidger2020neural}采用三次样条插值方法。
 % Generally speaking, data samples got from sensory measure system are commonly discrete and irregularly distributed with proportional missing values. 
 % It may exist one timestamp $i$, the interval $t_i-t_{i-1} \neq t_{i+1}-t_{i}$, or $\boldsymbol x(t_i)$ exists while $\boldsymbol y(t_i)$ is missing and be represented as \textit{Null} in dataset.
 % % As an instance, some
-% ODEnet takes only continuous data as input, therefore, the processing module is in charge of implementing interpolation methods to transfer discrete and irregular data samples to continuous format. There are many options, such as Gaussian processes\cite{li2016scalable}, kernel methods\cite{shukla2018interpolation} or natural cubic spline \cite{kidger2020neural}, appropriate interpolation method is free to apply in consideration of concrete situations.
+% ODE-Net takes only continuous data as input, therefore, the processing module is in charge of implementing interpolation methods to transfer discrete and irregular data samples to continuous format. There are many options, such as Gaussian processes\cite{li2016scalable}, kernel methods\cite{shukla2018interpolation} or natural cubic spline \cite{kidger2020neural}, appropriate interpolation method is free to apply in consideration of concrete situations.
 
 
 
 % \subsection{基于循环神经网络的初始状态编码}
-\subsection{自跳跃常微分方程网络}
-\label{sec:dfa-odenet}
+\subsection{微分方程状态空间定义及阶段自转移}
+% \label{sec:dfa-odenet}
 % \subsection{状态定义}
-部分工业系统存在多阶段、非确定和多物理过程混合等复杂特性。对这类系统进行高精度、高鲁棒的建模是一项具有挑战性的任务。
-在本章研究中，为了能够使模型准确地预测多阶段系统的阶段转换时刻以及预测系统输出，本章提出了AJ-ODEnet模型。
-具体地，我们首先根据系统先验知识构建系统的多阶段转换过程，对于每个阶段引入一个H-ODEnet以学习系统在该阶段内的动态特性，并对训练集中的序列数据进行阶段变量标注，引入阶段转换预测器学习每个阶段的持续时间。
-在测试阶段，阶段预测器可以作为不同H-ODENet的的调节器，实现不同阶段之间的自动转移。
-
-图~\ref{fig:AJ_ODEs}简要介绍了AJ-ODEnet的主要组件及其结构。
+% 部分工业系统存在多阶段、非确定和多物理过程混合等复杂特性。对这类系统进行高精度、高鲁棒的建模是一项具有挑战性的任务。
+% 在本章研究中，为了能够使模型准确地预测多阶段系统的阶段转换时刻以及预测系统输出，本章提出了AJ-ODE-Net模型。
+为了使辨识模型准确地预测周期跳变系统中的阶段转换以及建模各个阶段下的系统输出，本节在H-ODE-Net基础上提出了自跳跃常微分方程网络模型。
+具体地，我们首先利用系统先验知识构建系统的多阶段转换过程，对于每个阶段引入一个H-ODE-Net以学习系统在该阶段内的动态特性，通过对训练集中的序列数据进行阶段变量标注，可以定向地训练各个H-ODE-Net的参数。
+同时，在预测框架中引入阶段转换预测器学习预测每个阶段的持续时间。
+在测试阶段，阶段预测器可以作为不同H-ODE-Net的调节器，实现不同阶段之间的自动转移。
+图~\ref{fig:AJ_ODEs}简要介绍了AJ-ODE-Net的主要组件及其结构。
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/chapter4/Jump-ODEnet.pdf}
-    \caption{AJ-ODEnet 模型结构}
+    \includegraphics[width=0.9\textwidth]{figures/chapter4/Jump-ODEnet.pdf}
+    \caption{AJ-ODE-Net 模型结构}
     \label{fig:AJ_ODEs}
 \end{figure}
-在图\ref{fig:AJ_ODEs}中，AJ-ODEnet模型嵌入了$N$个H-ODEnet模块，根据状态变量$\sigma(t)$，在同一时刻只采用其中一个H-ODEnet模块用于系统预测。
-。相比于普通的ODEnet仅建模隐状态的导数。
-AJ-ODEnet将隐状态扩展为四个参数，从而覆盖连续时间跳变系统中输出变量变化以及阶段变量的变化。
-其中，隐状态的计算和更新是连续时间域下的，表示为$\boldsymbol{S}(t) = [\boldsymbol h(t), \boldsymbol y(t), \sigma(t), T(t)]$，
-其中四项分别为\textbf{系统隐状态}、\textbf{预测的系统输出}、\textbf{系统所处的当前阶段}和\textbf{处于当前阶段已经持续的时间}。
-AJ-ODEnet可以看作是ODEnet的扩展形式，
-计算更新过程可以视为给定时间点$t$ 和无穷小时间步长$\tau$计算微分方程的解，
-如\equref{equa:states_updates}所示:
 
-% For attention, even though there are several ODEnets as dynamical representations for available stages, only one ODEnet is active during processing, appointed by stage predictor. Therefore, AJ-ODEnet can still be seen as an extended version of ODEnet. Different to ODEnet shown in 式 \eqref{equ:ode_net} , which contains only self-governed hidden state predicted from input, AJ-ODEnet extend the hidden state to four arguments to cover enough dynamical variations in the system. Specifically, the calculation and update of hidden states are continuous-time processes, denoted by $\boldsymbol{S}(t) = [\boldsymbol h(t), \boldsymbol y(t), \sigma(t), T(t)]$, represent the \textbf{predicted hidden states}, \textbf{predicted system outputs}, \textbf{current stage} and \textbf{duration of current stage} respectively. %given current timestamp. 
+在图\ref{fig:AJ_ODEs}中，AJ-ODE-Net模型嵌入了$N$个H-ODE-Net模块，根据状态变量$\sigma(t)\in \{0,\cdots,N-1\}$，在同一时刻只使用一个H-ODE-Net用于系统预测。
+相比于普通的ODE-Net仅建模系统隐状态的导数，
+AJ-ODE-Net将隐状态扩展为四个参数，即$\boldsymbol{S}(t) = [\boldsymbol h(t), \boldsymbol y(t), \sigma(t), T(t)]$，
+其中四项分别为\textbf{系统隐状态}、\textbf{预测的系统输出}、\textbf{系统所处的当前阶段}和\textbf{处于当前阶段已经持续的时间}。
+这种定义形式能够覆盖连续时间跳变系统中建模系统输出变化以及阶段变量变化所需的全部信息。
+AJ-ODE-Net可以看作是ODE-Net的扩展形式，其状态的计算与更新均在连续时间域下进行。
+给定时间点$t$和无穷小时间步长$\tau$，状态更新方程
+如\equref{equ:stage_trans_predic}所示:
+
+% For attention, even though there are several ODE-Nets as dynamical representations for available stages, only one ODE-Net is active during processing, appointed by stage predictor. Therefore, AJ-ODE-Net can still be seen as an extended version of ODE-Net. Different to ODE-Net shown in 式 \eqref{equ:ode_net} , which contains only self-governed hidden state predicted from input, AJ-ODE-Net extend the hidden state to four arguments to cover enough dynamical variations in the system. Specifically, the calculation and update of hidden states are continuous-time processes, denoted by $\boldsymbol{S}(t) = [\boldsymbol h(t), \boldsymbol y(t), \sigma(t), T(t)]$, represent the \textbf{predicted hidden states}, \textbf{predicted system outputs}, \textbf{current stage} and \textbf{duration of current stage} respectively. %given current timestamp. 
 
 % The updating can be seen as a differential process given time point $t$ and infinitesimal time step $\tau$, as illustrated by 式~(\ref{equa:states_updates}):
 
 \begin{align}
-\label{equa:states_updates}
+% \label{equa:states_updates}
 \boldsymbol S(t+dt)=\left[
 \begin{aligned}
 &\left .\begin{aligned}
@@ -294,21 +319,21 @@ T(t)+dt, \quad &\text{else}
 \right.\\
 \end{aligned}
 \right]
+\label{equ:stage_trans_predic}
 \end{align}
-\label{sec:stage_trans_predic}
 
-对于复杂的周期性多阶段系统而言，很难用统一的模型拟合系统的所有阶段，在长期预测问题中该问题更加明显。
-对于周期稳定、各个阶段持续时间不变的系统，可以将系统的运行轨迹平均分解为若干区间，分别学习各阶段内的系统动态特性。
-但是，更普遍的情况是，系统中各阶段的持续时间长度会受到系统内部和外部多个变量的影响。为了使模型适用于系统中各阶段持续时间不稳定的情况， 本章引入了“持续时间估计器”，通过学习的方式，在预测时预估每个阶段的持续时间，并辅助模型判断是否应切换到下一阶段。
+% 对于复杂的周期多阶段系统而言，很难用统一的模型拟合系统的所有阶段，在长期预测问题中该问题更加明显。
+对于周期稳定、各个阶段持续时间不变的系统，可以将系统的运行过程分解为若干区间，分别学习各阶段内的系统动态特性。
+但是，更普遍的情况是，系统中各阶段的持续时间会受到系统内部和外部多个变量的影响。
+为了使模型适用于系统中各阶段持续时间不稳定的情况，本章引入“持续时间估计器”，通过学习的方式，在预测时预估每个阶段的持续时间，并辅助模型判断是否应切换到下一阶段。
 
-具体地，我们结合周期性多阶段系统中的先验知识，可以很容易地设计一个状态转换过程描述系统在各个阶段之间的转换。
+具体地，我们结合周期性多阶段系统中的先验知识，可以很容易地设计描述系统在各个阶段之间的状态转换过程。
 % 基于该AJ模型，可以建立一个基于持续时间估计器的阶段转换预测器。
-从给定的数据集中学习相邻阶段之间的转换规则，使系统在运行时切换到不同的H-ODEnet进行预测，将系统输出预测和阶段识别进行解耦。
-
-对于在$t$时刻的连续时间状态$\boldsymbol{S}(t) = [\boldsymbol{h}^T(t), \boldsymbol{y}^T(t), T(t), \sigma(t)]^T$ ， 
+% 从给定的数据集中学习相邻阶段之间的转换规则，使系统在运行时切换到不同的H-ODE-Net进行预测，将系统输出预测和阶段识别进行解耦。
+对于$t$时刻的连续时间状态$\boldsymbol{S}(t)$ ， 
 $\sigma(t)\in\{0，\dots,N-1\}$表示系统当前所处阶段，$T(t)$表示系统处于阶段$\sigma(t)$的持续时间。
 
-对于\equref{sec:stage_trans_predic}所述的状态演化过程，本章基于多层感知器实现了与当前阶段变量${\sigma(t)}$绑定的持续时间估计器$\hat{\tau}_{{\sigma(t)}}$来预测当前阶段的持续时间。预测器的输入为当前隐状态$\boldsymbol{h}(t)$和外部输入$\boldsymbol{x}(t)$:
+对于\equref{equ:stage_trans_predic}描述的状态演化过程，本章基于多层感知器实现了与当前阶段变量${\sigma(t)}$绑定的持续时间估计器$\hat{\tau}_{{\sigma(t)}}$来预测当前阶段的最终持续时间。预测器的输入为当前隐状态$\boldsymbol{h}(t)$和外部输入$\boldsymbol{x}(t)$:
 % 对于系统运行过程中可能出现的每个阶段$\sigma(t)$，基于多层感知器分别构建持续时间预测器，预测器的输入为当前隐状态$\boldsymbol{h}(t)$和外部输入$\boldsymbol{x}(t)$。
 % $\hat{\tau}_{\sigma(t)}$为持续时间估计器预估的$\sigma(t)$阶段将会持续的时间。
 \begin{equation}
@@ -319,14 +344,14 @@ $\sigma(t)\in\{0，\dots,N-1\}$表示系统当前所处阶段，$T(t)$表示系�
 % % 图.re.~\ref{fig:dt_label} illustrates the predicting and supervised signals of duration time predictors.
 % %the accumulative duration of current stage satisfies 
 % $T(t)\geq\hat{\tau}_{\sigma(t)}(\boldsymbol{h}(t),\boldsymbol{x}(t))$, the model will switch to the next stage $(\sigma(t)+1)\text{ mod } N$ and reset $T(t)$ to zero.
-\subsection{基于编码器解码器结构的微分方程网络初值估计与序列预测}
-\label{sec:encoder_decoder}
+\section{基于编码器解码器结构的微分方程网络初值估计与序列预测}
+\label{sec:4_encoder_decoder}
 % 求解ODE方程前，需要确定初值。
-在周期跳变系统的开环预测问题中，确定系统当前所处的相位，即识别当前所处阶段以及当前阶段已经持续的时间，是极其重要的。
+在周期跳变系统的开环预测问题中，确定系统当前所处的相位，包括识别当前系统所处阶段以及当前阶段已经持续的时间是极其重要的。
 % Meanwhile, the observation space of complicated system is always incomplete, subject to the limitation of monitoring techniques. Thus, to make accurate prediction, the model needs to 
 % infer the uncertain information by embedding the historical trajectories in the initial state.
 与此同时，受限于测量技术及成本的限制，复杂工业系统的观测空间往往是不完备的。因此，为了实现精确的预测，模型需要对系统的非确定性进行推理。
-本节将介绍如何根据给定条件范围下的序列数据推断系统的非确定性信息，并作为求解AJ-ODEnet所需的初始状态。
+本节将介绍如何根据给定条件范围下的序列数据推断系统的非确定性信息，并作为求解AJ-ODE-Net所需的初始状态。
 
 % 在对周期性多阶段系统进行长期预测时，确定系统当前的相位是至关重要的，包括确定系统当前处于哪个阶段以及当前阶段的持续时间。
 % 同时，受系统观测空间的限制，建模预测复杂系统的可用数据大多是局部观测数据，系统的部分指标量是不可知的。
@@ -338,38 +363,40 @@ $\sigma(t)\in\{0，\dots,N-1\}$表示系统当前所处阶段，$T(t)$表示系�
 % To make accurate prediction, the model need to 
 % %access historical system trajectories and 
 % infer the uncertain information by embedding the historical trajectories in the initial state.
-% % In the meanwhile, to make accurate prediction for high-order partially observed system with long time delay, AJ-ODEnet need to access historical information, which can be achieved by embedding the historical system trajectories in the initial state.
-% Furthermore, the proposed H-ODEnet only models the derivatives of system outputs, $\dot{\boldsymbol{y}}(t)$,
-% % It requires the initial system outputs when H-ODEnet is solved.
-% the initial system outputs are required to be embedded in the initial state when solving H-ODEnet.
+% % In the meanwhile, to make accurate prediction for high-order partially observed system with long time delay, AJ-ODE-Net need to access historical information, which can be achieved by embedding the historical system trajectories in the initial state.
+% Furthermore, the proposed H-ODE-Net only models the derivatives of system outputs, $\dot{\boldsymbol{y}}(t)$,
+% % It requires the initial system outputs when H-ODE-Net is solved.
+% the initial system outputs are required to be embedded in the initial state when solving H-ODE-Net.
 % % The initial system outputs should also be embedded in the initial state.
 
-本章遵循~\cite{du2020multivariate,yuan2020dual}中引入的编码器-解码器框架，使用两个AJ-ODEnets
-分别构建用于编码历史系统轨迹的编码器和预测系统输出的解码器，如图\ref{fig:AJ-ODEnet_framework}。
-模型输入的时间序列数据包括条件范围$\{{\boldsymbol{Y}}_{t_{1}:t_{I}}, {\boldsymbol {X}}_{t_{1}:t_{I}}\}$和预测范围$\{{\boldsymbol {X}}_{t_{I+1}:t_{L}}\}$。
-% The whole AJ-ODEnet framework is shown in 图.~\ref{fig:AJ-ODEnet_framework}, illustrates how data flows through the modules. 
+本章遵循编码器-解码器框架~\cite{du2020multivariate,yuan2020dual}，使用两个AJ-ODE-Nets
+分别构建用于编码历史系统轨迹的编码器和预测系统输出的解码器，
+% 模型输入的时间序列数据包括条件范围下的系统输入序列和系统输出序列$\{{\boldsymbol{Y}}_{t_{1}:t_{I}}, {\boldsymbol {X}}_{t_{1}:t_{I}}\}$和预测范围下的系统输入序列$\{{\boldsymbol {X}}_{t_{I+1}:t_{L}}\}$。
+如图\ref{fig:AJ-ODE-Net_framework}，首先
+给定条件范围内的系统输入序列和系统输出序列$\{{\boldsymbol{Y}}_{t_{1}:t_{I}}, {\boldsymbol {X}}_{t_{1}:t_{I}}\}$，根据初始状态$\boldsymbol S(t_1)$求解AJ-ODE-Net编码器的常微分方程，得到$t_I$时刻的系统状态$\boldsymbol S(t_I)=[\boldsymbol h(t_I), \boldsymbol y(t_I), s(t_I), T(t_I)]^T$。
+进一步地，将$\boldsymbol S(t_I)$作为预测阶段AJ-ODE-Net解码器中常微分方程网络的初始状态，在给定预测范围系统外部输入$\{{\boldsymbol {X}}_{t_{I}:t_{I+L}}\}$下，估计该范围内隐状态的导数，进而预测系统输出。
+% The whole AJ-ODE-Net framework is shown in 图.~\ref{fig:AJ-ODE-Net_framework}, illustrates how data flows through the modules. 
 \begin{figure*}[htb]
     \centering
     \includegraphics[width=1.0\linewidth]{figures/chapter4/Jump-ODEnet_flow.pdf}
-     \caption{基于AJ-ODEnet的编码器-解码器预测框架}
-    % \caption{The data flow in AJ-ODEnet framework}
-    \label{fig:AJ-ODEnet_framework}
+     \caption{基于AJ-ODE-Net的编码器-解码器预测框架}
+    % \caption{The data flow in AJ-ODE-Net framework}
+    \label{fig:AJ-ODE-Net_framework}
 \end{figure*}
-
-由于ODEnet中求解微分方程需要连续信号，需要对原始的离散序列数据处理转换为连续时间序列，利用编码器对条件范围内的数据进行编码，构建求解AJ-ODEnet解码器所需的初始状态$\boldsymbol S(t_I)$。
+% 由于ODE-Net中求解微分方程需要连续信号，需要对原始的离散序列数据处理转换为连续时间序列，利用编码器对条件范围内的数据进行编码，构建求解AJ-ODE-Net解码器所需的初始状态$\boldsymbol S(t_I)$。
 % be calculated in the end by solving 
-% AJ-ODEnet encoder for the decoding phase. 
-%conditional data range in $[t_1,t_I]$ contains the operational information of system and the initial state $\boldsymbol S(t_I)$ for decoding phase will be calculated at the end of conditional range by solving AJ-ODEnet encoder. 
+% AJ-ODE-Net encoder for the decoding phase. 
+%conditional data range in $[t_1,t_I]$ contains the operational information of system and the initial state $\boldsymbol S(t_I)$ for decoding phase will be calculated at the end of conditional range by solving AJ-ODE-Net encoder. 
 
-在条件范围内，根据初始状态$\boldsymbol S(t_1)$，求解AJ-ODEnet编码器对应的常微分方程，可以得到$t_I$时刻的状态$\boldsymbol S(t_I)=[\boldsymbol h(t_I), \boldsymbol y(t_I), s(t_I), T(t_I)]^T$。
-然后在预测阶段，基于AJ-ODEnet的解码器将会根据初始状态${\boldsymbol{S}}_I$和系统外部输入$\{{\boldsymbol {X}}_{t_{I}:t_{I+L}}\}$估计预测范围下隐状态的导数，进而预测系统输出。
 
-具体来说，在条件范围$[t_1, t_I]$的编码阶段，我们将连续时间信号$\boldsymbol y(t)$和$\boldsymbol x(t)$合并起来作为AJ-ODEnets编码器的输入，生解码器所需的初始状态，如式~\eqref{equa:initial_state}所示。
-% % Expect for $\boldsymbol h(t)$, the rest three parts are unrelated to the encoder AJ-ODE-nets because they can be estimated from data in conditioning range directly.
-% Specifically, in encoding phase for conditional range $[t_1, t_I]$, we concatenate the continuous time signal $\boldsymbol y(t)$ and $\boldsymbol x(t)$ as the inputs of AJ-ODE-nets encoder to generate initial state of predictive decoder ODE-nets, as shown in 式~\eqref{equa:initial_state}.
+% 然后在预测阶段，基于AJ-ODE-Net的解码器将会根据初始状态${\boldsymbol{S}}_I$和系统外部输入$\{{\boldsymbol {X}}_{t_{I}:t_{I+L}}\}$估计预测范围下隐状态的导数，进而预测系统输出。
+
+具体地，在条件范围$[t_1, t_I]$的编码阶段，本节将连续时间信号$\boldsymbol y(t)$和$\boldsymbol x(t)$合并作为AJ-ODE-Nets编码器的输入，如式~\eqref{equa:initial_state}所示。
+% % Expect for $\boldsymbol h(t)$, the rest three parts are unrelated to the encoder AJ-ODE-Nets because they can be estimated from data in conditioning range directly.
+% Specifically, in encoding phase for conditional range $[t_1, t_I]$, we concatenate the continuous time signal $\boldsymbol y(t)$ and $\boldsymbol x(t)$ as the inputs of AJ-ODE-Nets encoder to generate initial state of predictive decoder ODE-Nets, as shown in 式~\eqref{equa:initial_state}.
 
 \begin{equation}
-\boldsymbol{\tilde S}(t_I)=\text{ODESolve}(\text{Encoder AJ-ODE-nets},\boldsymbol S(t_1)
+\boldsymbol{\tilde S}(t_I)=\text{ODESolve}(\text{AJ-ODE-Nets 编码器},\boldsymbol S(t_1)
 , 
 \left [
 \begin{aligned} 
@@ -387,8 +414,8 @@ $
 $。 
 根据求解得到的
 $\boldsymbol{\tilde{S}}(t_I)=[\boldsymbol{\tilde h}(t_I), \boldsymbol{\tilde y}(t_I), \tilde s(t_I), \tilde T(t_I)]^T$。
-可以获得状态$\boldsymbol{S}(t_I)=[\boldsymbol{h}(t_I), \boldsymbol{y}(t_I), \tilde s(t_I), \tilde T(t_I)]^T$
-$\boldsymbol{h}(t_I)$ 是从均值为$\boldsymbol{\tilde h}(t_I)$，协方差矩阵为单位矩阵$\boldsymbol I$的对角多元高斯分布中采样得到的。
+可以获得状态$\boldsymbol{S}(t_I)=[\boldsymbol{h}(t_I)$，$ \boldsymbol{y}(t_I)$，$ \tilde s(t_I)$，$ \tilde T(t_I)]^T$。
+其中$\boldsymbol{h}(t_I)$ 是从均值为$\boldsymbol{\tilde h}(t_I)$，协方差阵$\boldsymbol I$的对角多元高斯分布中采样得到的。
 % where the initial state is defined as:
 % $
 % \boldsymbol S(t_1)=\left[\boldsymbol h(t_1) = \boldsymbol 0,\boldsymbol y(t_1),T(t_1)=0,s(t_1)\right ]^T
@@ -396,55 +423,58 @@ $\boldsymbol{h}(t_I)$ 是从均值为$\boldsymbol{\tilde h}(t_I)$，协方差矩
 % % The initial system outputs, $\boldsymbol y(t_0)$ are estimated from nature spline interpolation.
 % According to the solved $\boldsymbol{\tilde{S}}(t_I)=[\boldsymbol{\tilde h}(t_I), \boldsymbol{\tilde y}(t_I), \tilde s(t_I), \tilde T(t_I)]^T$, the state $\boldsymbol{S}(t_I)$ is obtained by sampling $\boldsymbol{h}(t_I)$ from a diagonal multivariate normal distribution whose mean and covariance matrix are $\boldsymbol{\tilde h}(t_I)$ and identity matrix $\boldsymbol I$.
 %and copying $\boldsymbol{\tilde y}(t_I), {\tilde s}(t_I), {\tilde T}(t_I)$.
-由于在网络传播过程中存在采样操作。为了构建用于梯度传导的计算图以及减小训练时梯度估计的方差，上述采样过程使用了重参数化法\cite{kingma2013auto}。
+由于在网络传播过程中存在采样操作，为了构建用于梯度传导的计算图以及减小训练时梯度估计的方差，上述采样过程使用了重参数化法\cite{kingma2013auto}。
+% 本节设计AJ-ODE-Nets编码器的
+对于式\ref{equa:initial_state}中的求解过程，
+其最重要的目的是估计隐变量$\boldsymbol h(t_I)$。上述从概率分布中采样的方式相当于将$\boldsymbol h(t)$视为条件序列生成模型中的隐变量，从过去的系统输出和输入中推测隐变量的近似状态后验分布，并从分布中进行采样以重构未来的系统输出\cite{10.5555/3454287.3454765,Hafner2019}。
 
-本节设计AJ-ODEnets编码器的最重要的目的是估计隐变量$\boldsymbol h(t_I)$。上述从概率分布中采样的方式相当于将$\boldsymbol h(t)$视为条件序列生成模型中的隐变量，从过去的系统输出和输入中推测隐变量的近似状态后验\cite{10.5555/3454287.3454765,Hafner2019}。
-
-接下来，通过给定解码阶段的初始状态$\boldsymbol S(t_I)$ 和连续时间系统输入$\boldsymbol x(t)$，在$[t_I, t_{I+L}]$范围内求解AJ-ODEnet解码器对应的常微分方程，可以得到预测范围内的隐变量状态$\boldsymbol S(t)$，其中包括系统在任意时刻$t_i$的系统输出$\boldsymbol{\hat{y}}(t_i)$：
+接下来，通过给定解码阶段的初始状态$\boldsymbol S(t_I)$ 和预测范围内连续时间系统输入$\boldsymbol x(t)$，在$[t_I, t_{I+L}]$范围内求解AJ-ODE-Net解码器对应的常微分方程，可以得到该范围内的隐变量状态$\boldsymbol S(t)$，其中包括系统在任意时刻$t_i$的系统输出$\boldsymbol{\hat{y}}(t_i)$，进而达到系统预测的目的：
 \begin{equation}
-\boldsymbol {\hat S}(t_{I+L})=\text{ODESolve}(\text{AJ-ODEnet Decoder},\boldsymbol S(t_I)
+\boldsymbol {\hat S}(t_{I+L})=\text{ODESolve}(\text{ AJ-ODE-Net 解码器},\boldsymbol S(t_I)
 , \boldsymbol {x}(t), t_I, t_{I+L})
 \label{equ:decoding}
 \end{equation}
 % With solving the , the predicted system outputs $\boldsymbol \hat{y}(t_i)$ at arbitrary time points $t_i$, where $i\in \{I, I+1, \cdots, I+L\}$
-% When the AJ-ODEnet decoder is being solved 
+% When the AJ-ODE-Net decoder is being solved 
 
 %where $i\in \{I, I+1, \cdots, I+L\}$ corresponds to the predicted indices, 
-%At an arbitrary time point $t_i$, the predicted system outputs $\boldsymbol{\hat{y}}(t_i)$ are also obtained accompanied with solving the AJ-ODEnet decoder.
+%At an arbitrary time point $t_i$, the predicted system outputs $\boldsymbol{\hat{y}}(t_i)$ are also obtained accompanied with solving the AJ-ODE-Net decoder.
 
-% In addition to embedding the system outputs $\boldsymbol y(t)$ in ODE inputs, a slight difference between AJ-ODE-nets encoder and AJ-ODE-nets decoder is that 
+% In addition to embedding the system outputs $\boldsymbol y(t)$ in ODE inputs, a slight difference between AJ-ODE-Nets encoder and AJ-ODE-Nets decoder is that 
 
-AJ-ODEnets编码器和AJ-ODEnets解码器之间有两个区别。首先，系统输入$\boldsymbol x(t)$和输出$\boldsymbol y(t)$都均是编码阶段的输入，而解码器的输入仅包含系统输入$\boldsymbol x(t)$。因此解码器和编码器中H-ODENet的输入层的大小是不一致的。
-其次，对于条件范围下的编码过程来说，由于系统的输入输出数据已知，模型进行阶段转移时，可直接根据系统先验属性得到阶段之间的转换规则，不需要阶段转换预测器进行阶段的自转移。
-对于解码器，由于系统输出$\boldsymbol y(t)$未知，因此需要利用阶段转换预测器进行状态自切换。
-这两个区别表明，在求解初始状态的过程中，编码器不引入阶段转换预测器，而是根据实际的系统输出准确地识别系统当前所处的阶段，并推导出$S(t_I)$，$T(t_I)$ 和$y(t_I)$。因此，初始状态$S(t)$中的$\sigma(t)$和$T(t)$是准确可靠的。
-对于解码器来说，相邻阶段之间的转移是依靠持续时间预测器进行判断，无法保证绝对准确的。在长范围开环预测时会带来较大的累积相位误差。
-\section{模型训练}
-\label{sec:loss_function}
-% AJ-ODEnet describes an ODE equation defined on an increasing continuous-time state $\boldsymbol{S}(t) = [\boldsymbol{h}^T(t), \boldsymbol{y}^T(t), T(t), s(t)]^T$.
+AJ-ODE-Nets编码器和AJ-ODE-Nets解码器之间有两个区别。首先，系统输入$\boldsymbol x(t)$和输出$\boldsymbol y(t)$都均是编码阶段的输入，而解码器的输入仅包含系统输入$\boldsymbol x(t)$。因此解码器和编码器中H-ODE-Net的输入层的大小是同的。
+另外，对于条件范围下的编码过程来说，由于系统的输入输出数据已知，模型进行阶段转移时，可直接根据系统先验得到不同阶段之间的转换位置，不需要阶段转换预测器进行阶段的自转移。
+% 因此，在求解初始状态的过程中，编码器不需要引入阶段转换预测器，而是根据实际的系统输出准确地识别系统当前所处的阶段，
+推导出的初始状态$S(t_I)$中的$\sigma(t_I)$和$T(t_I)$是准确可靠的。
+对于解码器，由于系统输出$\boldsymbol y(t)$未知，因此需要利用式\ref{equ:stage_trans_predic}所示的阶段转换预测器进行状态自切换。
+% 对于解码器来说，
+由于相邻阶段之间的转移是依靠持续时间预测器进行判断，无法保证绝对准确，在长范围开环预测时会带来较大的累积相位误差。
+\section{编码器解码器模型训练}
+\label{sec:4_loss_function}
+% AJ-ODE-Net describes an ODE equation defined on an increasing continuous-time state $\boldsymbol{S}(t) = [\boldsymbol{h}^T(t), \boldsymbol{y}^T(t), T(t), s(t)]^T$.
 % In prediction range, system outputs is predicted by solving the ODE equation and extracting the second part of system state, $\boldsymbol{y}^T(t_x)$ at any time $t_x$.
 % The following paragraphs will present detailed definition of continuous-time state and their derivative of time $\hat{\boldsymbol{S}}(t)$.
-利用AJ-ODENet编码器根据条件范围下的序列输入数据获得初始状态后，在预测范围下求解AJ-ODEnet解码器即可得到预测结果$\hat{\boldsymbol{Y}}_{t_{I+1}: t_{I+O}}$。利用数据集中真实的系统输出序列即可通过有监督学习的方式对网络进行端到端的训练。接下来本小节将对损失函数的定义进行介绍。
+利用AJ-ODE-Net编码器根据条件范围下的序列输入数据获得初始状态后，在预测范围下求解AJ-ODE-Net解码器即可得到预测结果$\hat{\boldsymbol{Y}}_{t_{I+1}: t_{I+O}}$。利用数据集中真实的系统输出序列即可通过有监督学习的方式对网络进行端到端的训练，接下来本小节将详细介绍损失函数的定义。
 
 在所述的编码器解码器框架中，待训练的参数包括三部分：$\boldsymbol \zeta=\{\boldsymbol{\Theta}_d, \boldsymbol{\Theta}_e,\boldsymbol{\Phi}\}$
 % After obtaining initial states through the conditional data range,
-% %By solving AJ-ODEnet encoder, the sequential inputs $\boldsymbol{Y}_{t_{1}: t_{I}}, \boldsymbol{X}_{t_{1}: t_{I}}$ is encoded to the initial state, $\boldsymbol{S}\left(t_{I}\right)$, for Prediction-AJ-ODEnet.
-% next, the predicted results of range $ \hat{\boldsymbol{Y}}_{t_{I+1}: t_{I+O}}$ are obtained by solving AJ-ODEnet decoder based on the inputs of the same range: $\boldsymbol{X}_{t_{I}: t_{I+O}}$.
+% %By solving AJ-ODE-Net encoder, the sequential inputs $\boldsymbol{Y}_{t_{1}: t_{I}}, \boldsymbol{X}_{t_{1}: t_{I}}$ is encoded to the initial state, $\boldsymbol{S}\left(t_{I}\right)$, for Prediction-AJ-ODE-Net.
+% next, the predicted results of range $ \hat{\boldsymbol{Y}}_{t_{I+1}: t_{I+O}}$ are obtained by solving AJ-ODE-Net decoder based on the inputs of the same range: $\boldsymbol{X}_{t_{I}: t_{I+O}}$.
 % % Two phases construct the computational graphs based on parameterized neural networks, which will be backpropagated for training.
 % % The complete parameters, $\boldsymbol \zeta=\{\boldsymbol{\Theta}_d, \boldsymbol{\Theta}_e,\boldsymbol{\Phi}\}$, will be trained in end to end manner, including three parts:
 % The complete parameters, $\boldsymbol \zeta=\{\boldsymbol{\Theta}_d, \boldsymbol{\Theta}_e,\boldsymbol{\Phi}\}$, include three parts:
 \begin{itemize}
-    \item $\boldsymbol{\Theta}_e=\{\theta_i^{\mathcal{Y}^{ns}},\theta_i^{\mathcal{Y}^{ns}},\theta_i^{\mathcal{H}}\}_{i=0}^{N-1}$: 在AJ-ODEnet编码器中的$N$个H-ODEnet 
-    \item $\boldsymbol{\Theta}_d=\{\theta_i^{\mathcal{Y}^{ns}},\theta_i^{\mathcal{Y}^{ns}},\theta_i^{\mathcal{H}}\}_{i=0}^{N-1}$: 在AJ-ODEnet解码器中的$N$个H-ODEnet 
-    \item $\boldsymbol{\Phi}=\{\phi_i\}_{i=0}^{N-1}$:  AJ-ODEnet解码器中的$N$个持续时间预测器。
+    \item $\boldsymbol{\Theta}_e=\{\theta_i^{\mathcal{Y}^{ns}},\theta_i^{\mathcal{Y}^{ns}},\theta_i^{\mathcal{H}}\}_{i=0}^{N-1}$: 在AJ-ODE-Net编码器中的$N$个H-ODE-Net 
+    \item $\boldsymbol{\Theta}_d=\{\theta_i^{\mathcal{Y}^{ns}},\theta_i^{\mathcal{Y}^{ns}},\theta_i^{\mathcal{H}}\}_{i=0}^{N-1}$: 在AJ-ODE-Net解码器中的$N$个H-ODE-Net 
+    \item $\boldsymbol{\Phi}=\{\phi_i\}_{i=0}^{N-1}$:  AJ-ODE-Net解码器中的$N$个持续时间预测器。
 \end{itemize}
-为了能够以端到端的方式对上述参数进行训练。需要优化的模型损失函数包括两部分，分别为模型预测系统输出的误差损失$\mathcal{L_P}$和持续时间预测器预测的各阶段持续时间的误差损失$\mathcal{L_{\tau}}$：
+为了能够以端到端的方式对上述参数进行训练，需要优化的模型损失函数包括两部分，分别为模型预测系统输出的误差损失$\mathcal{L_P}$和持续时间预测器预测各阶段持续时间的误差损失$\mathcal{L}_{\tau}$：
 \begin{equation}
-\mathcal{L}(\boldsymbol{\Theta}_e, \boldsymbol{\Theta}_d, \boldsymbol \Phi) = \mathcal{L_P}(\boldsymbol{\Theta}_e, \boldsymbol{\Theta}_d) + \lambda\mathcal{L_{\tau}}(\boldsymbol \Phi)
+\mathcal{L}(\boldsymbol{\Theta}_e, \boldsymbol{\Theta}_d, \boldsymbol \Phi) = \mathcal{L_P}(\boldsymbol{\Theta}_e, \boldsymbol{\Theta}_d) + \lambda\mathcal{L}_{\tau}(\boldsymbol \Phi)
 \end{equation}
-其中$\lambda$是平衡$\mathcal{L_P}$和$\mathcal{L_{\tau}}$的权重参数。
+其中$\lambda$是平衡$\mathcal{L_P}$和$\mathcal{L}_{\tau}$的权重参数。
 
-对于$\mathcal{L_P}$，由于模型将$\boldsymbol h(t_I)$作为隐变量进行后验推断，因此可以采用变分贝叶斯优化的方法，将最大化系统观测输出的证据下界（Evidence lower bound，ELBO）作为模型训练的目标，以近似地最大化系统输出的边际似然\cite{10.5555/3454287.3454765}:
+对于$\mathcal{L_P}$，由于模型将$\boldsymbol h(t_I)$作为隐变量进行后验推断，因此可以采用变分贝叶斯优化方法，将最大化系统观测输出的证据下界（Evidence lower bound，ELBO）作为模型训练的目标，以最大化系统输出边际似然的下界\cite{10.5555/3454287.3454765}:
 % For the part of $\mathcal{L_P}$, by considering $\boldsymbol h(t_I)$ as a latent variables, 
 % %$\mathcal{L_P}$ is the defined as the \textit{Evidence lower bound} on the marginal likelihood of system outputs:
 % we hope to maximize the \textit{Evidence lower bound} (ELBO) on the marginal likelihood of system outputs\cite{10.5555/3454287.3454765}:
@@ -453,26 +483,11 @@ AJ-ODEnets编码器和AJ-ODEnets解码器之间有两个区别。首先，系统
 &\operatorname{ELBO}(\boldsymbol{\Theta}_e,\boldsymbol{\Theta}_d)=-\operatorname{KL}\left[q_{\boldsymbol \Theta_e}(\boldsymbol h({t_I}) \mid\boldsymbol{Y}_{t_{1}: t_{I}}, \boldsymbol{X}_{t_{1}: t_{I}}) \| p\left(\boldsymbol h({t_I})\right)\right]+\\&\mathbb{E}_{\boldsymbol h({t_I}) \sim q_{\boldsymbol \Theta_e}(\boldsymbol h({t_I}) \mid\boldsymbol{Y}_{t_{1}: t_{I}}, \boldsymbol{X}_{t_{1}: t_{I}})}\log p_{\boldsymbol \Theta_d}(\{\boldsymbol y_{t_i}\}_{i=I+1}^{I+L}\mid \boldsymbol h_{t_I},\boldsymbol X_{t_I:t_{I+L}})
 \end{aligned}
 \end{equation}
-在本研究中，我们参考前人的工作~\cite{chen2018neural, 10.5555/3454287.3454765, Yildiz2019}，对隐变量的先验分布和后验分布做出了如下假设。
-我们假设隐变量$p(\boldsymbol{h}(t_I))$的先验分布服从正态分布$\text{Normal}(\boldsymbol{h}(t_I);\boldsymbol 0, \boldsymbol I)$。模型估计的后验分布$q_{\boldsymbol \Theta_e}(\boldsymbol h({t_I}) \mid\boldsymbol{Y}_{t_{1}: t_{I}}, \boldsymbol{X}_{t_{1}: t_{I}})$为对角多元高斯分布。
+本章参考前人工作~\cite{chen2018neural, 10.5555/3454287.3454765, Yildiz2019}，对隐变量的先验分布和后验分布做出了如下假设。
+首先假设隐变量$p(\boldsymbol{h}(t_I))$的先验分布服从正态分布$\mathcal{N}(\boldsymbol{h}(t_I);\boldsymbol 0, \boldsymbol I)$。模型估计的后验分布$q_{\boldsymbol \Theta_e}(\boldsymbol h({t_I}) \mid\boldsymbol{Y}_{t_{1}: t_{I}}, \boldsymbol{X}_{t_{1}: t_{I}})$为对角多元高斯分布。
 由此，KL散度项可以简化为对于$\boldsymbol h(t_I)$的正则项。
-对于解码器部分，我们定义生成模型$p_{\boldsymbol \Theta_d}({\boldsymbol Y}_{I+1: I+L}\mid \boldsymbol h_{t_I},\boldsymbol X_{t_I:t_{I+L}})$为具有固定协方差矩阵的正态分布。
-分布的均值定义为AJ-ODEnet解码器预测出的系统输出。最大化重构似然的期望$\mathbb{E}_{q_{\boldsymbol \Theta_e}(\boldsymbol h_{t_I} \mid\cdots)}\left[\log p_{\boldsymbol \Theta_d}({\boldsymbol Y}_{I+1: I+L}\mid \boldsymbol h_{t_I},\boldsymbol X_{t_I:t_{I+L}})\right]$可以简化为最小化系统输出预测值$\hat{\boldsymbol Y}_{I+1: I+L}$与实际系统输出${\boldsymbol Y}_{I+1: I+L}$之间的$L^2$距离。综上所述，预测系统输出的损失和编码获得隐变量的损失可表示为:
-
-% In this study, we refer to the previous works~\cite{chen2018neural, 10.5555/3454287.3454765, Yildiz2019} and make the following assumptions to regulate the training of loss functions.
-% We assume that the prior distribution of latent state $p(\boldsymbol{h}(t_I))$ obeys $\text{Normal}(\boldsymbol{h}(t_I);\boldsymbol 0, \boldsymbol I)$. 
-% The posterior distribution $q_{\boldsymbol \Theta_e}(\boldsymbol h({t_I}) \mid\boldsymbol{Y}_{t_{1}: t_{I}}, \boldsymbol{X}_{t_{1}: t_{I}})$ is considered as a diagonal multivariate normal distribution whose covariance matrix is an identity matrix. 
-% The KL divergence term could be simplified as a regularization item of $\boldsymbol h(t_I)$.
-% For the decoder part, we define the generative model $p_{\boldsymbol \Theta_d}({\boldsymbol Y}_{I+1: I+L}\mid \boldsymbol h_{t_I},\boldsymbol X_{t_I:t_{I+L}})$ as a normal distribution with a fixed covariance matrix.
-% And the mean of the distribution is defined as the predicted system outputs of AJ-ODEnet decoder.
-% maximizing the expected reconstruction likelihood $\mathbb{E}_{q_{\boldsymbol \Theta_e}(\boldsymbol h_{t_I} \mid\cdots)}\left[\log p_{\boldsymbol \Theta_d}({\boldsymbol Y}_{I+1: I+L}\mid \boldsymbol h_{t_I},\boldsymbol X_{t_I:t_{I+L}})\right]$ could be simplified as minimizing $L^2$ distance between predicted system outputs $\hat{\boldsymbol Y}_{I+1: I+L}$ and real system outputs ${\boldsymbol Y}_{I+1: I+L}$.
-% To sum up, the loss on predicting system outputs and loss on encoding are expressed as:
-% \begin{equation}
-% \begin{aligned}
-% \mathcal{L_P}(\boldsymbol{\Theta}_e,\boldsymbol{\boldsymbol \Theta}_d)&=-\operatorname{ELBO}(\boldsymbol{\Theta}_e,\boldsymbol{\Theta}_d)\\
-% &=||\boldsymbol h(t_I)||^2 + \sum_{i=I+1}^{I+L}\mid\mid\hat{\boldsymbol y}(t_i)-{\boldsymbol y}(t_i)\mid\mid^2
-% \end{aligned}
-% \end{equation}
+对于解码器部分，本节假设生成模型的输出概率分布$p_{\boldsymbol \Theta_d}({\boldsymbol Y}_{I+1: I+L}\mid \boldsymbol h_{t_I},\boldsymbol X_{t_I:t_{I+L}})$为具有固定协方差矩阵的正态分布。
+分布的均值定义为AJ-ODE-Net解码器预测出的系统输出。最大化重构似然的期望$\mathbb{E}_{q_{\boldsymbol \Theta_e}(\boldsymbol h_{t_I} \mid\cdots)}\left[\log p_{\boldsymbol \Theta_d}({\boldsymbol Y}_{I+1: I+L}\mid \boldsymbol h_{t_I},\boldsymbol X_{t_I:t_{I+L}})\right]$可以简化为最小化系统输出预测值$\hat{\boldsymbol Y}_{I+1: I+L}$与实际系统输出${\boldsymbol Y}_{I+1: I+L}$之间的$L-2$距离。综上所述，系统输出预测结果的损失和隐变量推理的损失可表示为:
 \begin{equation}
 \mathcal{L}_{\mathcal{P}}\left(\boldsymbol{\Theta}_{e}, \boldsymbol{\Theta}_{d}\right) =-\operatorname{ELBO}\left(\boldsymbol{\Theta}_{e}, \boldsymbol{\Theta}_{d}\right)
 =\left\|\boldsymbol{h}\left(t_{I}\right)\right\|^{2}+\sum_{i=I+1}^{I+L}\left\|\hat{\boldsymbol{y}}\left(t_{i}\right)-\boldsymbol{y}\left(t_{i}\right)\right\|^{2}
@@ -490,17 +505,17 @@ AJ-ODEnets编码器和AJ-ODEnets解码器之间有两个区别。首先，系统
 %     \mathcal{L_P}(\boldsymbol \Theta) = ||\boldsymbol h(t_I)||^2 + \sum_{x=I+1}^{O}\mid\mid\hat{\boldsymbol y}(t_x)-{\boldsymbol y}(t_x)\mid\mid^2
 % \end{equation}
 \begin{equation}
-    \mathcal{L_{\tau}}(\boldsymbol \Phi) =\sum_{i=I+1}^{I+L} \mid\mid\hat{\tau}_{s(t_i) }(t_i)-\tilde {\tau}(t_i))\mid\mid^2
+    \mathcal{L}_{\tau}(\boldsymbol \Phi) =\sum_{i=I+1}^{I+L} \mid\mid\hat{\tau}_{s(t_i) }(t_i)-\tilde {\tau}(t_i))\mid\mid^2
 \end{equation}
-其中$\tilde {\tau}(t_i)$代表阶段$\sigma(t_i)$的持续时间，
+其中$\tilde {\tau}(t_i)$代表阶段$\sigma(t_i)$的持续时间。
 为了计算$\tilde {\tau}(t_i)$，需要找到$t_i$所处阶段的区间边界$t_l$和$t_r$。
-$t_r$为$[t_i, \infty)$]范围下，满足条件$\sigma(t_r)=\sigma(t_i)$且$\sigma(t_r+dt)\neq \sigma(t_i)$的最小值。
+$t_r$为$[t_i, \infty)$范围下，满足条件$\sigma(t_r)=\sigma(t_i)$且$\sigma(t_r+dt)\neq \sigma(t_i)$的最小值。
 $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\sigma(t_l-dt)\neq \sigma(t_i)$的最大值。
 实际的阶段持续时间即为$\tilde {\tau}(t_i)=t_r-t_l$.
 
 
-完整的网络模型通过Adam优化器进行训练。
-完整的训练算法如算法\ref{alg:training}所示。
+网络模型通过Adam优化器进行训练。
+完整的训练过程如算法\ref{alg:training}所示。
 % where $\tilde {\tau}(t_i)$ represents the duration time of stage $s(t_i)$. 
 % It is determined by finding the minimal $t_r$ in range$[t_i, \infty)$, 
 % which satisfies $s(t_r)=s(t_i)$ and $s(t_r+dt)\neq s(t_i)$, and the maximum $t_l$ in range $(-\infty, t_i]$, which satisfies $s(t_l)=s(t_i)$ and $s(t_l-dt)\neq s(t_i)$.
@@ -510,18 +525,18 @@ $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\si
 % The overall training algorithm is illustrated in Algorithm \ref{alg:training}.
 \floatname{algorithm}{算法}  
 \begin{algorithm*}[]
-\caption{ 基于AJ-ODEnets的编码器-解码器训练过程 }
+\caption{ 基于AJ-ODE-Nets的编码器-解码器训练过程 }
 \label{alg:training}
 \begin{algorithmic}[1]
 \For{每一个训练轮次}
 \For{$k$ steps}
-\State  在训练集$S$中随机抽样一批序列 $\{\boldsymbol{Y}_{1:I+L}, {\boldsymbol {X}}_{1:I+L}\}$.
-\State \text{//}\textit{为了加快训练速度，下面的步骤是并行执行的.}
-\State 给训练数据的各阶段打标签: $s_{t_1:t_{I+L}}$
-\State 使用样条插值来处理离散序列${\boldsymbol {X}}_{1:I+L}$, $\boldsymbol{Y}_{1:I+L}$，生成$[t_1, t_{I+L}]$的连续序列 $\boldsymbol X(t)$ 和$[t_1, t_{I}]$的连续序列 $\boldsymbol Y(t)$。
-\State 编码阶段: AJ-ODEnet编码器根据条件范围下的系统输入和输出序列估计初始状态 $\boldsymbol{S}\left(t_{I}\right)$，\eqref{equa:initial_state}。
-\State 预测阶段: AJ-ODEnet解码器根据预测范围下的系统输入 $[t_I, t_{I+L}]$预测离散时间点$\{t_{I+1}, \dots, t_{I+L}\}$下的系统输出，\eqref{equ:decoding}。
-\State 利用随机梯度 $\nabla_{\boldsymbol{\Theta_{e}}, \boldsymbol{\Theta_{d}}, \boldsymbol \Phi}\mathcal{L}\left(\boldsymbol{\Theta}_{e}, \boldsymbol{\Theta}_{d}, \boldsymbol{\Phi}\right)$更新两个AJ-ODEnet中的参数 $\boldsymbol{\Theta_{e}}, \boldsymbol{\Theta_{d}}, \boldsymbol \Phi$:
+\State  在训练集$S$中随机抽样一批序列 $\{\boldsymbol{Y}_{1:I+L}, {\boldsymbol {X}}_{1:I+L}\}$。
+\State 利用先验知识对序列的各个位置指定阶段标签 $s_{t_1:t_{I+L}}$。
+\State \text{//}\textit{为了加快训练速度，以下步骤并行执行。}
+\State 使用并行样条插值算法处理离散序列${\boldsymbol {X}}_{1:I+L}$, $\boldsymbol{Y}_{1:I+L}$，生成连续时间信号$\boldsymbol X(t)$和$\boldsymbol Y(t)$。
+\State 编码阶段: AJ-ODE-Net编码器根据条件范围下的系统输入和输出序列估计初始状态 $\boldsymbol{S}\left(t_{I}\right)$，\eqref{equa:initial_state}。
+\State 预测阶段: AJ-ODE-Net解码器根据预测范围下的系统输入 预测离散时间点$\{t_{I+1}, \dots, t_{I+L}\}$下的系统输出，\eqref{equ:decoding}。
+\State 利用随机梯度 $\nabla_{\boldsymbol{\Theta_{e}}, \boldsymbol{\Theta_{d}}, \boldsymbol \Phi}\mathcal{L}\left(\boldsymbol{\Theta}_{e}, \boldsymbol{\Theta}_{d}, \boldsymbol{\Phi}\right)$更新两个AJ-ODE-Net中的参数 $\boldsymbol{\Theta_{e}}, \boldsymbol{\Theta_{d}}, \boldsymbol \Phi$。
 \EndFor
 \EndFor
 \end{algorithmic}
@@ -530,10 +545,13 @@ $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\si
 
 \section{实验验证与分析}
 \label{sec:evalutaion}
-接下来本章将使用AJ-ODENet模型及衍生出的编码器解码器预测框架解决某工业制冷系统的建模及预测问题，并采用两个实验探究模型的预测效果并基于仿真模型给出制冷系统的运行优化策略。
-具体地，在第一个实验中，我们使用AJ-ODENet模型根据当前的负载功率和环境温度，在线预测制冷系统的输出量。
-在第二个实验中，依托于实验一中训练得到的预测仿真模型，实现对不同制冷启动温度配置下的制冷功耗进行仿真，并结合仿真结果给出制冷策略优化。
-接下来本章将首先介绍作为实验对象的制冷系统，然后介绍模型的训练参数、评估结果和预测仿真结果。
+接下来本章将使用AJ-ODE-Net模型及衍生出的编码器解码器框架解决某工业制冷系统的建模及优化问题。
+% 并采用两个实验探究模型的预测效果
+% 并基于仿真模型给出制冷系统的运行优化策略。
+首先，使用制冷系统离线运行数据集训练基于AJ-ODE-Net的编码器及解码器，使模型能够根据给定的热负载功率和环境温度在线预测制冷系统的功耗、冷气温度、制冷量。
+下一步，采用训练得到的预测模型，仿真不同制冷温度配置下系统的功耗变化，同时利用仿真结果优化制冷系统启停温度设定值。
+接下来本节将首先介绍作为实验对象的工业制冷系统，然后介绍训练及测试数据构建细节，模型评价指标。紧接着，对比本文方法与其他系统预测方法的预测效果。
+最后介绍如何利用预测模型辅助优化制冷系统的运行参数。
 
 % In this section, we show the framework construction in an use case, by applying it to a real cooling system of a data center, with two case studies. Prior knowledge in this case refers to the cooling configuration, output constraints to guide the design and improve the prediction accuracy. The objective of the first implementation is to predict in real time the energy consumption of cooling, based on current IT activities and environmental conditions. Based on the first model, the second case study optimizes the energy consumption by adjusting the temperature set point according to simulations. This realization makes use of the mechanism that prior knowledge is written into the AJ transformation rules. The following subsections details the model design, evaluation results and simulation results, starts by a background introduction about the cooling system.
 
@@ -541,13 +559,13 @@ $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\si
 % \subsection{Backgrounds about the studied cooling system}
 \label{sec:ecotype_description}
 
-实验中探究的制冷系统为施耐德电气公司~\cite{InrowACRD602}设计。
+实验中探究的制冷系统为施耐德电气公司设计。
 制冷系统为某一大型熔炼设备提供压缩制冷。
 % 计算中心的集群为Grid5000大规模分布式集群，为在校科研人员提供CPU计算资源。
-制冷系统的运行数据可通过调用Seduce平台~\cite{SeducePastor2018}的API获取数据。
-Seduce平台是用于电源和温度管理的物联网平台，该系统以1hz的频率采集传感器监测数据，包括能耗和温度数据。
+制冷系统的运行数据可通过调用Seduce平台~\cite{SeducePastor2018}的API获取。
+Seduce平台是用于电源和温度管理的物联网平台，该系统以1hz的频率采集传感器监测数据，包括制冷能耗和气体温度等数据。
 图~\ref{fig:inrow_3dArchitecture}展示了制冷系统提供热交换制冷的过程示意图。
-该制冷系统包括室内和室外两部分。室内部分的主要模块为液体-空气热交换器，该模块吸收生产设备产生的热空气，然后通过管道、冷凝器和风机将热量转移和疏散到室外，通过压缩生成的冷空气输送至室内。
+该制冷系统包括室内和室外两部分。室内的液体-空气热交换器吸收生产设备产生的热空气，通过管道和风机将热量转移和疏散到室外。室外的冷凝器将通过压缩生成的冷空气输送至室内。
 
 \begin{figure*}[!htbp]
   \centering
@@ -561,43 +579,49 @@ Seduce平台是用于电源和温度管理的物联网平台，该系统以1hz�
 % In this modeling case study, cooling system is a typical periodic multi-stage system of an industrial infrastructure, it can be regarded as a partially observed MIMO (Multiple-Input Multiple-Output) system. 
 直观地，热负载（熔炼设备的运行总功率($x_1(t)$)）的升高会导致制冷系统进气口温度($y_3(t)$)升高。
 另外，由于制冷系统和室外环境之间存在热交换，系统所处环境的温度($x_2(t)$)也会影响制冷系统的工作情况。
-为了保持生产过程安全稳定运行，制冷系统需要维持室内的进气空气温度限定某预先设定的区间上下限内。
-当进气口空气温度达到上限时，制冷系统会开启压缩机，制冷系统产生的制冷量($y_2(t)$)增加。当进气口温度温度低于设定值时，压缩机关闭，制冷系统变为待机状态。系统在压缩制冷时的运行功率($y_1(t)$)远大于关闭压缩机时的功耗。
-伴随着制冷与待机，制冷系统的运行过程具有典型的周期多阶段特性，其阶段转换如图~\ref{fig:cooling_workloop}所示。 
+为了保持生产过程安全稳定运行，制冷系统需要维持室内的进气温度限定在某预先设定的区间上下限内。
+当进气口空气温度达到上限时，制冷系统会开启压缩机，制冷系统产生的制冷量($y_2(t)$)大幅增加，室内温度逐渐下降，制冷量和制冷功率经过两个阶段的快速震荡后会趋近于某固定值。
+当进气口温度低于设定值时，压缩机关闭，制冷系统变为待机状态。
+此阶段内进气口温度不断上升，其制冷量和制冷功率接近于0。
+因此系统在压缩制冷时的运行功率($y_1(t)$)远大于关闭压缩机时的功耗。
+由于制冷与待机两阶段交替出现，制冷系统的运行过程具有典型的周期多阶段特性，其阶段转换如图~\ref{fig:cooling_workloop}所示。 
 % Intuitively, heat load of the date center, represented by total server power ($x_1(t)$), leads to the increase of inlet temperature ($y_3(t)$). The room temperature ($x_2(t)$) also affects the thermal system due to heat exchange between cooling enclosure and the room. The configurations of cooling system determine the upper and lower bounds of inlet temperature to keep appropriate operational temperatures for servers. 
 %Once the compressor is on, cooling ability of heat exchanger will be enhanced and has more cooling production ($y_2(t)$) until inlet temperature decreases to the setting value, and accordingly, the system consumes more power ($y_1(t)$) than the compressor is off. Vice versa, the cooling system works based on the configurations in a infinite loop, as shown in 图.~\ref{fig:cooling_workloop}. 
 
-当制冷系统待机时，进气口温度不断上升，其制冷量和制冷功率接近于0。
-当制冷系统工作时，进气口温度不断下降，制冷量和制冷功率经过两个阶段的快速震荡后会趋近于某固定值。
-因此，对于该制冷系统，实时功率消耗$y_1(t)$和实时制冷量$y_2(t)$为系统的稳定输出$\boldsymbol y_s(t)=[y_1(t), y_2(t)]$。
+对于该制冷系统，实时功率消耗$y_1(t)$和实时制冷量$y_2(t)$为系统的稳定输出$\boldsymbol y_s(t)=[y_1(t), y_2(t)]$。
 进气口温度$y_3(t)$为系统的非稳定输出：$\boldsymbol y_{ns}(t)=[y_3(t)]$。
-将进气口温度定义为非稳定过程，这一性质与系统的先验特性是保持一致的。在第二个实验中，我们通过改变温度阈值而优化制冷系统能耗，需要模型对于进气口温度实现外推预测，在H-ODENet模型中将进气口温度定义为非稳定过程，对于实现可靠、合理的外推预测具有重要意义。
-
-% In the H-ODEnet, $y_1(t)$ and $y_2(t)$ are defined as stationary outputs $\boldsymbol y_s(t)=[y_1(t), y_2(t)]$. The inlet temperature $y_3(t)$ is defined as non-stationary outputs $\boldsymbol y_{ns}(t)=[y_3(t)]$.
+将进气口温度定义为非稳定过程，这一性质与系统的先验特性是保持一致的。在第二组制冷系统优化实验中，本节通过改变温度阈值而优化制冷系统能耗，这要求模型能够对进气口温度实现外推预测，在H-ODE-Net模型中将进气口温度定义为非稳定过程，能够保证该阶段内温度的预测值持续上升或下降，这对于实现可靠、合理的外推预测具有重要意义。
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/chapter4/cooling_workloop.pdf}
+  \caption{制冷系统运行机理简化图}
+  \label{fig:cooling_workloop} 
+\end{figure}
+% In the H-ODE-Net, $y_1(t)$ and $y_2(t)$ are defined as stationary outputs $\boldsymbol y_s(t)=[y_1(t), y_2(t)]$. The inlet temperature $y_3(t)$ is defined as non-stationary outputs $\boldsymbol y_{ns}(t)=[y_3(t)]$.
 % By modeling the inlet temperature change as a non-stationary process, the temperature will climb steadily when cooling system is off and vice versa when cooling system is on.
 % This property is consistent with the prior knowledge of system and important for subsequent experiments about the optimizations of temperature thresholds.
 
 
 \subsection{数据预处理：离散序列插及阶段标注}
 
-为了使用微分方程网络对序列数据进行处理，需要使用插值方法将带有缺失值的不规则采样数据集转换为连续信号。
-在本章实验环节中，制冷系统数据集存在采样间隔不均匀、部分数据缺失的问题。本章参照前人工作\cite{kidger2020neural}，使用三次样条插值方法对离散时间序列$\boldsymbol X_{[1:I+L]}$和$\boldsymbol Y_{[1:I]}$进行插值，构成连续时间信号$\boldsymbol Y:[t_1,t_{I}]$和$\boldsymbol X:[t_1,t_{I+L}]$。在任意时刻$t$,  $\boldsymbol X(t)$和$\boldsymbol Y(t)$二阶可微，满足自适应步长求解器求解神经ODE系统时所需的必要条件\cite{kidger2020neural}。
-当待处理的数据集包含的噪声比较少时，相比于其他插值算法，三次样条插值实现简单，且对原始
-序列数据的破坏较小，插值生成的连续信号中的噪音较小。
+为了使用微分方程网络对序列数据进行处理，需要使用插值方法将带有缺失值的不规则采样序列转换为连续信号。
+在本章实验中，制冷系统数据集存在采样间隔不均匀、部分数据缺失的问题。本章采用第三章\ref{sec:3_interpolation_training}的可微并行三阶样条插值方法对离散时间序列$\boldsymbol X_{[1:I+L]}$和$\boldsymbol Y_{[1:I]}$进行插值，构成连续时间信号$\boldsymbol Y:[t_1,t_{I}]$和$\boldsymbol X:[t_1,t_{I+L}]$。在任意时刻$t$,  $\boldsymbol X(t)$和$\boldsymbol Y(t)$二阶可微，满足自适应步长求解器求解神经ODE系统时所需的必要条件\cite{kidger2020neural}。
+当待处理的数据集噪声较少时，相比于其他插值算法，三次样条插值实现简单，插值生成的连续信号中的噪音较小，且对原始
+序列数据的破坏较小。
 % First part in preprocessing module mentioned in~\ref{sec:data_prepocessing_module} concerns the choice of interpolation method to transfer the input data sets with irregular missing values to continuous ones. In this concrete case, the data sets of cooling system come from highly reliable and well calibrated sensory measurement system, which works in relatively stable environment. Following the previous study in \cite{kidger2020neural}, natural cubic spline is usually employed to generate continuous-time processes  $\boldsymbol Y:[t_1,t_{I}]$ and $\boldsymbol X:[t_1,t_{I+L}]$ from discrete-time sequences $\boldsymbol X_{[1:I+L]}$ and $\boldsymbol Y_{[1:I]}$.
 % For an arbitrary time point $t$, the path $\boldsymbol X(t)$ and $\boldsymbol Y(t)$ are second order differentiable functions, which is a necessary condition of employing adaptive step size solvers to solve the neural ODE system.
 % When dealing with dataset containing not much noisy data, compared with other options for interpolation, natural cubic splines give essentially the minimum regularity. In this case, the data suffers little noise disturbance, spline interpolation is the appropriate choice in dealing with these cooling system operational data sets. 
 % The second part is sliding, 
 %It is a fortunate fact that our cooling system works in a closed space and suffers very little noise disturbance from environment.
 
-接下来，为了训练AJ-ODEnet模块中的阶段转换预测器，需要为序列数据标注各时间点所属的阶段。我们基于系统的先验知识构建了用于描述系统阶段转换的状态转换过程，并基于此自动地为序列数据标记所属阶段。
-
+接下来，为了训练AJ-ODE-Net模块中的阶段转换预测器，需要在训练前标注序列数据各时间点处的所属阶段。本节基于系统先验知识构建了系统阶段转换的判断规则，并基于此自动地为序列数据赋予阶段标签。
 根据现场观察和对于制冷系统的了解，可知的系统先验知识如下：
-\begin{itemize}
-    \item 根据当前进气口温度以及启停设定值，制冷系统的工作模式在压缩机启动和压缩机关闭两种状态之间来回切换。
-    \item 系统包含有四个可观测的工作阶段，每个阶段下，系统输出呈现不同的动态特性。
-    % \item 系统周期性循环运行，一个周期包含四个操作阶段。
-    % \item 监测的系统输出值:进气口温度、制冷量和系统功率受到设置的进气口温度上下限的限制。
+% \begin{itemize}[parskip=0pt,itemsep=0pt,topsep=0,parsep=0pt]
+% \begin{itemize}[itemsep=0pt,topsep=0pt,parsep=0pt]
+\begin{itemize}[nosep]
+% \begin{itemize}
+    \item 根据当前进气口温度以及制冷系统的启停温度设定值，制冷系统的工作模式在压缩机启动和压缩机关闭两种状态之间交替切换。
+    \item 系统共包含四个可观测的工作阶段，每阶段下的系统输出将呈现完全不同的动态特性。
 \end{itemize}
 
 % According to the observations in site and the pre-defined configurations, some knowledge are known in prior: 
@@ -609,57 +633,34 @@ Seduce平台是用于电源和温度管理的物联网平台，该系统以1hz�
 % \end{itemize}
 % The descriptions of each stage along with the transformation rules are detailed in Tab.~\ref{tab:cooling_dfa}.
 % 图.~\ref{fig:stages_mark} demonstrates the auto labeling results with an example: 
-根据上述先验知识，我们精确地定义了系统的各个阶段并给出了阶段之间的转换规则，如表~\ref{tab:cooling_dfa}所示。
+根据上述先验知识，可以精确地定义系统的各个阶段并给出阶段之间的转换规则，如表~\ref{tab:cooling_dfa}所示。
 % 每个时刻 $t_i$的阶段变量 $s(t_i)\in\{0,\dots,N-1\}$。
-制冷系统的运行阶段在$N=4$个阶段之间依周期地循环切换。
-% 在下面的图中，为了更好地区分各个阶段，四个阶段内的原始数据或预测数据将被标记为不同的颜色。
-%Two stages \textit{On} and \textit{Off} are relatively longer and the other stages are short-lived.
-% The AJ transformation rules are designed as well according to prior knowledge mentioned above.
-% % 图.~\ref{fig:dt_label} illustrates three duration estimators estimating the duration individually in corresponding stage. In the figure, $dt$ represents the sampling interval and $T(t)$ denotes the duration. The learning of duration estimator is supervised by \textit{Label} which is inferred from time points when stages transform. 
-% Formally, the stage variable of each sample $t_i$ are written as $s(t_i)\in\{0,\dots,N-1\}$. 
-% The cooling system runs periodically, the stage variable $s(t)$ moves around in a loop of size $N=4$.
-% In the following graphs, the four stages are marked with different colors for better illustration.
-% %In the following graphical illustrations, the four stages are marked with different colors for visualizing the stage belongs to at current timestamp.
-% %The transform rules in Table.~\ref{tab:cooling_dfa} are deterministic and can be easily implemented by programming, so there is no need for manual marking in the phase of generating stage labels.
-在图\ref{fig:state}中，我们统计了在不同的热负载下，每次\textit{On}阶段和\textit{Off}阶段的持续时间的分布情况。
-结果表明，阶段持续时间与服务器负载功率值有较强相关性。在特定的热负载下，阶段持续时间${\tau}_{i}$的分布趋于稳定。
-这一结果说明利用系统的热负载输入以及环境温度预测各个阶段的持续时间是具有可行性的。
-% 与服务器负载功率值有较强相关性，特定数据集下的阶段持续时间分布相对稳定。
-% In 图.~\ref{fig:state}, we analyse the statistical properties of duration in each stage. 
-% It demonstrates that the distribution of duration ${\tau}_{i}$ is stationary and highly depends on the nearby external inputs.
-\begin{figure}
-\centering
-\hspace{-0.1in}
-\subfigure[阶段-\textit{关闭}]{\includegraphics[width=0.45\linewidth]{figures/chapter4/state1.eps}}\hspace{-0.05in}
-\subfigure[阶段-\textit{开机}]{\includegraphics[width=0.45\linewidth]{figures/chapter4/state4.eps}}
-\caption{
-% The data of the four data sets are generated at different power of the server, which are 1.7kw, 3.8kw, 4.2kw and 6.3kw respectively. Compare the duration time of system on and off   under different power.
-在平均负载不同的四个数据集中，阶段\textit{启动}和\textit{关闭}阶段的持续时间分布箱线图
-} %图片标题
-\label{fig:state}  %图片交叉引用时的标签
-\end{figure}
+制冷系统在$N=4$个阶段之间依周期地循环切换。
+\begin{table*}[]
+    \centering
+    \caption{跳变系统在四种状态下循环，每种状态对应制冷系统的一个阶段}
+    % \caption{The designed AJ has four circular states and each state is corresponding to one stage in the cooling system.}
+    \label{tab:cooling_dfa}
+    \begin{tabular}{llcl}
+    \toprule
+    % \multirow{2}{*}{状态} & \multirow{2}{*}{描述}         & \multicolumn{2}{c}{转换规则}                                \\
+       状态                  &    描述             & 下一阶段 & 转换触发条件                                   \\ 
+       \hline
+    0-关闭                       & 系统待机                             & 1          & $y_3(t)\geq Ti_{max}$                                \\
+    1-启动第一阶段                      & 制冷系统启动的第一阶段                     & 2          & $y_1(t)$ 到达某一峰值                            \\
+    2-启动第二阶段                       & 制冷系统启动的第二阶段 & 3          & \multicolumn{1}{l}{$y_2(t)$ 稳定} \\
+    3-开机                       & 系统运行                                   & 0          & $y_3(t)\leq Ti_{min}$                                \\
+    % 4-Shut down                       & system is shutting down                            & 0          & $y_2(t)=0$                                           \\ 
+    \bottomrule
+    \end{tabular}
+\end{table*}
+
+
 % 与预测某时刻是否要切换到下一阶段这种做法相比，直接预测阶段的持续时间${\tau}_{i}$从而再决定是否切换到下一阶段这种方式更加具有鲁棒性，前者的直接进行阶段切换点预测更容易出现差错，可能会导致过早或过迟地切换到新阶段。
 % In comparison to predicting the final time point or classifying whether it is a proper time to switch to next stage, predicting duration time ${\tau}_{i}$ is more robust to give an appropriate stage transformation rather than make accidental faulty predictions or classifications than make accidental faulty predictions or classifications leading to switch to new stage too early or too late.
 %The transform rules in Table.~\ref{tab:cooling_dfa} are deterministic and can be easily implemented by programming, so there is no need for manual marking in the phase of generating stage labels.
 
-\begin{table*}[]
-\centering
-\caption{跳变系统在四种状态下循环，每种状态对应制冷系统的一个阶段}
-% \caption{The designed AJ has four circular states and each state is corresponding to one stage in the cooling system.}
-\label{tab:cooling_dfa}
-\begin{tabular}{llcl}
-\toprule
-% \multirow{2}{*}{状态} & \multirow{2}{*}{描述}         & \multicolumn{2}{c}{转换规则}                                \\
-   状态                  &    描述             & 下一阶段 & 转换触发条件                                   \\ 
-   \hline
-0-关闭                       & 系统待机                             & 1          & $y_3(t)\geq Ti_{max}$                                \\
-1-启动第一阶段                      & 制冷系统启动的第一阶段                     & 2          & $y_1(t)$ 到达某一峰值                            \\
-2-启动第二阶段                       & 制冷系统启动的第二阶段 & 3          & \multicolumn{1}{l}{$y_2(t)$ 稳定} \\
-3-开机                       & 系统运行                                   & 0          & $y_3(t)\leq Ti_{min}$                                \\
-% 4-Shut down                       & system is shutting down                            & 0          & $y_2(t)=0$                                           \\ 
-\bottomrule
-\end{tabular}
-\end{table*}
+
 % \begin{figure}
 %     \centering
 %     \includegraphics[width=10cm]{figures/chapter4/mark.eps}
@@ -681,28 +682,43 @@ Seduce平台是用于电源和温度管理的物联网平台，该系统以1hz�
 % \subsection{Model training}
 \label{sec:model_training}
 
-我们从Seduce平台采集了四组数据集用于模型的训练与评价，四组数据集均采集于生产运行稳定时段，且运行功率有较大差异，分别为1.7kw，3.8kw，4.2kw，6.3kw。运行功率$x_1(t)$越大，说明当前产热越多。表\ref{tab:sys_in_out_prior}中汇总了各个数据集描述和输入、输出介绍以及序列长度。对于四个数据集，每个数据集中的完整序列长度约为8000-10000，采样时间点为连续非均匀的，平均采样频率约为1条/秒，序列对应的时间长度约为8000s-10000s。
+本节从Seduce平台采集了四组数据集用于模型的训练与评价，四组数据集均采集于生产运行稳定时段，且运行功率有较大差异，分别为1.7kw，3.8kw，4.2kw，6.3kw。运行功率$x_1(t)$越大，说明当前热负载越高。表\ref{tab:sys_in_out_prior}中汇总了各个数据集的描述、输入输出介绍以及序列长度。在图\ref{fig:state}中，本节统计了不同热负载下，每次\textit{On}阶段和\textit{Off}阶段持续时间的分布情况。
+结果表明，阶段持续时间与热负载功率值有较强相关性。在特定的热负载下，阶段持续时间${\tau}_{i}$趋于稳定。
+这一结果说明，在开环预测时，利用系统的热负载输入以及外部环境温度动态地预测各个阶段的持续时间以及实现阶段自切换是具有可行性的。
+% 与服务器负载功率值有较强相关性，特定数据集下的阶段持续时间分布相对稳定。
+% In 图.~\ref{fig:state}, we analyse the statistical properties of duration in each stage. 
+% It demonstrates that the distribution of duration ${\tau}_{i}$ is stationary and highly depends on the nearby external inputs.
+\begin{figure}
+\centering
+\hspace{-0.1in}
+\subfigure[阶段-\textit{关闭}]{\includegraphics[width=0.45\linewidth]{figures/chapter4/state1.pdf}}\hspace{-0.05in}
+\subfigure[阶段-\textit{开机}]{\includegraphics[width=0.45\linewidth]{figures/chapter4/state4.pdf}}
+\caption{
+% The data of the four data sets are generated at different power of the server, which are 1.7kw, 3.8kw, 4.2kw and 6.3kw respectively. Compare the duration time of system on and off   under different power.
+在平均负载不同的四个数据集中，\textit{启动}阶段和\textit{关闭}阶段的持续时间分布箱线图
+} %图片标题
+\label{fig:state}  %图片交叉引用时的标签
+\end{figure}
+
+对于四个数据集，每个数据集中的完整序列长度约为8000-10000，采样时间点为连续非均匀的，平均采样频率约为1条/秒，序列对应的时间长度约为8000s-10000s。
 每个数据集的前50\%数据用于模型训练，剩下的数据中，25\%数据用于构建验证集，25\%数据用于模型测试。
 
 对于训练集和验证集，本节使用大小为1600s的滑动窗口对原始序列进行遍历并生成训练样本。
-对于每一个训练样本，根据~\ref{sec:notations}定义，前800s为条件范围，用于模型求解预测阶段所需的初始状态，后800s为预测范围，模型预测该范围内的系统输出。
-在训练过程中，我们选择在验证集中表现最好的模型用于模型评估。
-由于输入的维数较低，且得益于伴随状态法（Adjoint state），训练ODE-net网络对于显存的消耗是极低的。我们选择了较大批大小（batch size=4096）以加速训练。
+对于每一个训练样本，根据~\ref{sec:4_notations}节的定义，前800s为条件范围，用于编码器求解预测阶段所需的初始状态，后800s为预测范围，模型预测该范围内的系统输出。
+在训练过程中，选择验证集中表现最好的模型用于最终的模型评估。
+由于系统输入输出的维数较低，且得益于伴随状态法（Adjoint state），不需要存储求解ODE时的完整计算图，训练AJ-ODE-Net网络对于显存的消耗是极低的。因此本节选择了较大的批大小（batch size=4096）以加速训练。
 所有数据集的训练样本被随机排序并分批输入到模型训练。训练过程使用了单块型号为NVIDIA TITAN RTX的并行计算设备（GPU），其显存为24G。
 隐状态变量$\boldsymbol h(t)$的大小是20，学习率设置为0.005。
 
-在测试阶段，没有像构造训练集一样对测试集中的完整序列进行分割。序列的前800s被送入编码器模型以生成初始状态，解码器模块在给定序列输入下，以开环的方式预测余下部分的系统输出。预测结果与测试集中的真实输出作对比以评估模型精度。
+% 在测试阶段，没有像构造训练集一样对测试集中的完整序列进行分割。
+在测试阶段，未按照构造训练集时采用窗口分割方法对测试集序列进行拆分。
+序列的前800s被送入编码器模型以生成初始状态。解码器模块在给定800s之后的剩余序列输入下，以开环的方式预测余下部分的系统输出。预测结果与测试集中的真实输出作对比以评估模型精度。
 % During training, the model which performs best in validation dataset will be chosen 
 % Owing to low dimensional inputs, we choose a large batch size as 4096 to accelerate training.
 % In order to improve the robustness, the training samples of all data sets are randomly ordered and concatenated together before feeding into the model.
 % The training phase is executed on a single NVIDIA TITAN RTX with 24G memory.
 
-\begin{figure}[!htbp]
-  \centering
-  \includegraphics[width=0.8\textwidth]{figures/chapter4/cooling_workloop.pdf}
-\caption{制冷系统运行机理简化图}
-\label{fig:cooling_workloop} 
-\end{figure}
+
 %when cooling system is off and slower decrease of inlet temperature when cooling system is working.Together with the stages of cooling system, the consumed power of cooling system $y_1(t)$ and cooling capacity $y_2(t)$ also change periodically with the frequencies and phase positions determined by inputs $x_1(t)$ and $x_2(t)$.  
 
 
@@ -733,33 +749,37 @@ Seduce平台是用于电源和温度管理的物联网平台，该系统以1hz�
 
 \subsection{应用研究1: 运行变量仿真}
 \label{sec:case-study1}
-本节使用基于AJ-ODENet结构的编码器-解码器框架仿真制冷系统的输出。
-模型的预测变量为三个:进气口温度，制冷量和制冷机功率。
+本节使用基于AJ-ODE-Net结构的编码器-解码器框架预测制冷系统的输出。
+模型的预测变量为三个：进气口温度、制冷量和制冷机功率。
 其中，进气口温度是受制冷系统影响的控制目标变量，表示制冷系统排出的空气温度。制冷量代表制冷系统单位时间产生的制冷量，其直接影响制冷系统中进气口温度的变化~\cite{alonso2020estimating}，在压缩机不工作时，制冷量为0。制冷系统开始工作后，制冷量会突然飙升至较高水平。
-制冷机功率，表示整个制冷系统瞬时功耗。在制冷系统工作期间功耗较高，待机期间功耗较低。
+制冷机功率，表示整个制冷系统的瞬时功耗。在制冷系统工作期间功耗较高，待机期间功耗较低。
 % In the first place, the framework is used to simulate the operating variables of the concerned cooling system in real time, three typical variables are selected: inlet temperature, cooling production and cooling power. Where, the first variable inlet temperature is an important thermal target of data center affected by cooling production, indicating the air temperature taken by servers. The second one is cooling production generated by compressor, which acts directly on removing heat during the cooling process~\cite{alonso2020estimating},  compressor consumes most of the electricity in the cooling system. And the third estimated variable is cooling power, indicates the instant power consumed by entire cooling system. 
 % 另外，系统运行过程中混合稳定和非稳定的两种过程:当系统产生冷空气时，制冷量和系统功耗可以看作是典型的稳定过程(均值和方差相对稳定)。
 % 而在此过程中，进气口温度呈指数型下降，则应视为非稳定过程(均值不断下降)。这种稳定性和非稳定性过程混合的系统在工业系统中很常见，
-% 所以有必要将多个H-ODE嵌入到AJ-ODEnets模型中。
-本节同时引入普通的ODE-Net、ODE-RNN\cite{10.5555/3454287.3454765}、CDE-Net\cite{kidger2020neural}作为本章H-ODENet的对比模型。对比结果如图\ref{fig:models}所示。
+% 所以有必要将多个H-ODE嵌入到AJ-ODE-Nets模型中。
+本节同时引入普通的ODE-Net、ODE-RNN\cite{10.5555/3454287.3454765}、CDE-Net\cite{kidger2020neural}作为本章H-ODE-Net的对比模型。对比模型也可以与本章的阶段转换预测器组合，进而具备跳变系统辨识能力。AJ-ODE-Net与其他模型的对比结果如图\ref{fig:4_models}所示。
 % 为了展示H-ODE在多阶段AJ框架中应用的优势，我们对其他可以用来替代H-ODE的模块进行了评估，如嵌入单个ODE模块的结构和嵌入ODE- rnn模块的结构~，并与H-ODE进行了比较，结果如图.~\ref{fig:models}所示。
-% In addition, the system operating has a mixture of stationary and non-stationary processes: when the system is producing cold air, energy is consumed stably by compressor, which can be seen as a typical stationary process (with relatively fixed mean and variance). While during this process, the inlet temperature decreases in exponential way, which should be otherwise treated as non-stationary process (the mean keeps dropping). This mixture is commonly seen in industrial systems, and worth the efforts in developing H-ODE network within AJ-ODEnet module (refer to~\ref{sec:dfa-ode-module}).
+% In addition, the system operating has a mixture of stationary and non-stationary processes: when the system is producing cold air, energy is consumed stably by compressor, which can be seen as a typical stationary process (with relatively fixed mean and variance). While during this process, the inlet temperature decreases in exponential way, which should be otherwise treated as non-stationary process (the mean keeps dropping). This mixture is commonly seen in industrial systems, and worth the efforts in developing H-ODE network within AJ-ODE-Net module (refer to~\ref{sec:dfa-ode-module}).
 % In order to demonstrate the advantages of applying H-ODE in multi-stage AJ framework, other options like one Neural ODE structure and ODE-RNN~\cite{10.5555/3454287.3454765} structure as substitutions for H-ODE are evaluated as well to have a comparison, the results are shown in 图.~\ref{fig:models}.
-其中图~\ref{fig:models}(a)为真实的系统输出，图~\ref{fig:models}(d)为采用带有H-ODENet的AJ-ODENet模型的预测结果。
-在图~\ref{fig:models}(b)中，将AJ-ODEs模块替换为一个单一的稳定型ODENet，此时各阶段的转换不受持续时间预测器控制。此时模型难以对各个阶段间的系统切换边界处给出准确的拟合，尤其是对于持续时间较短的阶段转换位置，如阶段1以及阶段2。在图~\ref{fig:models}(c)中，采用ODE-RNN~\cite{10.5555/3454287.3454765}替换AJ-ODEnets中的混合了稳定性和非稳定性输出的H-ODENet模块。可以发现该结构形成的预测结果难以拟合平滑的输出过程。
-相比于其他模型，图~\ref{fig:models}(d)中AJ-ODENet预测的系统输出十分精确，且在阶段转换的边界处能够极好地识别系统输出的剧烈变化。
-% Where 图.~\ref{fig:models}(a) is the pattern of original data sets and 图.~\ref{fig:models}(d) is the estimation results by adopting AJ-ODE module with H-ODEnet cells. 
+其中图~\ref{fig:4_models}(a)为真实的系统输出，图~\ref{fig:4_models}(d)为采用带有H-ODE-Net的AJ-ODE-Net模型的预测结果。
+在图~\ref{fig:4_models}(b)中，将AJ-ODE-Net替换为一个单一的稳定型ODE-Net，此时各阶段的转换不受持续时间预测器控制。
+% 对比(b)和(d)可以发现，使用单一ODE模型难以对各个阶段间的系统切换边界处给出准确的拟合，尤其对于持续时间较短的阶段转换位置，如阶段1与阶段2，预测效果明显差于AJ-ODE-Net。
+可以发现，使用单一ODE模型时难以对各个阶段间的系统切换边界处给出准确的拟合，尤其对于持续时间较短的阶段转换位置，如阶段1与阶段2，预测效果明显较差。
+在图~\ref{fig:4_models}(c)中，采用ODE-RNN~\cite{10.5555/3454287.3454765}替换了AJ-ODE-Nets中用于建模稳定和非稳定混合输出的H-ODE-Net模块。
+可以发现经过替换后，网络难以平滑地预测系统输出。
+相比于其他模型，图~\ref{fig:4_models}(d)中AJ-ODE-Net预测的系统输出十分精确，且在阶段转换的边界处能够极好地识别系统输出的剧烈变化。
+% Where 图.~\ref{fig:models}(a) is the pattern of original data sets and 图.~\ref{fig:models}(d) is the estimation results by adopting AJ-ODE module with H-ODE-Net cells. 
 % In 图.~\ref{fig:models}(b), the AJ-ODEs module is replaced by one stationary neural-ODE, in this case, transition of stage is not governed by duration predictor, which could have troubles in precisely fitting dynamics of each stage, especially for the short stage transitions. In 图.~\ref{fig:models}(c) the hybrid stationary and non-stationary 
-% H-ODE cells in AJ-ODEnets are replaced by another widely used structure ODE-RNN~\cite{10.5555/3454287.3454765}, which can hardly simulate smooth physical process. 
+% H-ODE cells in AJ-ODE-Nets are replaced by another widely used structure ODE-RNN~\cite{10.5555/3454287.3454765}, which can hardly simulate smooth physical process. 
 \begin{figure*}
 \centering
 \hspace{-0.2in}
-\subfigure[Original data]{\includegraphics[width=0.45\linewidth]{figures/chapter4/truth.eps}}\hspace{-0.08in}
-\subfigure[One Neural ODE]{\includegraphics[width=0.45\linewidth]{figures/chapter4/one.eps}}\hspace{-0.08in}
-\subfigure[AJ with ODE-RNN cells]{\includegraphics[width=0.45\linewidth]{figures/chapter4/rnn.eps}}\hspace{-0.08in}
-\subfigure[AJ with H-ODE cells]{\includegraphics[width=0.45\linewidth]{figures/chapter4/ours.eps}}
-\caption{不同模型预测进气口温度，制冷量，制冷机功率的效果对比} %图片标题
-\label{fig:models}  %图片交叉引用时的标签
+\subfigure[原始数据]{\includegraphics[width=0.45\linewidth]{figures/chapter4/truth.pdf}}\hspace{-0.08in}
+\subfigure[单ODE网络]{\includegraphics[width=0.45\linewidth]{figures/chapter4/one.pdf}}\hspace{-0.08in}
+\subfigure[自跳跃结构+ODE-RNN]{\includegraphics[width=0.45\linewidth]{figures/chapter4/rnn.pdf}}\hspace{-0.08in}
+\subfigure[自跳跃结构+H-ODE-Net(本文方法)]{\includegraphics[width=0.45\linewidth]{figures/chapter4/ours.pdf}}
+\caption{不同模型预测进气口温度、制冷量、制冷机功率的效果对比} %图片标题
+\label{fig:4_models}  %图片交叉引用时的标签
 \end{figure*}
 % 图.~\ref{fig:}
 % \centering
@@ -779,21 +799,21 @@ Seduce平台是用于电源和温度管理的物联网平台，该系统以1hz�
 %     \caption{Prediction results of 6.3k-power}
 %     \label{fig:6.3k-power}
 % \end{figure}
-上述实验表明，使用多阶段模型能够将先验知识集成到模型中，相比于单模型结构，能够更好地处理多阶段系统的阶段转换边界预测。
-同时结合了非稳定输出和稳定输出的H-ODENet模型能够有效地对系统的多个输出项进行学习，相比于忽视了系统输出时序特性的ODE-RNN模型，能够更准确地预测系统的输出。
+上述实验表明，使用多阶段模型能够将先验知识集成到模型中，相比于单模型结构，能够更好地预测多阶段系统的阶段转换边界。
+同时，结合了非稳定输出和稳定输出的H-ODE-Net模型能够有效地对系统的多个输出项进行学习，相比于忽视了系统输出时序特性的ODE-RNN模型，能够更准确地预测系统的输出。
 
 % In addition to the predicted accuracy, in using AJ method, the prior knowledge can be integrated into models, to enable advanced studies like the simulation of configuration adjustments, dynamical control and energy consumption optimization. Conversely, for one Neural-ODE or AJ-ODE-RNN structures, it is not applicable.
-在预测精度量化方面，由于本文关注于开环预测问题并且需要模型自发地进行阶段切换，伴随着预测范围长度的增加，对于相位的估计误差也将不断累积。
-当预测结果中各阶段开始、结束的位置与系统真实输出中阶段的起止位置无法对齐时，此时点对点的误差计算并不适用于量化评估模型的预测误差。
+接下来，本小节将定量地评估不同模型的预测精度。由于本文关注于开环预测问题并且需要模型自发地进行阶段切换。伴随着预测范围长度的增加，对于相位的估计误差也将不断累积。
+当预测结果中各阶段开始、结束的位置与系统真实输出中阶段的起止位置无法对齐时，此时点对点的误差评估并不适用于量化评估模型的预测误差。
 因此，本节对模型预测功耗的长期累积结果进行评估。
-对于不同功率的数据集，我们采用训练过的模型预测制冷系统未来在预测范围为$[{t_I:t_{I+L}}]$（共120分钟）下的功耗。
-% In terms of the estimation accuracy, given that AJ-ODEnets is applied for open loop estimation and govern the stage transition automatically, the running phases could be affected significantly by the initial point and accumulative error, therefore the point to point accuracy is less meaningful. 
+对于不同功率的数据集，采用训练过的模型预测制冷系统在未来预测范围$[{t_I:t_{I+L}}]$（共120分钟）下的功耗。
+% In terms of the estimation accuracy, given that AJ-ODE-Nets is applied for open loop estimation and govern the stage transition automatically, the running phases could be affected significantly by the initial point and accumulative error, therefore the point to point accuracy is less meaningful. 
 % Accordingly, in order to evaluate the long term simulation capability of the framework, the accumulative energy consumption is estimated over different predictive length, from five minutes to two hours. 
 % For the datasets with different power, we employ the trained model to predict the future energy consumption with the predictive range $[{t_I:t_{I+L}}]$ equaling 120 minutes.
 % The length of the predicted range ${t_I:t_{I+L}}$ is 120 minutes.
 % The predictive error of the accumulative power consumption is evaluated sectionally and measured as Mean Absolute Percentage Error (MAPE).
 % By defining the size of the evaluation window as $T$, the prediction error of consumed power, $E(T)$, is measured as:
-接下来，依时间尺度对瞬时功耗进行积分可以得到某一时间长度（T）下的累积功耗。
+在序列预测结果基础上，按时间尺度对瞬时功耗进行积分以得到某一时间长度（T）下的累积功耗预测值。
 进一步地，可以定义预测功耗的平均绝对百分比误差，$\text{MAPE}(T)$:
 % The Mean Absolute Percentage Error (MAPE) of the predicted energy consumption, $\text{MAPE}(T)$, is defined based on the size of the evaluation window $T$:
 \vspace{-5pt}
@@ -805,17 +825,18 @@ Seduce平台是用于电源和温度管理的物联网平台，该系统以1hz�
 \begin{equation}
 \text{APE}(t_1,t_2) = \left|\frac{\int_{t_1}^{t_2}\hat{y}_1(t)dt-\int_{t_1}^{t_2}y_1(t)dt}{\int_{t_1}^{t_2}y_1(t)dt}\right|
 \end{equation}
-其中，绝对百分比误差$\text{APE}(t_1,t_2)$衡量了时间范围$[t_1, t_2]$内估计功耗和真实功耗之间的相对误差。图~\ref{fig:mape_evolution}描述了评估窗口的大小T的选取如何影响评估结果 $MAPE(T)$。
+其中，绝对百分比误差$\text{APE}(t_1,t_2)$衡量了时间范围$[t_1, t_2]$内预测功耗和真实功耗之间的相对误差。
+图\ref{fig:mape_evolution}描述了评估窗口的大小T对于评估结果$MAPE(T)$的影响。
 可以看出，随着$T$的增加，$\text{MAPE}(T)$ 在开始时剧烈下降，然后缓慢下降。
-当评价窗口大小超过35分钟时，所有数据集的MAPE都趋于稳定，说明此时真实系统输出序列与预测序列之间的阶段起止位置相位差对于评估长期功耗的预测精度不再产生影响。
-因为本节对比了$T=30$分钟下，不同模型对于累积功耗预测结果的MAPE，结果如表~\ref{tab:Compare power}所示。
-结果表明对于所有数据集，AJ-ODENet预测结果的MAPE稳定低于5\%，优于其他三个对比模型。
-充分证明了本文提出的AJ-ODENet框架能够以开环预测的方式在长时间尺度下精确地仿真制冷系统的累积功耗。
+当评窗口大小超过35分钟时，所有数据集的MAPE都趋于稳定，说明此时真实输出序列与预测序列之间的阶段起止位置相位差对于评估长期功耗的预测精度不再产生影响。
+因次本节对比了$T=30$分钟下，不同模型对于累积功耗预测结果的MAPE，结果如表~\ref{tab:Compare power}所示。
+对于所有数据集，AJ-ODE-Net预测结果的MAPE稳定低于5\%，优于其他三个对比模型。
+充分证明了本文提出的AJ-ODE-Net模型及编码器解码器框架能够以开环预测的方式在长时间尺度下精确地仿真制冷系统的累积功耗。
 
-从计算复杂性的角度，本节对四个模型在测试集单批数据上执行\eqref{equa:initial_state}以及\eqref{equ:decoding}两个过程的时间消耗进行了对比。
-Neural ODE作为耗时最短的模型，将其时间消耗作为基准。其他模型的推理时间均处以该基准以得到相对尺度下的时间对比结果。
-Neural ODE的相对时间消耗为1.0。对比结果如表\ref{tab:Compare power}的最后一列所示。
-相对时间尺度下的对比结果表明引入阶段转换预测器会增加计算的开销，该时间消耗主要用于更新阶段变量及阶段持续时间。
+从计算复杂性的角度，本节对四个模型在测试集单批数据上执行式\eqref{equa:initial_state}以及式\eqref{equ:decoding}两个过程的时间消耗进行了对比。
+普通ODE-Net作为耗时最短的模型，将其时间消耗作为基准，其他模型的推理时间均除以该基准以得到相对尺度下的耗时指标。
+相应地，普通ODE-Net的相对时间消耗为1.0。对比结果如表\ref{tab:Compare power}的最后一列所示。
+相对时间尺度下的对比结果表明引入阶段转换预测器会增加计算开销，该时间消耗主要用于更新阶段变量及阶段持续时间。
 
 % % The Mean Absolute Percentage Error (MAPE, see 式~\ref{equa:mape}) has been calculated between real and estimated energy consumption in the test datasets. We select a series with a time duration of 120min, In order to calculate the power consumption of different duration $t_r$, from 5 minututes to 120 minututes.According to the formula $ n=120/tr$, get n sample points. 
 % % Where, $n$ is the number of sample points, $\hat{e}_i$ is the estimated value and $e_i$ is the real value.  
@@ -826,27 +847,28 @@ Neural ODE的相对时间消耗为1.0。对比结果如表\ref{tab:Compare power
 % % The 图.~\ref{fig:mape_evolution} shows the MAPE of the energy consumption estimation results over prediction duration. 
 % It can be seen that, with the increase of $T$, $\text{MAPE}(T)$ declines dramatically at the beginning then becomes smaller and smaller. 
 % When the size of evaluation window exceeds 35 minutes, the MAPE of all datasets are stably below 5\%, the phase difference will have little impact on estimating long-term energy consumption. 
-% Tab.~\ref{tab:Compare power} also compares the MAPE of predicted energy consumption from proposed AJ-ODEnet with the results from the other competitors.
+% Tab.~\ref{tab:Compare power} also compares the MAPE of predicted energy consumption from proposed AJ-ODE-Net with the results from the other competitors.
 % The results indicate that, in terms of the open loop estimation, the proposed framework can eliminate the impact of initial point and obtain satisfying accuracy for energy consumption simulation with a predictive range longer than half an hour. 
 \begin{table}[t]
     \centering
     % \caption{
-    % of H-ODEnet and 
+    % of H-ODE-Net and 
     % Power estimation error comparison between One-ODE and H-ODE ,The total length of each test set is 120 minutes. Select the sequence every 30 minutes, calculate the power consumption of the truth value and the predicted value, and then calculate the MAPE. Truth power consumption$P_{truth}=(p_1,p_2,p_3,p_4)$,Predicted power consumption$P_{pred}=(\hat{p_1},\hat{p_2},\hat{p_3},\hat{p_4})$
     % The comparison of energy consumption prediction and the relative computational efficiency}
     \caption{不同模型累积能耗预测精度和推理时间的对比}
-    \resizebox{0.9\linewidth}{!}{
+    % \resizebox{0.9\linewidth}{!}{
     \begin{tabular}{lccccc} 
     \toprule
-                                & \multicolumn{4}{l}{\textbf{\textbf{热负载}}} & \multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}相对 \\时间\end{tabular}}  \\
+                                & \multicolumn{4}{c}{\textbf{\textbf{热负载}}} & \multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}相对 \\时间\end{tabular}}  \\
     \multicolumn{1}{c}{}        & 1.7k          & 3.8k          & 4.2k          & 6.3k               &                                                                           \\ 
     \hline
-    \textbf{AJ-ODENet}(本文模型) & \textbf{4.20} & \textbf{1.51} & \textbf{3.46} & \textbf{2.53}      & 3.2                                                                        \\
-    One Neural ODE              & 6.18          & 19.99         & 6.24          & 3.39               & 1.0                                                                         \\
-    Jump with CDE\cite{kidger2020neural} cells         & 8.25         & 2.73          & 6.62         & 3.87              & 3.8                                                                        \\
-    Jump with ODE-RNN cells     & 38.26         & 9.94          & 10.58         & 31.90              & 3.4                                                                        \\
+    \textbf{AJ-ODE-Net}(本文模型) & \textbf{4.20} & \textbf{1.51} & \textbf{3.46} & \textbf{2.53}      & 3.2                                                                        \\
+    单个ODE-Net              & 6.18          & 19.99         & 6.24          & 3.39               & 1.0                                                                         \\
+    自跳跃结构+受控微分方程网络\cite{kidger2020neural}     & 8.25         & 2.73          & 6.62         & 3.87              & 3.8                                                                        \\
+    自跳跃结构+ODE-RNN & 38.26         & 9.94          & 10.58         & 31.90              & 3.4                                                                        \\
     \bottomrule
-    \end{tabular}}
+    \end{tabular}
+    % }
     \label{tab:Compare power}
     \vspace{-15pt}
     \end{table}
@@ -874,7 +896,7 @@ Neural ODE的相对时间消耗为1.0。对比结果如表\ref{tab:Compare power
     \label{fig:mape_evolution}
 \end{figure}
 
-%Relative error of predicted power consumption at different intervals,According to the instant cooling power sequence value predicted by AJ-ODEnets, calculate the power consumption of the system over a period of time, compare it with the real power consumption value, and calculate the error.  Compare the power consumption error between the real value and the predicted value for different duration time (5min, 10min... 120min)
+%Relative error of predicted power consumption at different intervals,According to the instant cooling power sequence value predicted by AJ-ODE-Nets, calculate the power consumption of the system over a period of time, compare it with the real power consumption value, and calculate the error.  Compare the power consumption error between the real value and the predicted value for different duration time (5min, 10min... 120min)
 
 
 %Compare the prediction effects of different models. 图.re a is the truth sequential data, figure B is the prediction result of one stable ODE model, figure C is the experimental effect of Ode RNN, and figure D is the result of our model
@@ -883,14 +905,14 @@ Neural ODE的相对时间消耗为1.0。对比结果如表\ref{tab:Compare power
 \label{sub:case-study2}
 进气口温度设定点是影响制冷系统运行的关键设置参数之一。
 通常，系统要设定通入进气口的空气温度阈值(上限$Ti_{max}$和下限$Ti_{min}$)，以保证运行环境的安全。
-通常，对于大部分的制冷系统，初始的进气口温度设定点是固定的，配置值低于ASHRAE TC9.9~\cite{ashraeTC992011}(数据中心电源设备热指南和最佳实践)中定义的标准，没有充分考虑实际的制冷需求。
-以本章研究的制冷系统为例，其温度阈值为$12^\circ C$，$20\circ C$。
+% 通常，对于大部分的制冷系统，初始的进气口温度设定点是固定的，配置值低于ASHRAE TC9.9~\cite{ashraeTC992011}(数据中心电源设备热指南和最佳实践)中定义的标准，没有充分考虑实际的制冷需求。
+以本章研究的制冷系统为例，其默认温度阈值为$12^\circ C$，$20^\circ C$。
 数据集中进气温度在两个阈值之间周期性变化。
 
 出于提高能源效率和确保生产过程安全的目的，本节保持温度上限值不变，只调整下限值以减少能源消耗。
 然而，要确定最佳温度阈值是很棘手的。
 如果阈值设置得太低，由于过度冷却会浪费大量电能。
-如果阈值设置得太高，压缩机的制冷重启过程将更加频繁，这将在单位时间内形成更多的峰值功率。从图~\ref{fig:orginal}中可以看出，制冷系统重新启动时的功耗显著高于提供稳定冷却时的功耗。
+如果阈值设置得太高，压缩机的制冷重启过程将更加频繁，这将在单位时间内形成更多的峰值功率。从图~\ref{fig:4_models}中可以看出，制冷系统重新启动时的功耗显著高于提供稳定冷却时的功耗。
 因此，盲目地增加温度下阈值反而可能会导致的整体的能耗增加。
 % 实际上，最佳温度设定点随热负载的不同而变化，尤其是温度下限。如果下限设置过低，会因过度制冷过多而浪费电能;过高会导致压缩机频繁停机和启动，如图1所示(见表~\ref{tab:cooling_dfa})，在阶段一启动时功率峰值会很高，这些峰值过多会浪费额外的电能，。
 
@@ -898,7 +920,7 @@ Neural ODE的相对时间消耗为1.0。对比结果如表\ref{tab:Compare power
 \begin{equation}
     \begin{aligned}
        Ti^*_{\min}&=\mathop{\arg\min}\limits_{Ti_{\min}} \int_{0}^{T} \hat{y}_{1}(t) dt \\
-       &\text{ Where } \hat{\boldsymbol{Y}}_{0: T}=F\left(\boldsymbol{X}_{0: T},Ti_{\min}, Ti_{\max},\boldsymbol{\zeta}\right)
+       &\text{ 其中 } \hat{\boldsymbol{Y}}_{0: T}=F\left(\boldsymbol{X}_{0: T},Ti_{\min}, Ti_{\max},\boldsymbol{\zeta}\right)
     \end{aligned}
     \label{equ:optimazition}
     \end{equation}
@@ -910,7 +932,7 @@ Neural ODE的相对时间消耗为1.0。对比结果如表\ref{tab:Compare power
 % Normally, for the workplace like Data Centers, the initial set points are fixed and configured far below the standards defined by ASHRAE TC9.9~\cite{ashraeTC992011} (Data Center Power Equipment Thermal Guidelines and Best Practices), without considering the actual cooling requirement. 
 % Actually, optimal temperature set points vary with the heat load, especially for the lower boundary: if it is set too low, energy will be wasted due to over cooling; if too high, compressor may suffer from frequent stop and restart, additional energy can be wasted due to too many power peak as seen in stage 1 (refers to Tab.~\ref{tab:cooling_dfa}). 
 
-本节中，我们利用上一节~\ref{sec:case-study1}中训练的编码器-解码器AJ-ODEnets模型，
+本节中，我们利用上一节~\ref{sec:case-study1}中训练的编码器-解码器AJ-ODE-Nets模型，
 在给定不同下边界温度设定点的情况下，仿真系统能耗以及温度变化，同时评估特定时间区间内的累积制冷功耗。
 实验采用\secref{sec:case-study1}中所述的三个数据集，其的平均负载分别为1.7k、3.8k和6.3k。
 温度下阈值设置点从$12^{\circ}C$逐渐增加到$18^{\circ}C$，调整间隔为$0.5^{\circ}C$ 。
@@ -923,8 +945,8 @@ Neural ODE的相对时间消耗为1.0。对比结果如表\ref{tab:Compare power
 
     % The stage transition predictor in the proposed model is designed based on sojourn time prediction,  nevertheless, the rules could also be set manually in order to meet simulation requests.
     尽管本章所提出模型中的阶段转换预测器是基于持续时间预测器设计的，为了满足不同制冷系统运行参数的仿真需要，也可以手动设置状态转换规则。
-    虽然在上述模拟过程中的温度下限与训练数据集对应的阈值参数是不同的，但AJ-ODENet仍然支持手动调整阶段过渡阈值以支持此类外推预测。
-    % Although the lower temperature threshold in simulations is out of the range of the training dataset, AJ-ODENet can still support extrapolation by adjusting manually stage transition thresholds.
+    虽然在上述模拟过程中的温度下限与训练数据集对应的阈值参数是不同的，但AJ-ODE-Net仍然支持手动调整阶段过渡阈值以支持此类外推预测。
+    % Although the lower temperature threshold in simulations is out of the range of the training dataset, AJ-ODE-Net can still support extrapolation by adjusting manually stage transition thresholds.
     相比于没有引入系统先验的稳态模型~\cite{Yilmaz2007}，基于先验知识的模型更具可解释性和可扩展性。
     % Compared with the steady state model~\cite{Yilmaz2007}, the prior knowledge-informed model is more interpretable and extensible.
     % Meanwhile, in order to model the variation of inlet temperature as a non-stationary process, the temperature is made to climb steadily during stage \textit{Off} and decreased steadily during stage \textit{On}.
@@ -938,7 +960,7 @@ Neural ODE的相对时间消耗为1.0。对比结果如表\ref{tab:Compare power
 仿真时间为1000秒。随着温度下限设置点从$12^{\circ}C$增加到$18^{\circ}C$，在相同的持续时间内，稳定制冷阶段的时间不断缩减。与此同时，1000秒内包含了更多的制冷系统启停周期。这导致系统的主要功耗来自于由\textit{Off}阶段转变为\textit{on}阶段的系统启动功耗，而非制冷功耗。
 
 % In order to find the optimal lower boundary temperature set points under different heat loads. 
-% we make use of the Encoder-Decoder AJ-ODEnet model built in the first case study~\ref{sec:case-study1}, and run simulations by calculating the energy consumption within same duration under different lower temperature set point for three datasets.
+% we make use of the Encoder-Decoder AJ-ODE-Net model built in the first case study~\ref{sec:case-study1}, and run simulations by calculating the energy consumption within same duration under different lower temperature set point for three datasets.
 % % as they represent for different heat loads (higher IT loads will generate more heat). 
 % The three datasets represent for different average heat loads (higher IT loads will generate more heat) including 1.7k, 3.8k, and 6.3k.
 % In each simulation with specific lower boundary temperature $Ti_{min}$, we substituted the duration predictor with a rule in the transformation from \textit{On} stage to \textit{Off} stage.
@@ -949,9 +971,9 @@ Neural ODE的相对时间消耗为1.0。对比结果如表\ref{tab:Compare power
 \begin{figure*}[h]
 \centering
 \subfigure[$12^{\circ}C$]{\includegraphics[width=0.45\linewidth]{figures/chapter4/12.pdf}} \hspace{-0.1in}
-\subfigure[$14^{\circ}C$]{\includegraphics[width=0.45\linewidth]{figures/chapter4/14.eps}} \hspace{-0.1in}\\
-\subfigure[$16^{\circ}C$]{\includegraphics[width=0.45\linewidth]{figures/chapter4/16.eps}} \hspace{-0.1in}
-\subfigure[$18^{\circ}C$]{\includegraphics[width=0.45\linewidth]{figures/chapter4/18.eps}} 
+\subfigure[$14^{\circ}C$]{\includegraphics[width=0.45\linewidth]{figures/chapter4/14.pdf}} \hspace{-0.1in}\\
+\subfigure[$16^{\circ}C$]{\includegraphics[width=0.45\linewidth]{figures/chapter4/16.pdf}} \hspace{-0.1in}
+\subfigure[$18^{\circ}C$]{\includegraphics[width=0.45\linewidth]{figures/chapter4/18.pdf}} 
 \caption{在不同温度下限设定值下的进气口温度的仿真值}
 % \caption{The simulations of instant cooling power under different lower boundary of temperature set points}
 %\caption{The simulated instant consumed power with different temperature lower boundaries} %图片标题
@@ -959,7 +981,7 @@ Neural ODE的相对时间消耗为1.0。对比结果如表\ref{tab:Compare power
 \end{figure*}
 
 % In Fig.~\ref{fig:temperature}, we evaluate the predicted accumulated power consumption, PUE\footnote{PUE\text{ }=${\text { Total Facility Energy }}/{\text { IT Equipment Energy }}$\cite{song2015data}}, and Coefficient Of Performance (COP)\footnote{COP\text{ }=${\text { Cooling Production }}/{\text { Power consumption }}$\cite{song2015data}} within an hour for different $Ti_{\min}$.
-在图~\ref{fig:temperature}中, 我们评估了一个小时内，不同$Ti_{\min}$下的预测累积能耗, PUE\footnote{PUE\text{ }=${\text {  总能耗 }}/{\text { 设备工作能耗 }}$\cite{song2015data}}, 以及性能系数(COP)\footnote{COP\text{ }=${\text {制冷量}}/{\text { 制冷能耗}}$\cite{song2015data}}。
+在图~\ref{fig:mape_evolution}中, 我们评估了一个小时内，不同$Ti_{\min}$下的预测累积能耗, PUE\footnote{PUE\text{ }=${\text {  总能耗 }}/{\text { 设备工作能耗 }}$\cite{song2015data}}, 以及性能系数(COP)\footnote{COP\text{ }=${\text {制冷量}}/{\text { 制冷能耗}}$\cite{song2015data}}。
 PUE代表整个总能耗(制冷能耗与设备能耗的和)与设备能耗的比。
 % PUE is the ratio of the total amount of energy used by a data center facility to the energy delivered to computing equipment.
 % The more close PUE is to 1, the more energy-efficient the data center is.
@@ -978,8 +1000,8 @@ COP是实际产生的制冷量与所需能耗的比值。
 % In Fig.~\ref{fig:pue}, the optimal temperature thresholds are consistent with the ones in Fig.~\ref{fig:energy}.
 % In Fig.~\ref{fig:cop}, COP decreases with the increase of $Ti_{\min}$. 
 % The reason is that frequent on-off operations reduce the time for stable cooling. 
-在图~\ref{fig:pue}中，最佳温度阈值与图~\ref{fig:energy}中的阈值一致。
-在图~\ref{fig:cop}中，COP随着$Ti_{\min}$的增加不断降低。其原因为频繁的压缩机开闭过程会减少了稳定制冷的时间，进而导致单位功耗下产生的制冷量下降。
+在图~\ref{fig:4_temperature}\subref{fig:pue}中，最佳温度阈值与图~\ref{fig:4_temperature}\subref{fig:energy}中的阈值一致。
+在图~\ref{fig:4_temperature}\subref{fig:cop}中，COP随着$Ti_{\min}$的增加不断降低。其原因为频繁的压缩机开闭过程会减少了稳定制冷的时间，进而导致单位功耗下产生的制冷量下降。
 % We take it for granted that the COP is lower when system is unstable.
 % When the cooling system runs unstably for a long time, the COP decreases naturally.
 % The decline tendency in COP also explains why the required cooling decreases while the energy consumption increases.
@@ -1081,26 +1103,26 @@ COP的下降趋势也解释了为什么提高温度下限值，所需的冷却�
     \subfigure[COP]{\includegraphics[width=0.7\linewidth]{figures/chapter4/cop.pdf}\label{fig:cop}}
     % \includegraphics[width=8cm]{figures/temperature.eps}
     \caption{在不同热负载下改变温度设定下限值对功耗、COP、PUE的影响}
-    \label{fig:temperature}
+    \label{fig:4_temperature}
     \vspace{-10pt}
 \end{figure*}
 
 \section{本章小结}
 \label{sec:conclusion}
-针对连续时间周期跳变系统的建模预测问题，本文提出了一种基于H-ODENet的AJ-ODEnets模型，同时基于该模型构建了用于系统开环预测的编码器-解码器框架。
+针对连续时间周期跳变系统的建模预测问题，本文提出了一种基于H-ODE-Net的AJ-ODE-Nets模型，同时基于该模型构建了用于系统开环预测的编码器-解码器框架。
 % 该模型能够对给定历史序列数据中学习系统中不同阶段下的多输入多输出动态特性，通过给定未来的系统输入能够预测系统的未来输出。
 该模型能够对给定的历史序列数据进行编码，在给定未来系统输入序列下仿真预测系统的未来输出。
 % 中学习系统中不同阶段下的多输入多输出动态特性，通过给定未来的系统输入能够预测系统的未来输出。
-为了使AJ-ODEnet更好地学习不同阶段的动态特性，AJ-ODEnet包含了多个层次常微分方程网络(Hierarchical Neural ODE network), 独立地学习每个阶段下的系统动态特性，并分别建模系统的稳定输出和非稳定输出，同时构建阶段转换预测器以指定各个预测时刻所用的H-ODENet。
-作为ODENet的扩展，H-ODENet中的双层结构分别用于估计隐状态的导数和系统输出的导数，并且对于稳定输出和非稳定输出采用不同的导数模块进行建模。
+为了使AJ-ODE-Net更好地学习不同阶段的动态特性，AJ-ODE-Net包含了多个层次常微分方程网络(Hierarchical Neural ODE network), 独立地学习每个阶段下的系统动态特性，并分别建模系统的稳定输出和非稳定输出，同时构建阶段转换预测器以指定各个预测时刻所用的H-ODE-Net。
+作为ODE-Net的扩展，H-ODE-Net中的双层结构分别用于估计隐状态的导数和系统输出的导数，并且对于稳定输出和非稳定输出采用不同的导数模块进行建模。
 % 基于AJ设计的阶段转换预测器将系统的先验知识集成为转换规则，以提高模型的预测精度和可解释性。
-最后，本章利用所提出的基于AJ-ODEnet的编码器-解码器框架建模某一工业制冷系统。与其他方法相比，AJ-ODEnet在对于制冷系统温度、功耗的开环预测问题中表现出了良好性能，并且能够准确地预估阶段转换点。
+最后，本章利用所提出的基于AJ-ODE-Net的编码器-解码器框架建模某一工业制冷系统。与其他方法相比，AJ-ODE-Net在对于制冷系统温度、功耗的开环预测问题中表现出了良好性能，并且能够准确地预估阶段转换点。
 % Furthermore, we search the optimal lower threshold set points for the inlet temperature for minimizing cooling energy consumption with different heat loads.
 此外，依托于训练得到的仿真模型，以最小化不同热负荷下的制冷能耗为目标，我们成功优化了制冷系统的温度下限设定点。
 % It is shown that up to 25\% energy can be saved by adopting the optimized settings obtained by the simulations.
 仿真结果表明，通过采纳优化后温度阈值设置可以节省高达6-25％的制冷能耗。
-% The proposed AJ-ODENet could be deployed forward to model general continuous-time markov jump systems, future works will be devoted to extend the deterministic stage prediction to markov process.
-% 本章所提出的AJ-ODENet可以被应用于一般的连续时间马尔科夫跳跃系统的模型中，未来的工作将致力于将确定性的阶段预测扩展到带有随机性的马尔科夫过程。
+% The proposed AJ-ODE-Net could be deployed forward to model general continuous-time markov jump systems, future works will be devoted to extend the deterministic stage prediction to markov process.
+% 本章所提出的AJ-ODE-Net可以被应用于一般的连续时间马尔科夫跳跃系统的模型中，未来的工作将致力于将确定性的阶段预测扩展到带有随机性的马尔科夫过程。
 % Moreover, instead of designing transition rules manually in complex systems, we consider to further develop more intelligent stage labeling solutions based on unsupervised machine learning methods~\cite{10.1145/3097983.3098060}.
 
 
@@ -1110,7 +1132,7 @@ COP的下降趋势也解释了为什么提高温度下限值，所需的冷却�
 % 此外，基于训练得到的仿真模型实现了对于制冷系统的能耗仿真。实验结果表明，当预测时间超过35分钟时，能够基本消除了相位误差的影响，模型能够较为准确地估计预测时间内的系统能耗。另外，该模型能够仿真触发制冷启动的温度设定值对于系统能耗的影响，进而求解使冷却能耗最小的最优温度设定值。通过对不同服务器负载数据进行模拟，给出了不同负载下的最优温度设定，并预估经过优化的设定值能够节省制冷系统能耗约29\%。
 
 
-% In this paper, a novel deep learning based framework AJ-ODEnets is proposed, target at modeling periodic and multi-stage industrial complex systems. It is a MIMO framework, at first place, the framework learns the system behavior and stage transitions during given duration of conditional range, then start to predict required variables with given inputs. AJ-ODEnet serves as the key module, which takes in inputs, generates hidden states and appoints the system to switch across different ODEnets. In order to better characterize different and hybrid physical processes, Hierarchical Neural ODE networks (H-ODEnet) are adopted to fit different stages of the system, which contains hybrid stationary and non-stationary structure to deal with complex and more general cases. In addition, prior knowledge is integrated and written as transformation rules into the AJ of Stage Transition Predictor. The option allows improving the model interpretability, and exploring system optimization possibilities. With the features mentioned above, AJ-ODEnet has prominent advantages in simulating multi-stage physical processing. Finally, the proposed AJ-ODEnet framework is implemented on a cooling system of a running data center. Comparing with other methods, AJ-ODEnets achieves better performance in open loop estimation for several operating variables, with accurate results for each stage including the transition point. \\
+% In this paper, a novel deep learning based framework AJ-ODE-Nets is proposed, target at modeling periodic and multi-stage industrial complex systems. It is a MIMO framework, at first place, the framework learns the system behavior and stage transitions during given duration of conditional range, then start to predict required variables with given inputs. AJ-ODE-Net serves as the key module, which takes in inputs, generates hidden states and appoints the system to switch across different ODE-Nets. In order to better characterize different and hybrid physical processes, Hierarchical Neural ODE networks (H-ODE-Net) are adopted to fit different stages of the system, which contains hybrid stationary and non-stationary structure to deal with complex and more general cases. In addition, prior knowledge is integrated and written as transformation rules into the AJ of Stage Transition Predictor. The option allows improving the model interpretability, and exploring system optimization possibilities. With the features mentioned above, AJ-ODE-Net has prominent advantages in simulating multi-stage physical processing. Finally, the proposed AJ-ODE-Net framework is implemented on a cooling system of a running data center. Comparing with other methods, AJ-ODE-Nets achieves better performance in open loop estimation for several operating variables, with accurate results for each stage including the transition point. \\
 % Moreover, two applications are realized as use cases. Firstly, the framework is applied to estimate energy consumption for short and long terms cases. Evaluations show that, accurate estimation results can be obtained for prediction duration more than 35 minutes, to get rid of the impact brought by initial points (phrase difference in periodic sequences). Secondly, for the purpose of reducing cooling energy consumption, simulations are conducted by varying lower boundary temperature set points within Stage Transition Predictor to search for the optimal configuration under different heat load
 % \chapter{插入参考文献}
 % \section{\BibTeX 的使用}
