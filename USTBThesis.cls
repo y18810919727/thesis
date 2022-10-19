@@ -90,6 +90,8 @@
 \lstset{breaklines} %这条命令可以让LaTeX自动将长的代码行换行排版
 \lstset{extendedchars=false}    %这一条命令可以解决代码跨页时，章节标题，页眉等汉字不显示的问题
 
+\raggedbottom % 允许底部参差不齐，解决latex为了铺满每个页面，会使得某些地方段间距变大的问题。
+
 \setmainfont{Times New Roman}
 %\usepackage{CJKvert}    %直排文字
 %%%%%%%%%%%%%%%%%%%%%%%%%论文信息%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

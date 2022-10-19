@@ -3,6 +3,7 @@
 % \usepackage{multirow}
 % \usepackage[inner=0.75in,outer=0.65in,top=0.75in,bottom=0.75in]{geometry}
 % \usepackage{mathpazo}
+\raggedbottom
 \begin{document}
 
 \CTEXsetup[number={\arabic{chapter}}]{chapter}
@@ -13,7 +14,7 @@
 
 \newcommand{\tabref}[1]{表\ref{#1}}
 \newcommand{\equref}[1]{式(\ref{#1})}
-\newcommand{\secref}[1]{第\ref{#1}节}
+\newcommand{\secref}[1]{\ref{#1}节}
 \renewcommand{\algref}[1]{算法\ref{#1}}
 
 % \usepackage{enumitem}

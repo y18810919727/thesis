@@ -42,9 +42,10 @@
 本章提出了基于编码器解码器（Encoder-Decoder）框架的预测模型。该模型包含两个AJ-ODE-Net，编码AJ-ODE-Net用于编码历史数据以给定解码AJ-ODE-Net的初态，解码AJ-ODE-Net能够在给定的系统输入序列下以开环的方式预测系统的未来输出。
 
 % 除此之外，本章引入样条插值算法，以连续化离散的输入序列并作为AJ-ODE-Net模型的输入。
-最后，本章将所述模型及编解码预测框架应用于某一具有典型周期多阶段特性的工业制冷系统的预测与仿真问题中。
-在给定系统的多变量输入数据下，包括热负载以及环境温度，模型能够仿真系统的运行过程并准确地预测系统能耗，能耗预测误差小于5\%。
-进一步地，利用模型的仿真功能能够优化系统的制冷温度设定参数，仿真实验表明利用优化之后的温度设定值能够显著节省超过6-25\%的制冷能耗。
+最后，本章将所述模型及编解码预测框架应用于具有典型周期多阶段特性的膏体制备水泥添加过程的预测与仿真问题中。
+% 在给定系统的多变量输入数据下，包括热负载以及环境温度，模型能够仿真系统的运行过程并准确地预测系统能耗，能耗预测误差小于5\%。
+在给定系统的多变量输入数据下，包括浓密机底流浓度以及底流流量，模型能够仿真系统的运行过程并准确地预测膏体浓度及水泥消耗，其中水泥量消耗量的预测误差小于5\%。
+进一步地，利用模型的仿真功能能够优化膏体制备过程的浓度设定参数，仿真实验表明利用优化之后的浓度设定值能够在保证膏体浓度满足要求的前提下，显著减少螺旋给料器的开机频率以及水泥消耗6-25\%。
 % 本章所述模型能够有效地模拟制冷系统的运行，预测其功率消耗以及服务器进气口温度。
 
 % Addressing the challenges and problems mentioned above, we propose AJ-ODE-Nets, a novel framework for modeling and identifying the non-linear dynamics at different stages in periodic operational systems. The framework is specifically capable of capturing physical dynamics thanks to the implementation of ODE-Net, a neural network based on ODE. The framework is expected to learn the multivariate inputs-ouputs system in a data-driven way, by feeding several sequences of sensory data as training data. Once trained, the model is able to realize real time predictions according to the multivariate inputs. Modeling multi-stage periodic systems requires two principal realizations, one for the stages prediction, one for dynamical characteristics identifications of different stages. 
@@ -65,7 +66,8 @@
     （1）在集成化的网络中学习系统的多阶段动态，（2）在长序列开环预测中实现阶段自转移。
     % \item 其次，本章针对具有周期多阶段特性的动态系统，开创性地提出了AJ-ODE-Nets模型，该模型通过引入阶段转换预测器学习系统的周期性阶段转换以及采用多个H-ODE-Nets学习不同阶段内的系统动态特性。
     \item 为了学习同时包含稳定和非稳定项的多输出系统，本章结合每个输出项的统计特性，引入H-ODE-Net以改善长期预测中两种输出项的预测精度。
-    \item 本章所述模型成功应用于某一工业制冷系统的预测与仿真问题中，该模型能够在给定热负载功率下，准确地预测制冷系统的功率消耗以及冷气温度变化，利用该仿真模型能够优化制冷系统的工作温度设定值，进而优化制冷系统整体能耗约6-25\%。
+    % \item 本章所述模型成功应用于某一工业制冷系统的预测与仿真问题中，该模型能够在给定热负载功率下，准确地预测制冷系统的功率消耗以及冷气温度变化，利用该仿真模型能够优化制冷系统的工作温度设定值，进而优化制冷系统整体能耗约6-25\%。
+    \item 本章提出的AJ-ODE-Net模型成功应用于膏体制备系统的预测与仿真问题中，该模型能够在给定浓密机出料浓度与流量下，准确地预测系统的水泥消耗以及膏体浓度变化，利用该仿真模型能够优化控制螺旋给料器启停的浓度设定值，在控制螺旋给料器开机频率的同时，显著减少水泥消耗6-25\%。
 \end{itemize}
 % Two main contributions are devoted to this study, summarized as follows::
 % \begin{itemize}
@@ -73,22 +75,23 @@
 %     \item Second, we propose AJ-ODE-Nets framework, targeting at learning periodic multi-states systems in data-driven way. AJ-ODE-Nets disposes of several H-ODE-Nets to automatically learn dynamic characteristics at different states, along with a stage transition predictor to learn the transition actions during operation. 
 % \end{itemize}
 
-本章的结构组织如下:
-本章\ref{sec:4_notations}节给出了周期性多阶段系统预测问题中的变量符号定义以及形式化描述。
+本章正文内容的结构组织如下:
+\ref{sec:4_notations}节给出了周期性多阶段系统预测问题中的变量符号定义以及形式化描述。
 % 本章\ref{sec:h-ode}节介绍了分层常微分方程网络的定义及结构，以及如何将其用于学习同时带有稳定和非稳定时间序列输出的动态过程。
-本章\ref{sec:4_ajode}节介绍了AJ-ODE-Net模型的基本结构，并详细阐述了
-如何采用分层常微分方程网络学习同时带有稳定和非稳定时间序列输出的动态过程，以及如何构建连续时间域下的跳变系统状态转移方程、
-
+\ref{sec:4_ajode}节介绍了AJ-ODE-Net模型的基本结构，并详细阐述了
+如何采用分层常微分方程网络学习同时带有稳定和非稳定时间序列输出的动态过程，以及如何构建连续时间域下的跳变系统状态转移方程。
 % 最后给出了基于AJ-ODE-Net模型的编码器解码器框架及其训练方法
 \ref{sec:4_encoder_decoder}节介绍了基于双AJ-ODE-Net模型的编码器解码器框架，并详细介绍了AJ-ODE-Net的初态求解方法。
 \ref{sec:4_loss_function}节给出了用于训练持续时间预测器和预测模型的损失函数。
 % 关键模块结构和持续时间预测器的损失函数定义等内容。
 % 本章\ref{sec:4_encoder_decoder}给出了基于AJ-ODE-Net模型的编码器解码器框架及其训练方法。
-\ref{sec:evalutaion}节将所述框架应用于模拟某实际工业制冷系统。模型能够根据制冷系统的热负载输入对其功耗以及出气口气体温度变化进行模拟预测，同时能够实现不同制冷启动温度配置下的功耗仿真与优化。
-最后，\ref{sec:conclusion}节对本章工作进行总结，并对AJ-ODE-Net模型的未来研究方向以及在其他领域的应用做出了展望。
+\ref{sec:4_evalutaion}节将介绍利用所述框架建模膏体制备系统的水泥添加过程。
+% 模型能够根据系统的热负载输入对其功耗以及出气口气体温度变化进行模拟预测，
+同时，介绍如何利用辨识模型优化制备系统的浓度设定值以降低设备的重启频率并降低水泥消耗。
+最后，\ref{sec:4_conclusion}节对本章工作进行总结，并对AJ-ODE-Net模型的未来研究方向以及在其他领域的应用做出了展望。
 
 
-% The paper is organized as follows: related work on time series prediction for industrial systems, and for multi-state systems are summarized in Sec.~\ref{sec:review}. Then, preliminary in Sec.~\ref{sec:preliminary} describes the basic theory used in this study. After that, in Sec.~\ref{sec:methodology_dfaode}, the proposed framework AJ-ODE-Net is detailed in terms of data processing, structure of key modules and training for loss functions. In practice, the proposed framework is applied to simulate several working variables of a cooling system in real data centers. Two use cases are included, one for real time estimation of the energy consumption based on system inputs and environmental condition, and the other takes advantage of the integrated prior knowledge, simulations are conducted to optimize the consumption by varying configurations. In the end, Sec.~\ref{sec:conclusion} concludes the entire work and discuss the potential future work.
+% The paper is organized as follows: related work on time series prediction for industrial systems, and for multi-state systems are summarized in Sec.~\ref{sec:review}. Then, preliminary in Sec.~\ref{sec:preliminary} describes the basic theory used in this study. After that, in Sec.~\ref{sec:methodology_dfaode}, the proposed framework AJ-ODE-Net is detailed in terms of data processing, structure of key modules and training for loss functions. In practice, the proposed framework is applied to simulate several working variables of a cooling system in real data centers. Two use cases are included, one for real time estimation of the energy consumption based on system inputs and environmental condition, and the other takes advantage of the integrated prior knowledge, simulations are conducted to optimize the consumption by varying configurations. In the end, Sec.~\ref{sec:4_conclusion} concludes the entire work and discuss the potential future work.
 \section{问题形式化描述}
 \label{sec:4_notations}
 % 在本章中，标量和向量在形式上分别用小写字母和粗体小写字母表示，例如$y, \boldsymbol y$。
@@ -449,7 +452,7 @@ AJ-ODE-Nets编码器和AJ-ODE-Nets解码器之间有两个区别。首先，系�
 对于解码器，由于系统输出$\boldsymbol y(t)$未知，因此需要利用式\ref{equ:stage_trans_predic}所示的阶段转换预测器进行状态自切换。
 % 对于解码器来说，
 由于相邻阶段之间的转移是依靠持续时间预测器进行判断，无法保证绝对准确，在长范围开环预测时会带来较大的累积相位误差。
-\section{编码器解码器模型训练}
+\section{模型训练}
 \label{sec:4_loss_function}
 % AJ-ODE-Net describes an ODE equation defined on an increasing continuous-time state $\boldsymbol{S}(t) = [\boldsymbol{h}^T(t), \boldsymbol{y}^T(t), T(t), s(t)]^T$.
 % In prediction range, system outputs is predicted by solving the ODE equation and extracting the second part of system state, $\boldsymbol{y}^T(t_x)$ at any time $t_x$.
@@ -544,14 +547,14 @@ $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\si
 
 
 \section{实验验证与分析}
-\label{sec:evalutaion}
-接下来本章将使用AJ-ODE-Net模型及衍生出的编码器解码器框架解决某工业制冷系统的建模及优化问题。
+\label{sec:4_evalutaion}
+接下来本章将使用AJ-ODE-Net模型及衍生出的编码器解码器框架解决膏体制备系统水泥添加过程的建模及优化问题。
 % 并采用两个实验探究模型的预测效果
 % 并基于仿真模型给出制冷系统的运行优化策略。
-首先，使用制冷系统离线运行数据集训练基于AJ-ODE-Net的编码器及解码器，使模型能够根据给定的热负载功率和环境温度在线预测制冷系统的功耗、冷气温度、制冷量。
-下一步，采用训练得到的预测模型，仿真不同制冷温度配置下系统的功耗变化，同时利用仿真结果优化制冷系统启停温度设定值。
-接下来本节将首先介绍作为实验对象的工业制冷系统，然后介绍训练及测试数据构建细节，模型评价指标。紧接着，对比本文方法与其他系统预测方法的预测效果。
-最后介绍如何利用预测模型辅助优化制冷系统的运行参数。
+首先，使用水泥添加数据集训练基于AJ-ODE-Net的编码器及解码器，使模型能够根据给定的底流浓度和底流流量在线预测制备系统的水泥消耗及膏体浓度变化。
+下一步，利用训练得到的预测模型，仿真不同浓度阈值配置对系统的水泥消耗及给料装置启停变化的影响，同时利用仿真结果优化制冷系统启停温度设定值。
+接下来本节将首先介绍作为实验对象的膏体制备系统，然后介绍训练及测试数据构建细节，模型评价指标。紧接着，对比本文方法与其他系统预测方法的预测效果。
+最后介绍如何利用预测模型辅助优化制备系统的运行参数。
 
 % In this section, we show the framework construction in an use case, by applying it to a real cooling system of a data center, with two case studies. Prior knowledge in this case refers to the cooling configuration, output constraints to guide the design and improve the prediction accuracy. The objective of the first implementation is to predict in real time the energy consumption of cooling, based on current IT activities and environmental conditions. Based on the first model, the second case study optimizes the energy consumption by adjusting the temperature set point according to simulations. This realization makes use of the mechanism that prior knowledge is written into the AJ transformation rules. The following subsections details the model design, evaluation results and simulation results, starts by a background introduction about the cooling system.
 
@@ -646,10 +649,10 @@ Seduce平台是用于电源和温度管理的物联网平台，该系统以1hz�
     % \multirow{2}{*}{状态} & \multirow{2}{*}{描述}         & \multicolumn{2}{c}{转换规则}                                \\
        状态                  &    描述             & 下一阶段 & 转换触发条件                                   \\ 
        \hline
-    0-关闭                       & 系统待机                             & 1          & $y_3(t)\geq Ti_{max}$                                \\
+    0-关闭                       & 系统待机                             & 1          & $y_3(t)\geq Ti_{\max}$                                \\
     1-启动第一阶段                      & 制冷系统启动的第一阶段                     & 2          & $y_1(t)$ 到达某一峰值                            \\
     2-启动第二阶段                       & 制冷系统启动的第二阶段 & 3          & \multicolumn{1}{l}{$y_2(t)$ 稳定} \\
-    3-开机                       & 系统运行                                   & 0          & $y_3(t)\leq Ti_{min}$                                \\
+    3-开机                       & 系统运行                                   & 0          & $y_3(t)\leq Ti_{\min}$                                \\
     % 4-Shut down                       & system is shutting down                            & 0          & $y_2(t)=0$                                           \\ 
     \bottomrule
     \end{tabular}
@@ -816,7 +819,7 @@ Seduce平台是用于电源和温度管理的物联网平台，该系统以1hz�
 在序列预测结果基础上，按时间尺度对瞬时功耗进行积分以得到某一时间长度（T）下的累积功耗预测值。
 进一步地，可以定义预测功耗的平均绝对百分比误差，$\text{MAPE}(T)$:
 % The Mean Absolute Percentage Error (MAPE) of the predicted energy consumption, $\text{MAPE}(T)$, is defined based on the size of the evaluation window $T$:
-\vspace{-5pt}
+% \vspace{-5pt}
 \begin{equation}
 \text{MAPE}(T) = \frac{100\%}{n}\sum\limits_{i=1}^{\lfloor\frac{t_{I+L}-t_I}{T}\rfloor}\text{APE}(t_I+T*(i-1),t_I+T*i)
 \label{equ:energy_mape}
@@ -870,7 +873,7 @@ Seduce平台是用于电源和温度管理的物联网平台，该系统以1hz�
     \end{tabular}
     % }
     \label{tab:Compare power}
-    \vspace{-15pt}
+    % \vspace{-15pt}
     \end{table}
 
 % \begin{equation}
@@ -903,61 +906,70 @@ Seduce平台是用于电源和温度管理的物联网平台，该系统以1hz�
 
 \subsection{应用研究2: 制冷系统进气口温度设定点优化}
 \label{sub:case-study2}
-进气口温度设定点是影响制冷系统运行的关键设置参数之一。
-通常，系统要设定通入进气口的空气温度阈值(上限$Ti_{max}$和下限$Ti_{min}$)，以保证运行环境的安全。
+进气口温度上下限设定值(上限$Ti_{\max}$和下限$Ti_{\min}$)是影响制冷系统运行、保证运行环境安全的关键设置参数。
+% 通常，系统要设定通入进气口的空气温度阈值，以保证运行环境的安全。
 % 通常，对于大部分的制冷系统，初始的进气口温度设定点是固定的，配置值低于ASHRAE TC9.9~\cite{ashraeTC992011}(数据中心电源设备热指南和最佳实践)中定义的标准，没有充分考虑实际的制冷需求。
-以本章研究的制冷系统为例，其默认温度阈值为$12^\circ C$，$20^\circ C$。
-数据集中进气温度在两个阈值之间周期性变化。
-
-出于提高能源效率和确保生产过程安全的目的，本节保持温度上限值不变，只调整下限值以减少能源消耗。
-然而，要确定最佳温度阈值是很棘手的。
-如果阈值设置得太低，由于过度冷却会浪费大量电能。
-如果阈值设置得太高，压缩机的制冷重启过程将更加频繁，这将在单位时间内形成更多的峰值功率。从图~\ref{fig:4_models}中可以看出，制冷系统重新启动时的功耗显著高于提供稳定冷却时的功耗。
-因此，盲目地增加温度下阈值反而可能会导致的整体的能耗增加。
+对于本章研究的制冷系统，其默认温度阈值为$12^\circ C$，$20^\circ C$。
+从数据集可以观察到进气温度在上下阈值之间周期性变化。
+由于默认温度设置未充分考虑实际的制冷需求，会存在一定程度的能源浪费。
+出于提高能源效率以及确保生产过程安全的目的，本节在保持温度上阈值不变的情况下，通过优化下阈值以减少制冷消耗。
+然而，想要精确地找到最佳温度阈值是困难的。
+如果阈值设置太低，由于过度制冷会浪费大量电能。
+如果阈值设置太高，压缩机的制冷重启过程将更加频繁。
+从图~\ref{fig:4_models}中可以看出，制冷系统重新启动时的功耗显著高于提供稳定制冷时的功耗。
+因此，盲目地增加温度下阈值反而可能会导致整体能耗的增加。
 % 实际上，最佳温度设定点随热负载的不同而变化，尤其是温度下限。如果下限设置过低，会因过度制冷过多而浪费电能;过高会导致压缩机频繁停机和启动，如图1所示(见表~\ref{tab:cooling_dfa})，在阶段一启动时功率峰值会很高，这些峰值过多会浪费额外的电能，。
 
-在本节实验中，我们试图寻找最佳的温度下限以达到更好的能源效率。形式化地，寻找最佳温度下限$Ti_{min}^{*}$可以表示为一个单目标优化问题，考虑到以下因素：热负载、环境温度、进气口温度的上下限：
+本节试图寻找最优温度下限以期望达到最佳的能源效率。形式化地，寻找最优温度下限$Ti_{\min}^{*}$可以表示为一单目标优化问题，问题中需要考虑的因素包括：热负载、环境温度、进气口温度的上下限：
 \begin{equation}
     \begin{aligned}
        Ti^*_{\min}&=\mathop{\arg\min}\limits_{Ti_{\min}} \int_{0}^{T} \hat{y}_{1}(t) dt \\
-       &\text{ 其中 } \hat{\boldsymbol{Y}}_{0: T}=F\left(\boldsymbol{X}_{0: T},Ti_{\min}, Ti_{\max},\boldsymbol{\zeta}\right)
+       &\text{s.t. } \hat{\boldsymbol{Y}}_{0: T}=F\left(\boldsymbol{X}_{0: T},Ti_{\min}, Ti_{\max},\boldsymbol{\zeta}\right),
+       Ti^*_{\min}\leq \hat{y}_{3}(t) \leq Ti^*_{\max}
+    %    &\text{s.t. }\begin{aligned}
+    %    \end{aligned}
+    %    \text{s.t. } \hat{\boldsymbol{Y}}_{0: T}=F\left(\boldsymbol{X}_{0: T},Ti_{\min}, Ti_{\max},\boldsymbol{\zeta}\right)
+    %    &\text{s.t. } \hat{\boldsymbol{Y}}_{0: T}=F\left(\boldsymbol{X}_{0: T},Ti_{\min}, Ti_{\max},\boldsymbol{\zeta}\right)
     \end{aligned}
     \label{equ:optimazition}
     \end{equation}
-其中$\hat{\boldsymbol{Y}}_{0: T}$和$\hat{y}_{1}(t)$分别表示模型预测的系统输出和模拟的瞬时功耗。
-在给定系统输入和恒定的上限值的条件下，其优化变量是温度下限的设定点，优化目标是最小化累计能耗。
+其中$\hat{\boldsymbol{Y}}_{0: T}$和$\hat{y}_{1}(t)$分别表示模型预测的系统输出以及预测出的瞬时功耗。
+在给定系统输入和恒定上限值的条件下，被优化变量为温度下阈值，优化目标是最小化累计能耗。
 式\eqref{equ:optimazition}中的$\boldsymbol{X}_{0: T}$为测试数据集中的系统输入，其中包括所有时刻的热负载以及环境温度。
-式\eqref{equ:optimazition}中的$F(\cdot)$表示在给定输入和温度阈值$Ti_{max}$和$Ti_{min}$下，预测制冷系统的输出。
+$F(\cdot)$表示在给定输入和温度阈值$Ti_{\max}$和$Ti_{\min}$下，预测制冷系统的输出。
 % The inlet temperature set points are one of the key configurations of cooling systems. Generally, they put the temperature variation thresholds (upper and lower boundaries) for the air temperature to the front of the servers, to guarantee the ambient and secure operating environment. 
 % Normally, for the workplace like Data Centers, the initial set points are fixed and configured far below the standards defined by ASHRAE TC9.9~\cite{ashraeTC992011} (Data Center Power Equipment Thermal Guidelines and Best Practices), without considering the actual cooling requirement. 
 % Actually, optimal temperature set points vary with the heat load, especially for the lower boundary: if it is set too low, energy will be wasted due to over cooling; if too high, compressor may suffer from frequent stop and restart, additional energy can be wasted due to too many power peak as seen in stage 1 (refers to Tab.~\ref{tab:cooling_dfa}). 
 
-本节中，我们利用上一节~\ref{sec:case-study1}中训练的编码器-解码器AJ-ODE-Nets模型，
-在给定不同下边界温度设定点的情况下，仿真系统能耗以及温度变化，同时评估特定时间区间内的累积制冷功耗。
-实验采用\secref{sec:case-study1}中所述的三个数据集，其的平均负载分别为1.7k、3.8k和6.3k。
+本节利用上一节~\ref{sec:case-study1}中训练的编码器-解码器AJ-ODE-Net模型，
+在给定不同下阈值温度设定点的情况下，仿真制冷系统能耗以及进气温度变化，同时统计120分钟内的累积制冷能耗。
+实验采用\secref{sec:case-study1}中热负载分别为1.7k、3.8k和6.3k的三个数据集。
 温度下阈值设置点从$12^{\circ}C$逐渐增加到$18^{\circ}C$，调整间隔为$0.5^{\circ}C$ 。
 % In order to simulate the cooling system with different $Ti_{\min}$, the prediction in $F(\cdot)$ is slightly different from the trained model $f(\cdot)$.
-为了模拟不同$Ti_{min}$下的冷却系统运行过程，$F(\cdot)$中的预测过程与原始训练模型$f(\cdot)$略有不同。
-% In particular, the sojourn time predictor in stage \textit{On} is replaced by a specific transformation rule.
-特别地，在阶段\textit{On}下的持续时间预测器被特定的转换规则所替代。
-% Just as the rule in Table~\ref{tab:cooling_dfa}), the stage immediately transitions from 3 (\textit{On}) to 0 (\textit{Off}) if the inlet temperature is cooled down to $Ti_{\min}$. 
-如表~\ref{tab:cooling_dfa}中的规则，如果进气口温度经过冷却下降到$Ti_{min}$，预测模型立即将阶段变量从3（\textit{On}）过渡到0（\textit{Off}）。
 
+为了模拟不同$Ti_{\min}$下冷却系统的运行过程，$F(\cdot)$中的预测过程与式\ref{equa:problematique}的原始训练模型$f(\cdot)$略有不同。
+% In particular, the sojourn time predictor in stage \textit{On} is replaced by a specific transformation rule.
+在阶段\textit{On}下的持续时间预测器被特定的转换规则所替代。
+% Just as the rule in Table~\ref{tab:cooling_dfa}), the stage immediately transitions from 3 (\textit{On}) to 0 (\textit{Off}) if the inlet temperature is cooled down to $Ti_{\min}$. 
+如表~\ref{tab:cooling_dfa}所示规则，当进气口温度经过冷却下降到$Ti_{\min}$，预测模型立即将阶段变量从3（\textit{On}）过渡到0（\textit{Off}）。
     % The stage transition predictor in the proposed model is designed based on sojourn time prediction,  nevertheless, the rules could also be set manually in order to meet simulation requests.
-    尽管本章所提出模型中的阶段转换预测器是基于持续时间预测器设计的，为了满足不同制冷系统运行参数的仿真需要，也可以手动设置状态转换规则。
-    虽然在上述模拟过程中的温度下限与训练数据集对应的阈值参数是不同的，但AJ-ODE-Net仍然支持手动调整阶段过渡阈值以支持此类外推预测。
+尽管AJ-ODE-Net中的阶段转换预测器是基于持续时间预测器设计的，为了满足不同制冷运行参数仿真的需要，模型支持将持续时间预测器替换为其他的状态转换规则。
+虽然在上述模拟过程中的温度下限与训练数据集对应的阈值参数是不同的，但AJ-ODE-Net允许手动调整阶段过渡阈值以支持外推预测。
     % Although the lower temperature threshold in simulations is out of the range of the training dataset, AJ-ODE-Net can still support extrapolation by adjusting manually stage transition thresholds.
-    相比于没有引入系统先验的稳态模型~\cite{Yilmaz2007}，基于先验知识的模型更具可解释性和可扩展性。
+相比于没有引入系统先验的稳态模型~\cite{Yilmaz2007}，基于先验知识设计的模型具有更好的可扩展性，更便于实现灵活的系统仿真。
     % Compared with the steady state model~\cite{Yilmaz2007}, the prior knowledge-informed model is more interpretable and extensible.
     % Meanwhile, in order to model the variation of inlet temperature as a non-stationary process, the temperature is made to climb steadily during stage \textit{Off} and decreased steadily during stage \textit{On}.
-    同时，本章将进气口温度的变化建模成非平稳过程，使得在阶段\textit{Off}期间，进气温度会稳定地上升，在阶段\textit{On}期间，温度会稳定地下降，进而确保温度必然能够触达给定的阈值，
+同时，本章将进气口温度的变化建模成非平稳过程，使得在阶段\textit{Off}期间，进气温度将会稳定地上升，在阶段\textit{On}期间，温度会稳定地下降。
+% 这两个性质能够确保进气温度必然能够触达给定的阈值。
     % This property is consistent with the prior knowledge of the system and is necessary to guarantee that the inlet temperature will continue to vary until reach the wanted thresholds.
-    这一模型特性与系统的先验知识一致，是保证进气口温度能够持续变化直至达到阈值的必要条件，有效避免了模型无限期停留某一阶段内难以跳出的情况。
+这一特性与系统的先验知识一致，是保证进气口温度能够持续变化直至达到阈值的必要条件，有效避免了模型无限期停留某一阶段内难以跳出的情况。
 
 % 在下边界温度设定点不同的情况进行系统仿真实验中，我们对于从\textit{On}阶段到\textit{Off}阶段的转换过程，用了一个转换规则替换了持续时间预测器。
 % 如表~\ref{tab:cooling_dfa}所示的系统先验知识，随着制冷系统温度降低，当前进气口温度小于$Ti_{min}$时，系统将切换到阶段 \textit{Off}，
-图~\ref{fig:lowerbound_simulation}显示了对于热负载约为3.8k的数据集, 不同的进气口温度下限对制冷系统的影响。
-仿真时间为1000秒。随着温度下限设置点从$12^{\circ}C$增加到$18^{\circ}C$，在相同的持续时间内，稳定制冷阶段的时间不断缩减。与此同时，1000秒内包含了更多的制冷系统启停周期。这导致系统的主要功耗来自于由\textit{Off}阶段转变为\textit{on}阶段的系统启动功耗，而非制冷功耗。
+图~\ref{fig:lowerbound_simulation}展示了对于热负载约为3.8k的数据集，设置不同进气温度下限时，制冷系统在1000秒内的瞬时功率变化情况。
+% 对制冷系统的影响。
+% 仿真时间为1000秒。
+随着温度下限设定点从$12^{\circ}C$增加到$18^{\circ}C$，在相同的持续时间内，系统处于稳定制冷阶段的时间不断缩减。与此同时，1000秒内包含了更多的制冷系统启停周期。这导致系统的主要功耗来自于由\textit{Off}阶段转变为\textit{on}阶段的系统启动功耗，而非制冷功耗。
 
 % In order to find the optimal lower boundary temperature set points under different heat loads. 
 % we make use of the Encoder-Decoder AJ-ODE-Net model built in the first case study~\ref{sec:case-study1}, and run simulations by calculating the energy consumption within same duration under different lower temperature set point for three datasets.
@@ -981,37 +993,42 @@ Seduce平台是用于电源和温度管理的物联网平台，该系统以1hz�
 \end{figure*}
 
 % In Fig.~\ref{fig:temperature}, we evaluate the predicted accumulated power consumption, PUE\footnote{PUE\text{ }=${\text { Total Facility Energy }}/{\text { IT Equipment Energy }}$\cite{song2015data}}, and Coefficient Of Performance (COP)\footnote{COP\text{ }=${\text { Cooling Production }}/{\text { Power consumption }}$\cite{song2015data}} within an hour for different $Ti_{\min}$.
-在图~\ref{fig:mape_evolution}中, 我们评估了一个小时内，不同$Ti_{\min}$下的预测累积能耗, PUE\footnote{PUE\text{ }=${\text {  总能耗 }}/{\text { 设备工作能耗 }}$\cite{song2015data}}, 以及性能系数(COP)\footnote{COP\text{ }=${\text {制冷量}}/{\text { 制冷能耗}}$\cite{song2015data}}。
-PUE代表整个总能耗(制冷能耗与设备能耗的和)与设备能耗的比。
+图~\ref{fig:4_temperature}展示了在不同$Ti_{\min}$制冷系统在一小时内的累积能耗预测值，并结合实际热负载绘制了PUE\footnote{PUE\text{ }=${\text {  总能耗 }}/{\text { 设备工作能耗 }}$\cite{song2015data}} 以及性能系数(COP)\footnote{COP\text{ }=${\text {制冷量}}/{\text { 制冷能耗}}$\cite{song2015data}}的变化曲线。
+PUE代表整体总能耗(制冷能耗与工作能耗的和)与工作能耗的比。
 % PUE is the ratio of the total amount of energy used by a data center facility to the energy delivered to computing equipment.
 % The more close PUE is to 1, the more energy-efficient the data center is.
 % COP is a ratio of the actual produced cooling to required energy consumption.
-PUE越接近1，说明整套系统越节能。
-COP是实际产生的制冷量与所需能耗的比值。
+PUE越接近1，说明整套制冷系统越节能。
+COP是实际产生的制冷量与制冷所需能耗的比值。
 
 % When the lower threshold is increased from ${12}^{\circ} \mathrm{C}$ to ${18}^{\circ} \mathrm{C}$, the total energy consumption declines at first and then gradually goes up after certain points.
 当温度下阈值从${12}^{\circ} \mathrm{C}$增加到${18}^{\circ} \mathrm{C}$时，制冷系统总能耗先下降然后逐渐上升。
 % Since the higher $Ti_{\min}$ setting narrows the gap between the upper and the lower thresholds, which makes the compressor restart more frequently. Even though the restarting process has short duration, compressor has extremely high power. 
-由于设置较高的$Ti_{\min}$会缩小上下限之间的差距，使得压缩机更频繁地重启。虽然重启时间较短，但此时压缩机功耗是极高的。
+适当增加$Ti_{\min}$时，可以有效地避免过度制冷，从而减少能耗。
+但是过度增加$Ti_{\min}$会缩小温度上下限之间的间距，使得压缩机更频繁地重启。虽然重启时间较短，但此时压缩机功耗是极高的。
 % As a result, from certain point on, the energy consumption accumulated during compressor restarting process accounts for an important portion, and total energy consumption goes up after that. This certain point is actually the optimal $Ti_{\min}$ that we are searching for.
-因此，从某一温度开始，由于压缩机重新启动导致的能量消耗占据了制冷总能耗的主要部分，在此之后总能量消耗就会上升。而这一拐点就是寻找的最佳$Ti_{\min}$。
+当达到某一温度后，由于压缩机重新启动所需的能耗占据了制冷系统总能耗的主要部分，此后继续升高$Ti_{\min}$会使总能耗增加，这一拐点就是寻找的最佳$Ti_{\min}$。
+当$Ti_{\min}$达到某一温度后，由于压缩机频繁重启增加的能耗与减少过度制冷节省的能耗持平时，此后继续升高$Ti_{\min}$会使总能耗增加。这一拐点就是本项工作希望寻找的最佳$Ti_{\min}$。
 % For the three experiments with different heat loads, the optimal $Ti_{\min}$, where the total energy consumption is minimized are marked in Fig.~\ref{fig:energy}. 
-对于三个不同热负荷的数据集，图~\ref{fig:energy}中标出了使总能耗最小的最佳的$Ti_{\min}$。
+对于三个不同热负载的数据集，图~\ref{fig:energy}中标出了使总能耗最小的最佳的$Ti_{\min}$。
 % In Fig.~\ref{fig:pue}, the optimal temperature thresholds are consistent with the ones in Fig.~\ref{fig:energy}.
 % In Fig.~\ref{fig:cop}, COP decreases with the increase of $Ti_{\min}$. 
 % The reason is that frequent on-off operations reduce the time for stable cooling. 
 在图~\ref{fig:4_temperature}\subref{fig:pue}中，最佳温度阈值与图~\ref{fig:4_temperature}\subref{fig:energy}中的阈值一致。
-在图~\ref{fig:4_temperature}\subref{fig:cop}中，COP随着$Ti_{\min}$的增加不断降低。其原因为频繁的压缩机开闭过程会减少了稳定制冷的时间，进而导致单位功耗下产生的制冷量下降。
+在图~\ref{fig:4_temperature}\subref{fig:cop}中，COP随着$Ti_{\min}$的增加不断降低。其原因为频繁的压缩机开闭过程会减少稳定制冷的时间，进而导致单位功耗产生的制冷量下降。
 % We take it for granted that the COP is lower when system is unstable.
 % When the cooling system runs unstably for a long time, the COP decreases naturally.
 % The decline tendency in COP also explains why the required cooling decreases while the energy consumption increases.
-COP的下降趋势也解释了为什么提高温度下限值，所需的冷却量减少而制冷能耗却增加。
+COP的下降趋势也解释了为什么提高温度下限值能够使所需的冷气量减少而总制冷能耗却增加。
 
 % 仿真结果如图.~\ref{fig:temperature}所示，曲线中标出了系统达到最小功耗时的温度下限设定值。
-与此同时我们发现，最优温度设定点随负载的变化而变化。热负载越大，最优温度设定值越大。
+与此同时我们发现，最优温度设定点随热负载的增加而增加。因为热负载较高时，制冷系统在\text{On}阶段需要工作更长的时间才能使温度降低到$Ti_{\min}$，变相地增加了制冷阶段在完整工作周期中的占比。
+这一发现也在一定程度上表明制冷系统的PUE与制冷、待机两阶段时长的比例具有很强的相关性。
+
 基于仿真实验推导出的最优温度设置点$Ti^*_{\min}$，表~\ref{tab:power_save_percent}展示了优化温度设定点可以节省的功耗百分比。
+表~\ref{tab:power_save_percent}展示了基于仿真实验推导出的最优温度设置点$Ti^*_{\min}$以及通过优化温度设定点可以节省的功耗百分比。
 根据仿真结果，采用新的温度下限设定值可以节省约6-25\%的能耗，特别对于高热负载情况下的能耗优化是极其显著的。
-因为实验\ref{sec:case-study1}中评估了模型预测累积能耗的相对百分比误差小于5\%，可以认为本节对于不同温度下限设定值的仿真结果是有足够可信度。
+因为实验\ref{sec:case-study1}中评估了模型预测累积能耗的相对百分比误差小于5\%，可以认为本节对于不同温度下限设定值的仿真结果有足够的可信度。
 在未来的工作中，将进一步验证该温度设定策略在实际工业制冷系统中的能耗优化表现。
 
 % The simulations are shown in 图.~\ref{fig:temperature}, and the optimal lower temperature set point, which can achieve the least energy consumption are marked in the curves. 
@@ -1104,26 +1121,31 @@ COP的下降趋势也解释了为什么提高温度下限值，所需的冷却�
     % \includegraphics[width=8cm]{figures/temperature.eps}
     \caption{在不同热负载下改变温度设定下限值对功耗、COP、PUE的影响}
     \label{fig:4_temperature}
-    \vspace{-10pt}
+    % \vspace{-10pt}
 \end{figure*}
 
 \section{本章小结}
-\label{sec:conclusion}
-针对连续时间周期跳变系统的建模预测问题，本文提出了一种基于H-ODE-Net的AJ-ODE-Nets模型，同时基于该模型构建了用于系统开环预测的编码器-解码器框架。
+\label{sec:4_conclusion}
+本章针对连续时间周期跳变系统的建模预测问题，提出了一种基于自跳跃常微分方程模型，同时基于该模型构建了用于系统开环预测的编码器-解码器框架。
 % 该模型能够对给定历史序列数据中学习系统中不同阶段下的多输入多输出动态特性，通过给定未来的系统输入能够预测系统的未来输出。
-该模型能够对给定的历史序列数据进行编码，在给定未来系统输入序列下仿真预测系统的未来输出。
+该框架能够对给定的历史序列数据进行编码，通过给定系统的未来序列输入，模型能够预测周期跳变系统的未来阶段变化以及系统输出。
 % 中学习系统中不同阶段下的多输入多输出动态特性，通过给定未来的系统输入能够预测系统的未来输出。
-为了使AJ-ODE-Net更好地学习不同阶段的动态特性，AJ-ODE-Net包含了多个层次常微分方程网络(Hierarchical Neural ODE network), 独立地学习每个阶段下的系统动态特性，并分别建模系统的稳定输出和非稳定输出，同时构建阶段转换预测器以指定各个预测时刻所用的H-ODE-Net。
-作为ODE-Net的扩展，H-ODE-Net中的双层结构分别用于估计隐状态的导数和系统输出的导数，并且对于稳定输出和非稳定输出采用不同的导数模块进行建模。
+为了使模型更好地学习跳变系统在不同阶段内的动态特性，AJ-ODE-Net包含了多个层次常微分方程网络, 每个H-ODE-Net能够独立地学习各阶段下的系统动态，并分别建模系统的稳定输出和非稳定输出。同时，AJ-ODE-Net构建阶段转换预测器以指定各个预测时刻所用的H-ODE-Net。
+% 作为ODE-Net的扩展，H-ODE-Net中的双层结构分别用于估计隐状态的导数和系统输出的导数，并且对于稳定输出和非稳定输出采用不同的导数模块进行建模。
 % 基于AJ设计的阶段转换预测器将系统的先验知识集成为转换规则，以提高模型的预测精度和可解释性。
-最后，本章利用所提出的基于AJ-ODE-Net的编码器-解码器框架建模某一工业制冷系统。与其他方法相比，AJ-ODE-Net在对于制冷系统温度、功耗的开环预测问题中表现出了良好性能，并且能够准确地预估阶段转换点。
+最后，本章利用所提出的基于AJ-ODE-Net的编码器-解码器框架建模某一工业制冷系统。
+与其他方法相比，AJ-ODE-Net能够很好地预测制冷系统温度、功耗变化，并且能够准确地预估阶段转换点。
 % Furthermore, we search the optimal lower threshold set points for the inlet temperature for minimizing cooling energy consumption with different heat loads.
-此外，依托于训练得到的仿真模型，以最小化不同热负荷下的制冷能耗为目标，我们成功优化了制冷系统的温度下限设定点。
+此外，
+本章依托于训练得到的能耗仿真模型，成功优化了制冷系统的温度下限设定点，有效减少了不同热负荷下的制冷能耗。
 % It is shown that up to 25\% energy can be saved by adopting the optimized settings obtained by the simulations.
-仿真结果表明，通过采纳优化后温度阈值设置可以节省高达6-25％的制冷能耗。
+仿真结果表明，采纳优化后的温度阈值可以节省高达6-25％的制冷能耗。
 % The proposed AJ-ODE-Net could be deployed forward to model general continuous-time markov jump systems, future works will be devoted to extend the deterministic stage prediction to markov process.
 % 本章所提出的AJ-ODE-Net可以被应用于一般的连续时间马尔科夫跳跃系统的模型中，未来的工作将致力于将确定性的阶段预测扩展到带有随机性的马尔科夫过程。
 % Moreover, instead of designing transition rules manually in complex systems, we consider to further develop more intelligent stage labeling solutions based on unsupervised machine learning methods~\cite{10.1145/3097983.3098060}.
+
+在未来的研究工作中，可以尝试将AJ-ODE-Net推广至更通用的马尔科夫连续时间跳变系统，将固定的周期转换过程推广至随机的马尔科夫链。
+另外，本文采用自定义状态转移规则的方式对原始系统输出序列进行阶段标注。未来将考虑引入无监督统计学习方法，实现更加智能的自动标注~\cite{10.1145/3097983.3098060}。
 
 
 
