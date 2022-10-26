@@ -587,7 +587,7 @@ $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\si
 考虑到卧式搅拌槽能够起到暂存尾矿浆和水泥的缓冲作用，工业场景下一般将水泥添加量设为固定值，按需间隔添加。当膏体浓度低于某一阈值时，开启螺旋给料器添加水泥。高于某一阈值时停止添加，以控制物料成本。
 % 因此，膏体制备过程是一种典型的周期性多阶段系统，其运行过程为部分可观测的2输入3输出系统。
 % In this modeling case study, cooling system is a typical periodic multi-stage system of an industrial infrastructure, it can be regarded as a partially observed MIMO (Multiple-Input Multiple-Output) system. 
-直观地，当浓密机出料浓度（$x_1(t)$）较高时，水泥的需求量较少，此时开启螺旋给料器后，膏体浓度($y_3(t)$)升高较快，满足某一浓度要求后即可关闭水泥添加装置。
+直观地，当浓密机出料浓度($x_1(t)$)较高时，水泥的需求量较少，此时开启螺旋给料器后，膏体浓度($y_3(t)$)升高较快，满足某一浓度要求后即可关闭水泥添加装置。
 当浓密机出料流量（$x_2(t)$）较高时，按比例地，也需要添加更多的水泥以满足浓度要求。
 此时搅拌机排出的膏体流量($y_1(t)$)也会增加。
 % 的升高会导致制冷系统进气口温度($y_3(t)$)升高。
@@ -621,24 +621,28 @@ $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\si
 \subsection{数据预处理：离散序列插及阶段标注}
 
 为了使用微分方程网络对序列数据进行处理，需要使用插值方法将带有缺失值的不规则采样序列转换为连续信号。
-在本章实验中，膏体制备系统数据集存在采样间隔不均匀、部分数据缺失的问题。本章采用第三章\ref{sec:3_interpolation_training}的可微并行三阶样条插值方法对离散时间序列$\boldsymbol X_{[1:I+L]}$和$\boldsymbol Y_{[1:I]}$进行插值，构成连续时间信号$\boldsymbol Y:[t_1,t_{I}]$和$\boldsymbol X:[t_1,t_{I+L}]$。在任意时刻$t$,  $\boldsymbol X(t)$和$\boldsymbol Y(t)$二阶可微，满足自适应步长求解器求解神经ODE系统时所需的必要条件\cite{kidger2020neural}。
-当待处理的数据集噪声较少时，相比于其他插值算法，三次样条插值实现简单，插值生成的连续信号中的噪音较小，且对原始
-序列数据的破坏较小。
+在本章实验中，膏体制备系统数据集存在采样间隔不均匀、部分数据缺失的问题。本章采用第五章\ref{sec:ode_system_modeling}中的
+带有二次平方指数核函数的高斯过程插值方法对离散时间序列$\boldsymbol X_{[1:I+L]}$和$\boldsymbol Y_{[1:I]}$进行插值，构成连续时间信号$\boldsymbol Y:[t_1,t_{I}]$和$\boldsymbol X:[t_1,t_{I+L}]$。在任意时刻$t$，  $\boldsymbol X(t)$和$\boldsymbol Y(t)$二阶可微，满足自适应步长求解器求解神经ODE系统时所需的必要条件\cite{kidger2020neural}。
+由于数据集中水泥添加量监测值$y_1(t)$具有较大噪音，因此不适合采用第三章介绍的样条插值方法。
+% 当待处理的数据集噪声较少时，
+% 相比于其他插值算法，三次样条插值实现简单，插值生成的连续信号中的噪音较小，且对原始序列数据的破坏较小。
 % First part in preprocessing module mentioned in~\ref{sec:data_prepocessing_module} concerns the choice of interpolation method to transfer the input data sets with irregular missing values to continuous ones. In this concrete case, the data sets of cooling system come from highly reliable and well calibrated sensory measurement system, which works in relatively stable environment. Following the previous study in \cite{kidger2020neural}, natural cubic spline is usually employed to generate continuous-time processes  $\boldsymbol Y:[t_1,t_{I}]$ and $\boldsymbol X:[t_1,t_{I+L}]$ from discrete-time sequences $\boldsymbol X_{[1:I+L]}$ and $\boldsymbol Y_{[1:I]}$.
 % For an arbitrary time point $t$, the path $\boldsymbol X(t)$ and $\boldsymbol Y(t)$ are second order differentiable functions, which is a necessary condition of employing adaptive step size solvers to solve the neural ODE system.
 % When dealing with dataset containing not much noisy data, compared with other options for interpolation, natural cubic splines give essentially the minimum regularity. In this case, the data suffers little noise disturbance, spline interpolation is the appropriate choice in dealing with these cooling system operational data sets. 
 % The second part is sliding, 
 %It is a fortunate fact that our cooling system works in a closed space and suffers very little noise disturbance from environment.
 
-接下来，为了训练AJ-ODE-Net模块中的阶段转换预测器，需要在训练前标注序列数据各时间点处的所属阶段。本节基于系统先验知识构建了系统阶段转换的判断规则，并基于此自动地为序列数据赋予阶段标签。
-根据现场观察和对于膏体制备系统的了解，可知的系统先验知识如下：
-% \begin{itemize}[parskip=0pt,itemsep=0pt,topsep=0,parsep=0pt]
-% \begin{itemize}[itemsep=0pt,topsep=0pt,parsep=0pt]
-\begin{itemize}[nosep]
-% \begin{itemize}
-    \item 根据当前进气口温度以及制冷系统的启停温度设定值，制冷系统的工作模式在压缩机启动和压缩机关闭两种状态之间交替切换。
-    \item 系统共包含四个可观测的工作阶段，每阶段下的系统输出将呈现完全不同的动态特性。
-\end{itemize}
+接下来，为了训练AJ-ODE-Net模块中的阶段转换预测器，需要在训练前标注序列数据各时间点处的所属阶段。
+本节基于系统先验知识构建了系统阶段转换的判断规则，并基于此自动地为序列数据赋予阶段标签。
+系统的各个阶段以及阶段之间的转换规则如表~\ref{tab:cooling_dfa}所示。
+% 根据现场观察和对于膏体制备系统的了解，可知的系统先验知识如下：
+% % \begin{itemize}[parskip=0pt,itemsep=0pt,topsep=0,parsep=0pt]
+% % \begin{itemize}[itemsep=0pt,topsep=0pt,parsep=0pt]
+% \begin{itemize}[nosep]
+% % \begin{itemize}
+%     \item 根据当前进气口温度以及制冷系统的启停温度设定值，制冷系统的工作模式在压缩机启动和压缩机关闭两种状态之间交替切换。
+%     \item 系统共包含四个可观测的工作阶段，每阶段下的系统输出将呈现完全不同的动态特性。
+% \end{itemize}
 
 % According to the observations in site and the pre-defined configurations, some knowledge are known in prior: 
 % \begin{itemize}
@@ -649,12 +653,12 @@ $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\si
 % \end{itemize}
 % The descriptions of each stage along with the transformation rules are detailed in Tab.~\ref{tab:cooling_dfa}.
 % 图.~\ref{fig:stages_mark} demonstrates the auto labeling results with an example: 
-根据上述先验知识，可以精确地定义系统的各个阶段并给出阶段之间的转换规则，如表~\ref{tab:cooling_dfa}所示。
+
 % 每个时刻 $t_i$的阶段变量 $s(t_i)\in\{0,\dots,N-1\}$。
-制冷系统在$N=4$个阶段之间依周期地循环切换。
+% 制冷系统在$N=4$个阶段之间依周期地循环切换。
 \begin{table*}[]
     \centering
-    \caption{跳变系统在四种状态下循环，每种状态对应制冷系统的一个阶段}
+    \caption{膏体制备系统在两种状态下循环}
     % \caption{The designed AJ has four circular states and each state is corresponding to one stage in the cooling system.}
     \label{tab:cooling_dfa}
     \begin{tabular}{llcl}
@@ -662,10 +666,10 @@ $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\si
     % \multirow{2}{*}{状态} & \multirow{2}{*}{描述}         & \multicolumn{2}{c}{转换规则}                                \\
        状态                  &    描述             & 下一阶段 & 转换触发条件                                   \\ 
        \hline
-    0-关闭                       & 系统待机                             & 1          & $y_3(t)\geq Ti_{\max}$                                \\
-    1-启动第一阶段                      & 制冷系统启动的第一阶段                     & 2          & $y_1(t)$ 到达某一峰值                            \\
-    2-启动第二阶段                       & 制冷系统启动的第二阶段 & 3          & \multicolumn{1}{l}{$y_2(t)$ 稳定} \\
-    3-开机                       & 系统运行                                   & 0          & $y_3(t)\leq Ti_{\min}$                                \\
+    0-Off                       & 螺旋给料器关闭，浓度持续降低                             & 1          & $y_3(t)\geq C_{\max}$                                \\
+    % 1-启动第一阶段                      & 制冷系统启动的第一阶段                     & 2          & $y_1(t)$ 到达某一峰值                            \\
+    % 2-启动第二阶段                       & 制冷系统启动的第二阶段 & 3          & \multicolumn{1}{l}{$y_2(t)$ 稳定} \\
+    1-On                       & 螺旋给料器开启，浓度持续增加                                   & 0          & $y_3(t)\leq C_{\min}$                                \\
     % 4-Shut down                       & system is shutting down                            & 0          & $y_2(t)=0$                                           \\ 
     \bottomrule
     \end{tabular}
@@ -698,26 +702,30 @@ $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\si
 % \subsection{Model training}
 \label{sec:model_training}
 
-本节从Seduce平台采集了四组数据集用于模型的训练与评价，四组数据集均采集于生产运行稳定时段，且运行功率有较大差异，分别为1.7kw，3.8kw，4.2kw，6.3kw。运行功率$x_1(t)$越大，说明当前热负载越高。表\ref{tab:sys_in_out_prior}中汇总了各个数据集的描述、输入输出介绍以及序列长度。在图\ref{fig:state}中，本节统计了不同热负载下，每次\textit{On}阶段和\textit{Off}阶段持续时间的分布情况。
-结果表明，阶段持续时间与热负载功率值有较强相关性。在特定的热负载下，阶段持续时间${\tau}_{i}$趋于稳定。
-这一结果说明，在开环预测时，利用系统的热负载输入以及外部环境温度动态地预测各个阶段的持续时间以及实现阶段自切换是具有可行性的。
+本节从DCS系统中采集约11万条数据用于模型的训练与评价，所有数据均来源于生产运行稳定时段，且不同时段浓密机出料流量和浓度和有较大差异，流量波动范围为$130m^3/h-200m^3/h$，浓度波动范围为$52\%-67\%$。
+% 运行功率$x_1(t)$越大，说明当前热负载越高。
+% 表\ref{tab:sys_in_out_prior}中汇总了各个数据集的描述、输入输出介绍以及序列长度。
+% 在图\ref{fig:state}中，本节统计了不同热负载下，每次\textit{On}阶段和\textit{Off}阶段持续时间的分布情况。
+% 结果表明，阶段持续时间与热负载功率值有较强相关性。在特定的热负载下，阶段持续时间${\tau}_{i}$趋于稳定。
+% 这一结果说明，在开环预测时，利用系统的热负载输入以及外部环境温度动态地预测各个阶段的持续时间以及实现阶段自切换是具有可行性的。
 % 与服务器负载功率值有较强相关性，特定数据集下的阶段持续时间分布相对稳定。
 % In 图.~\ref{fig:state}, we analyse the statistical properties of duration in each stage. 
 % It demonstrates that the distribution of duration ${\tau}_{i}$ is stationary and highly depends on the nearby external inputs.
-\begin{figure}
-\centering
-\hspace{-0.1in}
-\subfigure[阶段-\textit{关闭}]{\includegraphics[width=0.45\linewidth]{figures/chapter4/state1.pdf}}\hspace{-0.05in}
-\subfigure[阶段-\textit{开机}]{\includegraphics[width=0.45\linewidth]{figures/chapter4/state4.pdf}}
-\caption{
-% The data of the four data sets are generated at different power of the server, which are 1.7kw, 3.8kw, 4.2kw and 6.3kw respectively. Compare the duration time of system on and off   under different power.
-在平均负载不同的四个数据集中，\textit{启动}阶段和\textit{关闭}阶段的持续时间分布箱线图
-} %图片标题
-\label{fig:state}  %图片交叉引用时的标签
-\end{figure}
-
-对于四个数据集，每个数据集中的完整序列长度约为8000-10000，采样时间点为连续非均匀的，平均采样频率约为1条/秒，序列对应的时间长度约为8000s-10000s。
-每个数据集的前50\%数据用于模型训练，剩下的数据中，25\%数据用于构建验证集，25\%数据用于模型测试。
+% \begin{figure}
+% \centering
+% \hspace{-0.1in}
+% \subfigure[阶段-\textit{关闭}]{\includegraphics[width=0.45\linewidth]{figures/chapter4/state1.pdf}}\hspace{-0.05in}
+% \subfigure[阶段-\textit{开机}]{\includegraphics[width=0.45\linewidth]{figures/chapter4/state4.pdf}}
+% \caption{
+% % The data of the four data sets are generated at different power of the server, which are 1.7kw, 3.8kw, 4.2kw and 6.3kw respectively. Compare the duration time of system on and off   under different power.
+% 在平均负载不同的四个数据集中，\textit{启动}阶段和\textit{关闭}阶段的持续时间分布箱线图
+% } %图片标题
+% \label{fig:state}  %图片交叉引用时的标签
+% \end{figure}
+% 对于四个数据集，每个数据集中的完整序列长度约为8000-10000，
+数据集中的采样时间是为连续非均匀的，平均采样频率约为1条/秒
+% ，序列对应的时间长度约为8000s-10000s。
+数据集的前50\%用于模型训练。剩下的数据中，25\%数据用于构建验证集，25\%数据用于模型测试。
 
 对于训练集和验证集，本节使用大小为1600s的滑动窗口对原始序列进行遍历并生成训练样本。
 对于每一个训练样本，根据~\ref{sec:4_notations}节的定义，前800s为条件范围，用于编码器求解预测阶段所需的初始状态，后800s为预测范围，模型预测该范围内的系统输出。
@@ -738,37 +746,40 @@ $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\si
 %when cooling system is off and slower decrease of inlet temperature when cooling system is working.Together with the stages of cooling system, the consumed power of cooling system $y_1(t)$ and cooling capacity $y_2(t)$ also change periodically with the frequencies and phase positions determined by inputs $x_1(t)$ and $x_2(t)$.  
 
 
-\begin{table}[ht]
-    \centering
-\caption{系统输入输出, 不同负载下的数据集和模型的操作}
-% \caption{System Inputs-Outputs, data sets based on heat load and model options}
-\label{tab:sys_in_out_prior}
-\begin{tabular}{cll}
-\toprule
-\multicolumn{1}{c}{}                                  & 变量定义                      & 描述                                    \\ \hline
-\multicolumn{1}{c|}{\multirow{2}{*}{输入}}          & \multicolumn{1}{c|}{$x_1(t)$}& 服务器的瞬时功率,  $W$            \\ \cline{2-3} 
-\multicolumn{1}{c|}{}                                 & \multicolumn{1}{c|}{$x_2(t)$}& 环境温度, $^{\circ}C$          \\ \hline
-\multicolumn{1}{c|}{\multirow{3}{*}{输出}}         & \multicolumn{1}{c|}{$y_1(t)$}& 制冷系统功率,  $W$                  \\ \cline{2-3} 
-\multicolumn{1}{c|}{}                                 & \multicolumn{1}{c|}{$y_2(t)$} & 制冷量,  $W$                     \\ \cline{2-3} 
-\multicolumn{1}{c|}{}                                 & \multicolumn{1}{c|}{$y_3(t)$}& 入气口温度,  $^{\circ}C$  \\ \hline
-\multicolumn{1}{c|}{\multirow{4}{*}{数据集}} & \multicolumn{2}{l}{"1.7k":服务器稳定运行在1.7kw左右, 长度: 8853s}  \\ \cline{2-3} 
-\multicolumn{1}{c|}{}                                 & \multicolumn{2}{l}{"3.8k": 服务器稳定运行在3.8kw左右, 长度: 9771s}  \\ \cline{2-3} 
-\multicolumn{1}{c|}{}                                 &
-\multicolumn{2}{l}{"4.2k": 服务器稳定运行在4.2kw左右, 长度: 8472s}  \\ \cline{2-3} 
-\multicolumn{1}{c|}{}                                 &
-\multicolumn{2}{l}{"6.3k": 服务器稳定运行在6.3kw左右, 长度: 8418s} \\ \hline
+% \begin{table}[ht]
+%     \centering
+% \caption{系统输入输出, 不同负载下的数据集和模型的操作}
+% % \caption{System Inputs-Outputs, data sets based on heat load and model options}
+% \label{tab:sys_in_out_prior}
+% \begin{tabular}{cll}
+% \toprule
+% \multicolumn{1}{c}{}                                  & 变量定义                      & 描述                                    \\ \hline
+% \multicolumn{1}{c|}{\multirow{2}{*}{输入}}          & \multicolumn{1}{c|}{$x_1(t)$}& 服务器的瞬时功率,  $W$            \\ \cline{2-3} 
+% \multicolumn{1}{c|}{}                                 & \multicolumn{1}{c|}{$x_2(t)$}& 环境温度, $^{\circ}C$          \\ \hline
+% \multicolumn{1}{c|}{\multirow{3}{*}{输出}}         & \multicolumn{1}{c|}{$y_1(t)$}& 制冷系统功率,  $W$                  \\ \cline{2-3} 
+% \multicolumn{1}{c|}{}                                 & \multicolumn{1}{c|}{$y_2(t)$} & 制冷量,  $W$                     \\ \cline{2-3} 
+% \multicolumn{1}{c|}{}                                 & \multicolumn{1}{c|}{$y_3(t)$}& 入气口温度,  $^{\circ}C$  \\ \hline
+% \multicolumn{1}{c|}{\multirow{4}{*}{数据集}} & \multicolumn{2}{l}{"1.7k":服务器稳定运行在1.7kw左右, 长度: 8853s}  \\ \cline{2-3} 
+% \multicolumn{1}{c|}{}                                 & \multicolumn{2}{l}{"3.8k": 服务器稳定运行在3.8kw左右, 长度: 9771s}  \\ \cline{2-3} 
 % \multicolumn{1}{c|}{}                                 &
-% \multicolumn{2}{l}{Proportion of dataset for training, validation, and test 5:2:5}  \\ \hline
-% Dataset split & training: validation:test = 5:2:5 \\ \hline
-\end{tabular}
-\end{table}
+% \multicolumn{2}{l}{"4.2k": 服务器稳定运行在4.2kw左右, 长度: 8472s}  \\ \cline{2-3} 
+% \multicolumn{1}{c|}{}                                 &
+% \multicolumn{2}{l}{"6.3k": 服务器稳定运行在6.3kw左右, 长度: 8418s} \\ \hline
+% % \multicolumn{1}{c|}{}                                 &
+% % \multicolumn{2}{l}{Proportion of dataset for training, validation, and test 5:2:5}  \\ \hline
+% % Dataset split & training: validation:test = 5:2:5 \\ \hline
+% \end{tabular}
+% \end{table}
 
-\subsection{应用研究1: 运行变量仿真}
+\subsection{实验一: 膏体制备系统运行过程预测与仿真}
 \label{sec:case-study1}
-本节使用基于AJ-ODE-Net结构的编码器-解码器框架预测制冷系统的输出。
-模型的预测变量为三个：进气口温度、制冷量和制冷机功率。
-其中，进气口温度是受制冷系统影响的控制目标变量，表示制冷系统排出的空气温度。制冷量代表制冷系统单位时间产生的制冷量，其直接影响制冷系统中进气口温度的变化~\cite{alonso2020estimating}，在压缩机不工作时，制冷量为0。制冷系统开始工作后，制冷量会突然飙升至较高水平。
-制冷机功率，表示整个制冷系统的瞬时功耗。在制冷系统工作期间功耗较高，待机期间功耗较低。
+本节使用基于AJ-ODE-Net结构的编码器-解码器框架，在给定浓密机出料浓度和出料流量输入下，预测膏体制备系统的输出。
+模型的预测变量为三个：膏体浓度、膏体流量和制冷机功率。
+其中，膏体浓度是系统的控制目标变量，表示搅拌机排出膏体的浓度。
+膏体流量代表制备系统单位时间产出的膏体体积，其受到水泥添加量和浓密机出料流量的共通影响。
+水泥量为实时水泥添加量($t/h$)。
+给料系统开始工作后，添加量会从0开始，以较快速度飙升至某一固定值。
+在给料器关闭时，添加量快速降至0。
 % In the first place, the framework is used to simulate the operating variables of the concerned cooling system in real time, three typical variables are selected: inlet temperature, cooling production and cooling power. Where, the first variable inlet temperature is an important thermal target of data center affected by cooling production, indicating the air temperature taken by servers. The second one is cooling production generated by compressor, which acts directly on removing heat during the cooling process~\cite{alonso2020estimating},  compressor consumes most of the electricity in the cooling system. And the third estimated variable is cooling power, indicates the instant power consumed by entire cooling system. 
 % 另外，系统运行过程中混合稳定和非稳定的两种过程:当系统产生冷空气时，制冷量和系统功耗可以看作是典型的稳定过程(均值和方差相对稳定)。
 % 而在此过程中，进气口温度呈指数型下降，则应视为非稳定过程(均值不断下降)。这种稳定性和非稳定性过程混合的系统在工业系统中很常见，
@@ -794,7 +805,7 @@ $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\si
 \subfigure[单ODE网络]{\includegraphics[width=0.45\linewidth]{figures/chapter4/one.pdf}}\hspace{-0.08in}
 \subfigure[自跳跃结构+ODE-RNN]{\includegraphics[width=0.45\linewidth]{figures/chapter4/rnn.pdf}}\hspace{-0.08in}
 \subfigure[自跳跃结构+H-ODE-Net(本文方法)]{\includegraphics[width=0.45\linewidth]{figures/chapter4/ours.pdf}}
-\caption{不同模型预测进气口温度、制冷量、制冷机功率的效果对比} %图片标题
+\caption{不同模型预测水泥添加量、膏体流量、膏体浓度的效果对比} %图片标题
 \label{fig:4_models}  %图片交叉引用时的标签
 \end{figure*}
 % 图.~\ref{fig:}
@@ -815,22 +826,22 @@ $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\si
 %     \caption{Prediction results of 6.3k-power}
 %     \label{fig:6.3k-power}
 % \end{figure}
-上述实验表明，使用多阶段模型能够将先验知识集成到模型中，相比于单模型结构，能够更好地预测多阶段系统的阶段转换边界。
+上述实验表明，使用多阶段模型能够将先验知识集成到模型中，相比单模型结构，能够更好地预测多阶段系统的阶段转换边界。
 同时，结合了非稳定输出和稳定输出的H-ODE-Net模型能够有效地对系统的多个输出项进行学习，相比于忽视了系统输出时序特性的ODE-RNN模型，能够更准确地预测系统的输出。
 
 % In addition to the predicted accuracy, in using AJ method, the prior knowledge can be integrated into models, to enable advanced studies like the simulation of configuration adjustments, dynamical control and energy consumption optimization. Conversely, for one Neural-ODE or AJ-ODE-RNN structures, it is not applicable.
 接下来，本小节将定量地评估不同模型的预测精度。由于本文关注于开环预测问题并且需要模型自发地进行阶段切换。伴随着预测范围长度的增加，对于相位的估计误差也将不断累积。
 当预测结果中各阶段开始、结束的位置与系统真实输出中阶段的起止位置无法对齐时，此时点对点的误差评估并不适用于量化评估模型的预测误差。
-因此，本节对模型预测功耗的长期累积结果进行评估。
-对于不同功率的数据集，采用训练过的模型预测制冷系统在未来预测范围$[{t_I:t_{I+L}}]$（共120分钟）下的功耗。
+因此，本节对水泥累积添加量的预测结果进行评估。
+具体地，采用训练过的模型预测膏体制备系统在未来预测范围$[{t_I:t_{I+L}}]$（共120分钟）下的水泥消耗量。
 % In terms of the estimation accuracy, given that AJ-ODE-Nets is applied for open loop estimation and govern the stage transition automatically, the running phases could be affected significantly by the initial point and accumulative error, therefore the point to point accuracy is less meaningful. 
 % Accordingly, in order to evaluate the long term simulation capability of the framework, the accumulative energy consumption is estimated over different predictive length, from five minutes to two hours. 
 % For the datasets with different power, we employ the trained model to predict the future energy consumption with the predictive range $[{t_I:t_{I+L}}]$ equaling 120 minutes.
 % The length of the predicted range ${t_I:t_{I+L}}$ is 120 minutes.
 % The predictive error of the accumulative power consumption is evaluated sectionally and measured as Mean Absolute Percentage Error (MAPE).
 % By defining the size of the evaluation window as $T$, the prediction error of consumed power, $E(T)$, is measured as:
-在序列预测结果基础上，按时间尺度对瞬时功耗进行积分以得到某一时间长度（T）下的累积功耗预测值。
-进一步地，可以定义预测功耗的平均绝对百分比误差，$\text{MAPE}(T)$:
+在序列预测结果基础上，对给定预测时间范围内的瞬时水泥量进行积分以得到某一时间长度（T）下的累积水泥量预测值。
+进一步地，可以定义预测值的平均绝对百分比误差，$\text{MAPE}(T)$:
 % The Mean Absolute Percentage Error (MAPE) of the predicted energy consumption, $\text{MAPE}(T)$, is defined based on the size of the evaluation window $T$:
 % \vspace{-5pt}
 \begin{equation}
@@ -841,13 +852,13 @@ $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\si
 \begin{equation}
 \text{APE}(t_1,t_2) = \left|\frac{\int_{t_1}^{t_2}\hat{y}_1(t)dt-\int_{t_1}^{t_2}y_1(t)dt}{\int_{t_1}^{t_2}y_1(t)dt}\right|
 \end{equation}
-其中，绝对百分比误差$\text{APE}(t_1,t_2)$衡量了时间范围$[t_1, t_2]$内预测功耗和真实功耗之间的相对误差。
+其中，绝对百分比误差$\text{APE}(t_1,t_2)$衡量了时间范围$[t_1, t_2]$内水泥消耗预测值和真实消耗之间的相对误差。
 图\ref{fig:mape_evolution}描述了评估窗口的大小T对于评估结果$MAPE(T)$的影响。
 可以看出，随着$T$的增加，$\text{MAPE}(T)$ 在开始时剧烈下降，然后缓慢下降。
-当评窗口大小超过35分钟时，所有数据集的MAPE都趋于稳定，说明此时真实输出序列与预测序列之间的阶段起止位置相位差对于评估长期功耗的预测精度不再产生影响。
-因次本节对比了$T=30$分钟下，不同模型对于累积功耗预测结果的MAPE，结果如表~\ref{tab:Compare power}所示。
-对于所有数据集，AJ-ODE-Net预测结果的MAPE稳定低于5\%，优于其他三个对比模型。
-充分证明了本文提出的AJ-ODE-Net模型及编码器解码器框架能够以开环预测的方式在长时间尺度下精确地仿真制冷系统的累积功耗。
+当评窗口大小超过35分钟时，MAPE都趋于稳定，说明此时真实输出序列与预测序列之间的阶段起止位置相位差对于评估长期水泥消耗不再产生影响。
+因次本节对比了$T=30$分钟下，不同模型对于水泥累积消耗的预测结果的MAPE，结果如表~\ref{tab:Compare power}所示。
+通过对比不同模型的预测效果，AJ-ODE-Net预测结果的MAPE稳定低于5\%，优于其他三个对比模型。
+充分证明了本章提出的AJ-ODE-Net模型及编码器解码器框架能够以开环预测的方式在长时间尺度下精确地仿真制冷系统的累积功耗。
 
 从计算复杂性的角度，本节对四个模型在测试集单批数据上执行式\eqref{equa:initial_state}以及式\eqref{equ:decoding}两个过程的时间消耗进行了对比。
 普通ODE-Net作为耗时最短的模型，将其时间消耗作为基准，其他模型的推理时间均除以该基准以得到相对尺度下的耗时指标。
@@ -871,7 +882,7 @@ $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\si
     % of H-ODE-Net and 
     % Power estimation error comparison between One-ODE and H-ODE ,The total length of each test set is 120 minutes. Select the sequence every 30 minutes, calculate the power consumption of the truth value and the predicted value, and then calculate the MAPE. Truth power consumption$P_{truth}=(p_1,p_2,p_3,p_4)$,Predicted power consumption$P_{pred}=(\hat{p_1},\hat{p_2},\hat{p_3},\hat{p_4})$
     % The comparison of energy consumption prediction and the relative computational efficiency}
-    \caption{不同模型累积能耗预测精度和推理时间的对比}
+    \caption{使用不同模型预测水泥消耗量时的精度和推理时间的对比}
     % \resizebox{0.9\linewidth}{!}{
     \begin{tabular}{lccccc} 
     \toprule
@@ -908,7 +919,7 @@ $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\si
 \begin{figure}
     \centering
     \includegraphics[width=0.8\linewidth]{figures/chapter4/power_error.pdf}
-    \caption{预测不同时间长度的功耗的MAPE的变化}
+    \caption{不同时间长度下水泥消耗量预测值的MAPE变化}
     \label{fig:mape_evolution}
 \end{figure}
 
@@ -919,26 +930,27 @@ $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\si
 
 \subsection{应用研究2: 制冷系统进气口温度设定点优化}
 \label{sub:case-study2}
-进气口温度上下限设定值(上限$Ti_{\max}$和下限$Ti_{\min}$)是影响制冷系统运行、保证运行环境安全的关键设置参数。
+膏体浓度上下限设定值(上限$C_{\max}$和下限$C_{\min}$)是影响膏体制备系统运行以及水泥消耗的关键设置参数。
 % 通常，系统要设定通入进气口的空气温度阈值，以保证运行环境的安全。
 % 通常，对于大部分的制冷系统，初始的进气口温度设定点是固定的，配置值低于ASHRAE TC9.9~\cite{ashraeTC992011}(数据中心电源设备热指南和最佳实践)中定义的标准，没有充分考虑实际的制冷需求。
-对于本章研究的制冷系统，其默认温度阈值为$12^\circ C$，$20^\circ C$。
-从数据集可以观察到进气温度在上下阈值之间周期性变化。
-由于默认温度设置未充分考虑实际的制冷需求，会存在一定程度的能源浪费。
-出于提高能源效率以及确保生产过程安全的目的，本节在保持温度上阈值不变的情况下，通过优化下阈值以减少制冷消耗。
-然而，想要精确地找到最佳温度阈值是困难的。
-如果阈值设置太低，由于过度制冷会浪费大量电能。
-如果阈值设置太高，压缩机的制冷重启过程将更加频繁。
-从图~\ref{fig:4_models}中可以看出，制冷系统重新启动时的功耗显著高于提供稳定制冷时的功耗。
-因此，盲目地增加温度下阈值反而可能会导致整体能耗的增加。
+对于本章研究的制备系统，其默认膏体浓度阈值为$67^\circ C$，$74^\circ C$。
+从数据集可以观察到膏体浓度在上下阈值之间周期变化。
+由于默认浓度设置未充分考虑实际输入尾矿浆的浓度以及流量、水泥价格、设备开关机损耗等因素，因此水泥添加环节的生产成本具有极大的优化空间。
+在保证膏体浓度满足充填要求的前提下，出于降低水泥消耗以及减少设备磨损的目的，本节保持浓度下阈值不变，通过优化上阈值以削减生产成本。
+然而，想要精确地找到最佳浓度阈值是困难的。
+如果阈值设置太高，每次给料器打开后需要长时间添加水泥，造成物料成本浪费。
+如果阈值设置太低，给料器的重启过程将极其频繁，每次设备重启都会带来一定的设备磨损，缩短设备使用寿命。
+% 从图~\ref{fig:4_models}中可以看出，给料系统重新启动时的功耗显著高于提供稳定制冷时的功耗。
+因此，盲目地降低浓度上阈值可能会导致生产成本升高。
 % 实际上，最佳温度设定点随热负载的不同而变化，尤其是温度下限。如果下限设置过低，会因过度制冷过多而浪费电能;过高会导致压缩机频繁停机和启动，如图1所示(见表~\ref{tab:cooling_dfa})，在阶段一启动时功率峰值会很高，这些峰值过多会浪费额外的电能，。
 
-本节试图寻找最优温度下限以期望达到最佳的能源效率。形式化地，寻找最优温度下限$Ti_{\min}^{*}$可以表示为一单目标优化问题，问题中需要考虑的因素包括：热负载、环境温度、进气口温度的上下限：
+本节试图寻找最优浓度上限以期望达到最佳的生产成本。形式化地，寻找最优浓度上限$C_{\max}^{*}$可以表示为一单目标优化问题。
+% 问题中需要考虑的因素包括：浓密机出料浓度、浓密机出料流量、环境温度、进气口温度的上下限：
 \begin{equation}
     \begin{aligned}
-       Ti^*_{\min}&=\mathop{\arg\min}\limits_{Ti_{\min}} \int_{0}^{T} \hat{y}_{1}(t) dt \\
-       &\text{s.t. } \hat{\boldsymbol{Y}}_{0: T}=F\left(\boldsymbol{X}_{0: T},Ti_{\min}, Ti_{\max},\boldsymbol{\zeta}\right),
-       Ti^*_{\min}\leq \hat{y}_{3}(t) \leq Ti^*_{\max}
+       C^*_{\min}&=\mathop{\arg\min}\limits_{C_{\min}} \int_{0}^{T} Q\hat{y}_{1}(t) dt + P*|S|\\
+       &\text{s.t. } \hat{\boldsymbol{Y}}_{0: T}=F\left(\boldsymbol{X}_{0: T},C_{\min}, C_{\max},\boldsymbol{\zeta}\right),
+       C^*_{\min}\leq \hat{y}_{3}(t) \leq C^*_{\max}
     %    &\text{s.t. }\begin{aligned}
     %    \end{aligned}
     %    \text{s.t. } \hat{\boldsymbol{Y}}_{0: T}=F\left(\boldsymbol{X}_{0: T},Ti_{\min}, Ti_{\max},\boldsymbol{\zeta}\right)
@@ -946,43 +958,45 @@ $t_l$为$(-\infty, t_i]$范围下，满足条件$\sigma(t_l)=\sigma(t_i)$且$\si
     \end{aligned}
     \label{equ:optimazition}
     \end{equation}
-其中$\hat{\boldsymbol{Y}}_{0: T}$和$\hat{y}_{1}(t)$分别表示模型预测的系统输出以及预测出的瞬时功耗。
-在给定系统输入和恒定上限值的条件下，被优化变量为温度下阈值，优化目标是最小化累计能耗。
-式\eqref{equ:optimazition}中的$\boldsymbol{X}_{0: T}$为测试数据集中的系统输入，其中包括所有时刻的热负载以及环境温度。
-$F(\cdot)$表示在给定输入和温度阈值$Ti_{\max}$和$Ti_{\min}$下，预测制冷系统的输出。
+其中$S=\{t_i|\sigma (t_i)\neq \sigma (t^+_i)\}$代表阶段发生转换的时间点。P代表每次给料器开机的设备损耗成本，$Q$表示水泥价格。$\hat{\boldsymbol{Y}}_{0: T}$和$\hat{y}_{1}(t)$分别表示模型预测的系统输出以及预测出的瞬时水泥量。
+在给定系统输入和恒定下限值的条件下，被优化变量为温度下阈值，优化目标是最小化累计生产成本。
+式\eqref{equ:optimazition}中的$\boldsymbol{X}_{0: T}$为测试数据集中的系统输入，其中包括所有时刻的浓密机出料浓度和流量。
+$F(\cdot)$表示在给定输入和阈值$C_{\max}$和$C_{\min}$下，预测膏体制备系统的输出。
 % The inlet temperature set points are one of the key configurations of cooling systems. Generally, they put the temperature variation thresholds (upper and lower boundaries) for the air temperature to the front of the servers, to guarantee the ambient and secure operating environment. 
 % Normally, for the workplace like Data Centers, the initial set points are fixed and configured far below the standards defined by ASHRAE TC9.9~\cite{ashraeTC992011} (Data Center Power Equipment Thermal Guidelines and Best Practices), without considering the actual cooling requirement. 
 % Actually, optimal temperature set points vary with the heat load, especially for the lower boundary: if it is set too low, energy will be wasted due to over cooling; if too high, compressor may suffer from frequent stop and restart, additional energy can be wasted due to too many power peak as seen in stage 1 (refers to Tab.~\ref{tab:cooling_dfa}). 
 
 本节利用上一节~\ref{sec:case-study1}中训练的编码器-解码器AJ-ODE-Net模型，
-在给定不同下阈值温度设定点的情况下，仿真制冷系统能耗以及进气温度变化，同时统计120分钟内的累积制冷能耗。
-实验采用\secref{sec:case-study1}中热负载分别为1.7k、3.8k和6.3k的三个数据集。
-温度下阈值设置点从$12^{\circ}C$逐渐增加到$18^{\circ}C$，调整间隔为$0.5^{\circ}C$ 。
+在给定不同下阈值设定点的情况下，仿真系统水泥添加量以及膏体浓度变化，同时统计120分钟内的累积充填流量。
+% 实验采用\secref{sec:case-study1}中热负载分别为1.7k、3.8k和6.3k的三个数据集。
+用于仿真的浓度下阈值设置点从$68\%$逐渐增加到$74\%$，调整间隔为$0.5\%C$ 。
 % In order to simulate the cooling system with different $Ti_{\min}$, the prediction in $F(\cdot)$ is slightly different from the trained model $f(\cdot)$.
 
-为了模拟不同$Ti_{\min}$下冷却系统的运行过程，$F(\cdot)$中的预测过程与式\ref{equa:problematique}的原始训练模型$f(\cdot)$略有不同。
+为了模拟不同$C_{\min}$下系统的运行过程，$F(\cdot)$中的预测过程与式\ref{equa:problematique}的原始训练模型$f(\cdot)$略有不同。
 % In particular, the sojourn time predictor in stage \textit{On} is replaced by a specific transformation rule.
 在阶段\textit{On}下的持续时间预测器被特定的转换规则所替代。
 % Just as the rule in Table~\ref{tab:cooling_dfa}), the stage immediately transitions from 3 (\textit{On}) to 0 (\textit{Off}) if the inlet temperature is cooled down to $Ti_{\min}$. 
-如表~\ref{tab:cooling_dfa}所示规则，当进气口温度经过冷却下降到$Ti_{\min}$，预测模型立即将阶段变量从3（\textit{On}）过渡到0（\textit{Off}）。
+如表~\ref{tab:cooling_dfa}所示的阶段转换规则，当持续添加水泥使得膏体浓度不断上升直到$C_{\max}$时，预测模型立即将阶段变量从1（\textit{On}）转换到0（\textit{Off}）。
     % The stage transition predictor in the proposed model is designed based on sojourn time prediction,  nevertheless, the rules could also be set manually in order to meet simulation requests.
-尽管AJ-ODE-Net中的阶段转换预测器是基于持续时间预测器设计的，为了满足不同制冷运行参数仿真的需要，模型支持将持续时间预测器替换为其他的状态转换规则。
-虽然在上述模拟过程中的温度下限与训练数据集对应的阈值参数是不同的，但AJ-ODE-Net允许手动调整阶段过渡阈值以支持外推预测。
+尽管AJ-ODE-Net中的阶段转换预测器是基于持续时间预测器设计的，为了满足不同运行参数仿真的需要，模型支持将持续时间预测器替换为其他的状态转换规则。
+虽然在上述模拟过程中的浓度上限与训练数据集对应的阈值参数是不同的，但AJ-ODE-Net允许手动调整阶段过渡阈值以支持外推预测。
     % Although the lower temperature threshold in simulations is out of the range of the training dataset, AJ-ODE-Net can still support extrapolation by adjusting manually stage transition thresholds.
 相比于没有引入系统先验的稳态模型~\cite{Yilmaz2007}，基于先验知识设计的模型具有更好的可扩展性，更便于实现灵活的系统仿真。
     % Compared with the steady state model~\cite{Yilmaz2007}, the prior knowledge-informed model is more interpretable and extensible.
     % Meanwhile, in order to model the variation of inlet temperature as a non-stationary process, the temperature is made to climb steadily during stage \textit{Off} and decreased steadily during stage \textit{On}.
-同时，本章将进气口温度的变化建模成非平稳过程，使得在阶段\textit{Off}期间，进气温度将会稳定地上升，在阶段\textit{On}期间，温度会稳定地下降。
+同时，本章将膏体浓度的变化过程建模成非平稳过程，使得在阶段\textit{On}期间，膏体浓度将会持续地上升，在阶段\textit{Off}期间，膏体浓度会持续地下降。
 % 这两个性质能够确保进气温度必然能够触达给定的阈值。
     % This property is consistent with the prior knowledge of the system and is necessary to guarantee that the inlet temperature will continue to vary until reach the wanted thresholds.
-这一特性与系统的先验知识一致，是保证进气口温度能够持续变化直至达到阈值的必要条件，有效避免了模型无限期停留某一阶段内难以跳出的情况。
+这一特性与系统的先验知识一致，是保证膏体浓度能够持续变化直至达到阈值的必要条件，有效避免了模型无限期停留某一阶段内难以跳出的情况。
 
 % 在下边界温度设定点不同的情况进行系统仿真实验中，我们对于从\textit{On}阶段到\textit{Off}阶段的转换过程，用了一个转换规则替换了持续时间预测器。
 % 如表~\ref{tab:cooling_dfa}所示的系统先验知识，随着制冷系统温度降低，当前进气口温度小于$Ti_{min}$时，系统将切换到阶段 \textit{Off}，
-图~\ref{fig:lowerbound_simulation}展示了对于热负载约为3.8k的数据集，设置不同进气温度下限时，制冷系统在1000秒内的瞬时功率变化情况。
+图~\ref{fig:lowerbound_simulation}展示了设置不同浓度上限时，膏体制备系统在1000分钟内的水泥添加量变化情况。
+% todo: 上面的1000s
 % 对制冷系统的影响。
 % 仿真时间为1000秒。
-随着温度下限设定点从$12^{\circ}C$增加到$18^{\circ}C$，在相同的持续时间内，系统处于稳定制冷阶段的时间不断缩减。与此同时，1000秒内包含了更多的制冷系统启停周期。这导致系统的主要功耗来自于由\textit{Off}阶段转变为\textit{on}阶段的系统启动功耗，而非制冷功耗。
+随着浓度设定点从$74\%$逐渐增加到$68\%$，在相同的持续时间内，系统处于水泥添加阶段的时间不断缩减。与此同时，1000分钟内包含了更多的给料器启停周期。
+% 这导致系统的主要功耗来自于由\textit{Off}阶段转变为\textit{on}阶段的系统启动功耗，而非制冷功耗。
 
 % In order to find the optimal lower boundary temperature set points under different heat loads. 
 % we make use of the Encoder-Decoder AJ-ODE-Net model built in the first case study~\ref{sec:case-study1}, and run simulations by calculating the energy consumption within same duration under different lower temperature set point for three datasets.
@@ -999,50 +1013,54 @@ $F(\cdot)$表示在给定输入和温度阈值$Ti_{\max}$和$Ti_{\min}$下，预
 \subfigure[$14^{\circ}C$]{\includegraphics[width=0.45\linewidth]{figures/chapter4/14.pdf}} \hspace{-0.1in}\\
 \subfigure[$16^{\circ}C$]{\includegraphics[width=0.45\linewidth]{figures/chapter4/16.pdf}} \hspace{-0.1in}
 \subfigure[$18^{\circ}C$]{\includegraphics[width=0.45\linewidth]{figures/chapter4/18.pdf}} 
-\caption{在不同温度下限设定值下的进气口温度的仿真值}
+\caption{在不同浓度上限设定下的水泥添加量的仿真值}
 % \caption{The simulations of instant cooling power under different lower boundary of temperature set points}
 %\caption{The simulated instant consumed power with different temperature lower boundaries} %图片标题
 \label{fig:lowerbound_simulation}
 \end{figure*}
 
 % In Fig.~\ref{fig:temperature}, we evaluate the predicted accumulated power consumption, PUE\footnote{PUE\text{ }=${\text { Total Facility Energy }}/{\text { IT Equipment Energy }}$\cite{song2015data}}, and Coefficient Of Performance (COP)\footnote{COP\text{ }=${\text { Cooling Production }}/{\text { Power consumption }}$\cite{song2015data}} within an hour for different $Ti_{\min}$.
-图~\ref{fig:4_temperature}展示了在不同$Ti_{\min}$制冷系统在一小时内的累积能耗预测值，并结合实际热负载绘制了PUE\footnote{PUE\text{ }=${\text {  总能耗 }}/{\text { 设备工作能耗 }}$\cite{song2015data}} 以及性能系数(COP)\footnote{COP\text{ }=${\text {制冷量}}/{\text { 制冷能耗}}$\cite{song2015data}}的变化曲线。
-PUE代表整体总能耗(制冷能耗与工作能耗的和)与工作能耗的比。
+图~\ref{fig:4_temperature}展示了在不同$C_{\max}$下，制备系统在一小时内的生产成本预测值，其中包括水泥成本和设备损耗成本。同时，结合实际充填膏体体积计算了单位体积充填成本\footnote{单位体积充填成本\text{ }=${\text {  物料成本+设备损耗 }}/{\text { 充填膏体体积 }}$}。
+% $\cite{song2015data}} 以及性能系数(COP)\footnote{COP\text{ }=${\text {制冷量}}/{\text { 制冷能耗}}$\cite{song2015data}}的变化曲线。
+% PUE代表整体总能耗(制冷能耗与工作能耗的和)与工作能耗的比。
 % PUE is the ratio of the total amount of energy used by a data center facility to the energy delivered to computing equipment.
 % The more close PUE is to 1, the more energy-efficient the data center is.
 % COP is a ratio of the actual produced cooling to required energy consumption.
-PUE越接近1，说明整套制冷系统越节能。
+% PUE越接近1，说明整套制冷系统越节能。
 COP是实际产生的制冷量与制冷所需能耗的比值。
 
 % When the lower threshold is increased from ${12}^{\circ} \mathrm{C}$ to ${18}^{\circ} \mathrm{C}$, the total energy consumption declines at first and then gradually goes up after certain points.
-当温度下阈值从${12}^{\circ} \mathrm{C}$增加到${18}^{\circ} \mathrm{C}$时，制冷系统总能耗先下降然后逐渐上升。
-% Since the higher $Ti_{\min}$ setting narrows the gap between the upper and the lower thresholds, which makes the compressor restart more frequently. Even though the restarting process has short duration, compressor has extremely high power. 
-适当增加$Ti_{\min}$时，可以有效地避免过度制冷，从而减少能耗。
-但是过度增加$Ti_{\min}$会缩小温度上下限之间的间距，使得压缩机更频繁地重启。虽然重启时间较短，但此时压缩机功耗是极高的。
-% As a result, from certain point on, the energy consumption accumulated during compressor restarting process accounts for an important portion, and total energy consumption goes up after that. This certain point is actually the optimal $Ti_{\min}$ that we are searching for.
-当达到某一温度后，由于压缩机重新启动所需的能耗占据了制冷系统总能耗的主要部分，此后继续升高$Ti_{\min}$会使总能耗增加，这一拐点就是寻找的最佳$Ti_{\min}$。
-当$Ti_{\min}$达到某一温度后，由于压缩机频繁重启增加的能耗与减少过度制冷节省的能耗持平时，此后继续升高$Ti_{\min}$会使总能耗增加。这一拐点就是本项工作希望寻找的最佳$Ti_{\min}$。
-% For the three experiments with different heat loads, the optimal $Ti_{\min}$, where the total energy consumption is minimized are marked in Fig.~\ref{fig:energy}. 
-对于三个不同热负载的数据集，图~\ref{fig:energy}中标出了使总能耗最小的最佳的$Ti_{\min}$。
-% In Fig.~\ref{fig:pue}, the optimal temperature thresholds are consistent with the ones in Fig.~\ref{fig:energy}.
-% In Fig.~\ref{fig:cop}, COP decreases with the increase of $Ti_{\min}$. 
+当浓度上阈值从$74\%$降低到$68\%$时，膏体制备总成本先下降然后逐渐上升。
+% Since the higher $C_{\min}$ setting narrows the gap between the upper and the lower thresholds, which makes the compressor restart more frequently. Even though the restarting process has short duration, compressor has extremely high power. 
+适当增加$C_{\max}$时，可以有效地避免水泥的过度添加，从而减少物料成本。
+但是过度降低$C_{\max}$会缩小浓度上下限之间的间距，使得给料器更频繁地重启，显著增加系统损耗成本。
+% 虽然重启时间较短，但此时压缩机功耗是极高的。
+% As a result, from certain point on, the energy consumption accumulated during compressor restarting process accounts for an important portion, and total energy consumption goes up after that. This certain point is actually the optimal $C_{\min}$ that we are searching for.
+% 当上阈值达到某一浓度后，由于给料器重新启动所需的能耗占据了制冷系统总能耗的主要部分，此后继续升高$C_{\min}$会使总能耗增加，这一拐点就是寻找的最佳$C_{\min}$。
+当$C_{\max}$达到某一浓度后，由于给料器频繁重启增加的设备损耗成本与减少水泥过度添加节省的物料成本持平时，此后继续降低$C_{\max}$会使总成本增加。这一拐点就是本项工作希望寻找的最佳$C_{\max}$。
+% For the three experiments with different heat loads, the optimal $C_{\min}$, where the total energy consumption is minimized are marked in Fig.~\ref{fig:cost}. 
+图~\ref{fig:cost}中标出了使总成本最小的最佳的$C_{\max}$。
+% In Fig.~\ref{fig:profit}, the optimal temperature thresholds are consistent with the ones in Fig.~\ref{fig:cost}.
+% In Fig.~\ref{fig:cop}, COP decreases with the increase of $C_{\min}$. 
 % The reason is that frequent on-off operations reduce the time for stable cooling. 
-在图~\ref{fig:4_temperature}\subref{fig:pue}中，最佳温度阈值与图~\ref{fig:4_temperature}\subref{fig:energy}中的阈值一致。
-在图~\ref{fig:4_temperature}\subref{fig:cop}中，COP随着$Ti_{\min}$的增加不断降低。其原因为频繁的压缩机开闭过程会减少稳定制冷的时间，进而导致单位功耗产生的制冷量下降。
+在图~\ref{fig:4_temperature}\subref{fig:profit}中，最佳浓度阈值与图~\ref{fig:4_temperature}\subref{fig:cost}中的阈值一致。
+% 在图~\ref{fig:4_temperature}\subref{fig:cop}中，COP随着$C_{\max}$的增加不断降低。其原因为频繁的压缩机开闭过程会减少稳定制冷的时间，进而导致单位功耗产生的制冷量下降。
 % We take it for granted that the COP is lower when system is unstable.
 % When the cooling system runs unstably for a long time, the COP decreases naturally.
 % The decline tendency in COP also explains why the required cooling decreases while the energy consumption increases.
-COP的下降趋势也解释了为什么提高温度下限值能够使所需的冷气量减少而总制冷能耗却增加。
+% COP的下降趋势也解释了为什么提高温度下限值能够使所需的冷气量减少而总制冷能耗却增加。
 
 % 仿真结果如图.~\ref{fig:temperature}所示，曲线中标出了系统达到最小功耗时的温度下限设定值。
-与此同时我们发现，最优温度设定点随热负载的增加而增加。因为热负载较高时，制冷系统在\text{On}阶段需要工作更长的时间才能使温度降低到$Ti_{\min}$，变相地增加了制冷阶段在完整工作周期中的占比。
-这一发现也在一定程度上表明制冷系统的PUE与制冷、待机两阶段时长的比例具有很强的相关性。
+% 与此同时我们发现，最优温度设定点随热负载的增加而增加。因为热负载较高时，制冷系统在\text{On}阶段需要工作更长的时间才能使温度降低到$C_{\max}$，变相地增加了制冷阶段在完整工作周期中的占比。
+% 这一发现也在一定程度上表明制冷系统的PUE与制冷、待机两阶段时长的比例具有很强的相关性。
 
-基于仿真实验推导出的最优温度设置点$Ti^*_{\min}$，表~\ref{tab:power_save_percent}展示了优化温度设定点可以节省的功耗百分比。
-表~\ref{tab:power_save_percent}展示了基于仿真实验推导出的最优温度设置点$Ti^*_{\min}$以及通过优化温度设定点可以节省的功耗百分比。
-根据仿真结果，采用新的温度下限设定值可以节省约6-25\%的能耗，特别对于高热负载情况下的能耗优化是极其显著的。
-因为实验\ref{sec:case-study1}中评估了模型预测累积能耗的相对百分比误差小于5\%，可以认为本节对于不同温度下限设定值的仿真结果有足够的可信度。
-在未来的工作中，将进一步验证该温度设定策略在实际工业制冷系统中的能耗优化表现。
+% 基于仿真实验推导出的最优浓度设置点$C^*_{\max}$，
+% 表~\ref{tab:power_save_percent}展示了通过采纳仿真实验推导出的最优浓度设置点$C^*_{\max}$，可以节省的生产成本百分比。
+表~\ref{tab:power_save_percent}展示了基于仿真实验推导出的最优浓度设置点$C^*_{\max}$以及通过优化浓度设定点可以节省的生产成本百分比。
+根据仿真结果，采用新的上限设定值可以节省约6-25\%的生产成本。
+% ，特别对于高热负载情况下的能耗优化是极其显著的。
+因为实验\ref{sec:case-study1}中评估了模型预测水泥累积消耗量的精度，其相对百分比误差小于5\%。可以认为本节对于不同浓度上限设定值的仿真结果有足够的可信度。
+在未来的工作中，将进一步验证该浓度设定策略在实际膏体制备系统中的成本优化表现。
 
 % The simulations are shown in 图.~\ref{fig:temperature}, and the optimal lower temperature set point, which can achieve the least energy consumption are marked in the curves. 
 % It can be found that, optimal temperature set points are varied with the heat load, higher heat load corresponding to higher optimal temperature set points. 
@@ -1050,17 +1068,17 @@ COP的下降趋势也解释了为什么提高温度下限值能够使所需的�
 % From results, we find that optimizing the lower boundary set point will produce great energy saving. 
 % It is an extremely economical and green improvement of the studied data center, which is supposed to be verified in the future work.
 
-\begin{table}[]
-\centering
-\caption{能耗优化效果}
-\label{tab:power_save_percent}
-\begin{tabular}{lcccc}
-\hline
-\multicolumn{1}{c}{\textbf{不同负载的数据集}} & 1.7k  & 3.8k    & 6.3k  \\ \hline
-最优温度设定值(${ }^{\circ} \mathrm{C}$)               & 14   & 15     & 15.5    \\
-最大功耗优化比例(\%)              & 6.49 & 10.93  & 25.71\\ \hline
-\end{tabular}
-\end{table}
+% \begin{table}[]
+% \centering
+% \caption{充填成本优化结果}
+% \label{tab:power_save_percent}
+% \begin{tabular}{lcccc}
+% \hline
+% \multicolumn{1}{c}{\textbf{不同负载的数据集}} & 1.7k  & 3.8k    & 6.3k  \\ \hline
+% 最优温度设定值(${ }^{\circ} \mathrm{C}$)               & 14   & 15     & 15.5    \\
+% 最大功耗优化比例(\%)              & 6.49 & 10.93  & 25.71\\ \hline
+% \end{tabular}
+% \end{table}
 
 
 % optimized power,best temp set point is the temperature point when the power consumption is the lowest ,max optimized power is compare the lowest power consumption with the truth power consumption
@@ -1073,7 +1091,7 @@ COP的下降趋势也解释了为什么提高温度下限值能够使所需的�
 % \label{tab:rrse(1.7k)}
 % \begin{tabular}{lccc}
 % \hline
-% \textbf{\%RRSE(1.7k)} & Ti    & PCooling & Power Cooling \\ \hline
+% \textbf{\%RRSE(1.7k)} & C    & PCooling & Power Cooling \\ \hline
 % H-ODE                 & 14.32  & 17.34    & 19.37        \\
 % ODE-RNN               & 16.33  & 18.86    & 16.79        \\ \hline
 % \end{tabular}
@@ -1085,7 +1103,7 @@ COP的下降趋势也解释了为什么提高温度下限值能够使所需的�
 % \label{tab:rrse(3.8k)}
 % \begin{tabular}{lccc}
 % \hline
-% \textbf{RRSE(3.8k)} & Ti    & PCooling & Power Cooling \\ \hline
+% \textbf{RRSE(3.8k)} & C    & PCooling & Power Cooling \\ \hline
 % H-ODE               & 12.77 & 14.60    & 17.79         \\
 % ODE-RNN             & 15.37 & 15.25    & 16.97         \\ \hline
 % \end{tabular}
@@ -1099,7 +1117,7 @@ COP的下降趋势也解释了为什么提高温度下限值能够使所需的�
 % \label{tab:rrse(4.2k)}
 % \begin{tabular}{lccc}
 % \hline
-% \textbf{RRSE(4.2k)} & Ti    & PCooling & Power Cooling \\ \hline
+% \textbf{RRSE(4.2k)} & C    & PCooling & Power Cooling \\ \hline
 % H-ODE               & 13.34 & 15.57    & 18.88         \\
 % ODE-RNN             & 17.03 & 18.61    & 17.54         \\ \hline
 % \end{tabular}
@@ -1111,7 +1129,7 @@ COP的下降趋势也解释了为什么提高温度下限值能够使所需的�
 % \label{tab:rrse(4.2k)}
 % \begin{tabular}{lccc}
 % \hline
-% \textbf{RRSE(6.3k)} & Ti    & PCooling & Power Cooling \\ \hline
+% \textbf{RRSE(6.3k)} & C    & PCooling & Power Cooling \\ \hline
 % H-ODE               & 13.07 & 15.65    & 19.29         \\
 % ODE-RNN             & 17.75 & 18.61    & 18.23         \\ \hline
 % \end{tabular}
@@ -1128,11 +1146,11 @@ COP的下降趋势也解释了为什么提高温度下限值能够使所需的�
 
 \begin{figure*}[htb]
     \centering
-    \subfigure[制冷能耗]{\includegraphics[width=0.7\linewidth]{figures/chapter4/power.pdf}\label{fig:energy}}
-    \subfigure[PUE]{\includegraphics[width=0.7\linewidth]{figures/chapter4/pue.pdf}\label{fig:pue}}
-    \subfigure[COP]{\includegraphics[width=0.7\linewidth]{figures/chapter4/cop.pdf}\label{fig:cop}}
+    \subfigure[累积充填成本]{\includegraphics[width=0.7\linewidth]{figures/chapter4/power.pdf}\label{fig:cost}}
+    \subfigure[平均充填成本]{\includegraphics[width=0.7\linewidth]{figures/chapter4/pue.pdf}\label{fig:profit}}
+    % \subfigure[COP]{\includegraphics[width=0.7\linewidth]{figures/chapter4/cop.pdf}\label{fig:cop}}
     % \includegraphics[width=8cm]{figures/temperature.eps}
-    \caption{在不同热负载下改变温度设定下限值对功耗、COP、PUE的影响}
+    \caption{不同浓度上阈值对充填成本的影响}
     \label{fig:4_temperature}
     % \vspace{-10pt}
 \end{figure*}
@@ -1146,13 +1164,13 @@ COP的下降趋势也解释了为什么提高温度下限值能够使所需的�
 为了使模型更好地学习跳变系统在不同阶段内的动态特性，AJ-ODE-Net包含了多个层次常微分方程网络, 每个H-ODE-Net能够独立地学习各阶段下的系统动态，并分别建模系统的稳定输出和非稳定输出。同时，AJ-ODE-Net构建阶段转换预测器以指定各个预测时刻所用的H-ODE-Net。
 % 作为ODE-Net的扩展，H-ODE-Net中的双层结构分别用于估计隐状态的导数和系统输出的导数，并且对于稳定输出和非稳定输出采用不同的导数模块进行建模。
 % 基于AJ设计的阶段转换预测器将系统的先验知识集成为转换规则，以提高模型的预测精度和可解释性。
-最后，本章利用所提出的基于AJ-ODE-Net的编码器-解码器框架建模某一工业制冷系统。
-与其他方法相比，AJ-ODE-Net能够很好地预测制冷系统温度、功耗变化，并且能够准确地预估阶段转换点。
+最后，本章利用所提出的基于AJ-ODE-Net的编码器-解码器框架建模某一膏体制备系统。
+与其他方法相比，AJ-ODE-Net能够很好地预测制备系统的膏体浓度变化、水泥消耗量以及膏体流量变化，并且能够准确地预估系统的阶段转换点。
 % Furthermore, we search the optimal lower threshold set points for the inlet temperature for minimizing cooling energy consumption with different heat loads.
 此外，
-本章依托于训练得到的能耗仿真模型，成功优化了制冷系统的温度下限设定点，有效减少了不同热负荷下的制冷能耗。
+本章依托于训练得到的水泥量消耗预测模型，成功优化了系统的浓度上限设定点。通过合理地规划螺旋给料器的启停规则，在满足充填浓度要求的同时，有效减少了设备损耗以及物料消耗，降低了单位体积充填生产成本。
 % It is shown that up to 25\% energy can be saved by adopting the optimized settings obtained by the simulations.
-仿真结果表明，采纳优化后的温度阈值可以节省高达6-25％的制冷能耗。
+仿真结果表明，采纳优化后的浓度阈值可以节省高达6-25％的充填成本。
 % The proposed AJ-ODE-Net could be deployed forward to model general continuous-time markov jump systems, future works will be devoted to extend the deterministic stage prediction to markov process.
 % 本章所提出的AJ-ODE-Net可以被应用于一般的连续时间马尔科夫跳跃系统的模型中，未来的工作将致力于将确定性的阶段预测扩展到带有随机性的马尔科夫过程。
 % Moreover, instead of designing transition rules manually in complex systems, we consider to further develop more intelligent stage labeling solutions based on unsupervised machine learning methods~\cite{10.1145/3097983.3098060}.
@@ -1164,55 +1182,4 @@ COP的下降趋势也解释了为什么提高温度下限值能够使所需的�
 
 
 
-% 此外，基于训练得到的仿真模型实现了对于制冷系统的能耗仿真。实验结果表明，当预测时间超过35分钟时，能够基本消除了相位误差的影响，模型能够较为准确地估计预测时间内的系统能耗。另外，该模型能够仿真触发制冷启动的温度设定值对于系统能耗的影响，进而求解使冷却能耗最小的最优温度设定值。通过对不同服务器负载数据进行模拟，给出了不同负载下的最优温度设定，并预估经过优化的设定值能够节省制冷系统能耗约29\%。
-
-
-% In this paper, a novel deep learning based framework AJ-ODE-Nets is proposed, target at modeling periodic and multi-stage industrial complex systems. It is a MIMO framework, at first place, the framework learns the system behavior and stage transitions during given duration of conditional range, then start to predict required variables with given inputs. AJ-ODE-Net serves as the key module, which takes in inputs, generates hidden states and appoints the system to switch across different ODE-Nets. In order to better characterize different and hybrid physical processes, Hierarchical Neural ODE networks (H-ODE-Net) are adopted to fit different stages of the system, which contains hybrid stationary and non-stationary structure to deal with complex and more general cases. In addition, prior knowledge is integrated and written as transformation rules into the AJ of Stage Transition Predictor. The option allows improving the model interpretability, and exploring system optimization possibilities. With the features mentioned above, AJ-ODE-Net has prominent advantages in simulating multi-stage physical processing. Finally, the proposed AJ-ODE-Net framework is implemented on a cooling system of a running data center. Comparing with other methods, AJ-ODE-Nets achieves better performance in open loop estimation for several operating variables, with accurate results for each stage including the transition point. \\
-% Moreover, two applications are realized as use cases. Firstly, the framework is applied to estimate energy consumption for short and long terms cases. Evaluations show that, accurate estimation results can be obtained for prediction duration more than 35 minutes, to get rid of the impact brought by initial points (phrase difference in periodic sequences). Secondly, for the purpose of reducing cooling energy consumption, simulations are conducted by varying lower boundary temperature set points within Stage Transition Predictor to search for the optimal configuration under different heat load
-% \chapter{插入参考文献}
-% \section{\BibTeX 的使用}
-% \BibTeX 是一种格式和一个程序，用于协调LaTeX的参考文献处理。\BibTeX 使用数据库的的方式来管理参考文献. \BibTeX 文件的后缀名为 .bib。 先来看一个例子：
-% \begin{quote}
-% @article\{name1,\\
-% author = \{作者, 多个作者用 and 连接\},\\
-% title = \{标题\},\\
-% journal = \{期刊名\},\\
-% volume = \{卷20\},\\
-% number = \{页码\},\\
-% year = \{年份\},\\
-% abstract = \{摘要, 这个主要是引用的时候自己参考的, 这一行不是必须的\}\\
-% \}\\
-
-% @book\{name2,\\
-% author ="作者",\\
-% year="年份2008",\\
-% title="书名",\\
-% publisher ="出版社名称"\\
-% \}
-% \end{quote}
-% 说明:第一行@article 告诉 \BibTeX 这是一个文章类型的参考文献，还有其它格式, 例如 article, book, booklet, conference, inbook, incollection, inproceedings，manual, misc, mastersthesis, phdthesis, proceedings, techreport, unpublished 等等。接下来的"name1"，就是你在正文中应用这个条目的名称。其它就是参考文献里面的具体内容啦。
-% \section{在\LaTeX 中使用\BibTeX }
-% 为了在LaTeX中使用BibTeX 数据库, 你必须先做下面三件事情:
-% \begin{enumerate}
-% \item 设置参考文献的类型 (bibliography style). 标准的为 plain:\\
-% 　　$\backslash$bibliographystyle\{plain\}\\
-% 将上面的命令放在 \LaTeX 文档的 $\backslash$begin\{document\}后边. 其它的类型包括:\\
-% unsrt – 基本上跟 plain 类型一样，除了参考文献的条目的编号是按照引用的顺序，而不是按照作者的字母顺序。\\
-% alpha – 类似于 plain 类型，当参考文献的条目的编号基于作者名字和出版年份的顺序。\\
-% abbrv – 缩写格式。
-% \item 标记引用 (Make citations). 当你在文档中想使用引用时, 插入\LaTeX 命令$\backslash$cite{引用文章名称}。"引用文章名称" 就是前边定义@article后面的名称.
-% \item 告诉LaTeX生成参考文献列表，在 LaTeX 的结束前输入$\backslash$bibliography{bibfile}。这里bibfile 就是你的 BibTeX 数据库文件 bibfile.bib .
-% \end{enumerate}
-
-% \section{运行 \BibTeX}
-% 分为下面四步:
-% \begin{enumerate}
-% \item 用LaTeX编译你的 .tex 文件 , 这是生成一个 .aux 的文件, 这告诉 \BibTeX 将使用那些应用；
-% \item 用\BibTeX 编译 .bib 文件；
-% \item 再次用\LaTeX 编译你的 .tex 文件，这个时候在文档中已经包含了参考文献，但此时引用的编号可能不正确；
-% \item 最后用 \LaTeX 编译你的 .tex 文件，如果一切顺利的话, 这是所有东西都已正常了.
-% \end{enumerate}
-
-% \section{本论文参考文献格式}
-% 北京科技大学博士论文的参考文献要求符合国家标准“GB/T7714-2005文后参考文献著录规则”。本模板中已包含了关于符合此要求的gbt7714-2005.bst文件，只需要将参考文献类型设置为$\backslash$bibliographystyle\{gbt7714-2005\}即可。
 
