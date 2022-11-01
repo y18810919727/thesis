@@ -160,6 +160,29 @@
     \def\StudentID{#1}
 }
 
+% \titlechapter1{高时延复杂工业系统的连续时间域建模与预测}
+
+%学号
+\def\TitlechapterI{}
+\newcommand{\titlechapterI}[1]{%
+    \def\TitlechapterI{#1}
+}
+%学号
+\def\TitlechapterII{}
+\newcommand{\titlechapterII}[1]{%
+    \def\TitlechapterII{#1}
+}
+%学号
+\def\TitlechapterIII{}
+\newcommand{\titlechapterIII}[1]{%
+    \def\TitlechapterIII{#1}
+}
+%学号
+\def\TitlechapterIV{}
+\newcommand{\titlechapterIV}[1]{%
+    \def\TitlechapterIV{#1}
+}
+
 % 指导老师
 \def\TeacherCN{}
 \def\TeacherEN{}
@@ -313,9 +336,13 @@
 \setitemize[1]{itemsep=0pt,partopsep=0pt,parsep=0pt,topsep=0pt,parskip=0pt}
 \setdescription{itemsep=0pt,partopsep=0pt,parsep=0,topsep=0pt}
 
+\setlength{\bibsep}{0em}
 
 % \setlength{\itemsep}{0pt}
 % \setlength{\parsep}{0pt}
 % \setlength{\parskip}{0pt}
 % \setlength{\topsep}{0pt}
 % \setlength{\partopsep}{0pt}
+
+
+

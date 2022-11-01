@@ -1,7 +1,7 @@
 % !Mode:: "TeX:UTF-8"
 \renewcommand{\b}{\boldsymbol}
 
-\chapter{基于可微ODE-Net的高时延工业多输入输出系统预测}
+\chapter{\TitlechapterI}
 在复杂过程工业系统控制研究领域中，基于传统控制理论的系统辨识及控制器设计方法受限于系统复杂性难以适用。
 而基于强化学习的无模型控制策略学习方法虽然不受系统复杂性的影响，但需要与环境之间不断进行交互反馈，因此同样不适用于试错代价极其高昂的工业场景。
 模型预测控制方法首先构建被控系统的预测仿真模型，然后依赖于预测模型的推演结果实现系统优化及控制策略，有效解决了复杂系统的控制决策难题~\cite{Yuan2020,Member2019,wu2020optimization}。
@@ -18,7 +18,7 @@
 
 对于上述复杂工业系统特点，许多工业界和学术界的研究人员通过构建不同预测模型来解决这些问题。
 特别地，在基于数据的连续时间系统预测及辨识领域中，研究人员主要利用采样于真实系统的有噪数据来拟合高阶微分方程。
-然而，这种方法不适用于建模部分可观测系统(Partially Observed System)和极端复杂的工业系统.
+然而，这种方法不适用于建模部分可观测系统（Partially Observed System）和极端复杂的工业系统.
 伴随着深度神经网络技术的不断发展，得益于其强大的特征表示能力和可扩展的参数结构，深度学习在解决复杂工业系统的预测及分析问题时被广泛使用。如时间序列预测~\cite{Member2019,Essien2020,9161367,9522017,neu2021systematic}、设备异常检测等~\cite{9326384}。
 然而，现有的大多数基于深度学习的系统建模及预测方法都是基于离散时间域的，忽略了系统的连续时间特性。从模型结构与系统本体的一致性角度来看，忽视系统本身具备的连续时间先验特性会增加模型的自由度及拟合难度，最终限制了模型精度。
 % The above features of a thickening system create challenges for predictive control. There are a number of studies addressing these challenges. 
@@ -38,12 +38,12 @@
 % 针对上述工业系统存在的复杂特性以及长短期预测需求，本章节以ODE-Net作为模型骨架结构，从连续时间域角度拟合复杂工业系统的动态过程，由此提出了一种连续时间域
 针对上述工业系统存在的复杂特性以及长短期预测需求，本章以ODE-Net作为模型骨架结构，
 % 从连续时间域角度拟合复杂工业系统的动态过程，由此提出了一种连续时间域
-提出一种由序列编码器、状态解码器和导数模块组成的深度连续时间(Continuous Time, CT)网络，以端到端的方式学习工业系统输出的自回归变化过程和输入对输出的非线性影响。
+提出一种由序列编码器、状态解码器和导数模块组成的深度连续时间（Continuous Time，CT）网络，以端到端的方式学习工业系统输出的自回归变化过程和输入对输出的非线性影响。
 最终实现在给定历史系统运行轨迹及未来系统控制输入序列情况下，预测系统输出的未来变化。
 
 % 因此，本章将以ODE-Net作为模型骨架结构，从连续时间域角度拟合复杂工业系统的动态过程，以实现给定历史系统输出序列及未来系统控制输入序列情况下，预测系统输出的未来变化。
 具体地，由于工业系统往往存在长时间的系统延迟，因此本章节引入序列编码器以从历史系统运行轨迹中提取特征。
-在预测时，本章提出方法构建了基于深度连续时间状态空间的导数模块。该模块相比于传统的离散序列模型，如循环神经网络（Recurrent Neural Network, RNN）等，更适用于建模系统在连续时间域下的非线性演化，并且在模块中通过引入隐状态可以辅助推断系统的不可观测信息。
+在预测时，本章提出方法构建了基于深度连续时间状态空间的导数模块。该模块相比于传统的离散序列模型，如循环神经网络（Recurrent Neural Network， RNN）等，更适用于建模系统在连续时间域下的非线性演化，并且在模块中通过引入隐状态可以辅助推断系统的不可观测信息。
 最后，本方法将非平稳系统和平稳系统概念融入在模型的导数模块设计中，可以有效解决系统的短期和长期预测问题。
 % 通过将历史系统轨迹和任意长度的系统输入输入到模型中，解决了短期和长期预测问题。然后预测未来的系统输出。
 本章研究在工业系统预测领域有三个方面贡献:
@@ -141,19 +141,6 @@ $\boldsymbol Y_p^{N_y}=[\boldsymbol y(-N_y),\boldsymbol y(-N_y+1),\dots, \boldsy
 图~\ref{fig:model_structure}展示了网络中包含的各个组件及其连接。
 对于给定条件范围内的历史序列轨迹 $\boldsymbol{X}_{p}^{N_{x}}$ 和 $\boldsymbol{Y}_{p}^{N_{y}}$，以及预测范围 内的系统输入序列$\boldsymbol{X}_{f}^{M}$，模型输出$\hat{\boldsymbol{Y}}_{f}^{M}$以近似估计系统输出 $\boldsymbol{Y}_{f}^{M}$。
 % We separately introduce a recurrent neural network (RNN) network to encode historical system trajectories to the initial hidden state and an ODE system to describe the state space model in the given time range.
-
-该模型的预测过程分成以下几个步骤。
-首先， 采用基于循环神经网络的\textbf{序列编码器}，将历史轨迹序列$\boldsymbol{X}_{p}^{N_{X}}$和$\boldsymbol{Y}_{p}^{N_{Y}}$编码为隐状态$\b h(t_0)$。
-然后，将$\b h(t_0)$作为预测阶段待求解常微分方程的初始状态。
-常微分方程的一阶导数由模型中的\textbf{导数模块}定义，模型将隐状态$\b h(t)$和连续时间域中任意时刻的外部控制信号$\b x(t)$作为输入，以估计隐状态$\b h(t)$的瞬时导数$\dot{\b h}(t)$。
-模型中引入的\textbf{并行样条插值}模块将离散的外部输入序列$\boldsymbol{X}_{f}^{M}$插值为连续时间形式$\b x(t)$以作为导数模块的输入。
-接下来，利用ODE求解器求解基于初始状态$\b h(t_0)$和导数模块定义的常微分方程，可以得到时间范围$[t_0\leq t \leq t_M]$内的系统隐状态$\b h(t)$。
-% 其中$[t_0,t_M]$代表与离线时间点序列$-1, \cdots, M-1$相对应的连续时间区间。
-% The derivative of the hidden state with respect to the time variable $ \dot{\b h}(t)$ in the state space model is determined based on a neural network differential function $\b d(\b h(t), t)$. 
-最后，模型利用多层感知器(MLP)网络构建\textbf{状态解码器}，将求解出的隐状态$\b h(t)$映射为待预测的系统输出$\hat{\boldsymbol{Y}}_{f}^{M}$。
-% We then provide a detailed introduction of each network module. 
-接下来，本章将详细介绍所述模型的每个模块的技术细节。
-
 \begin{figure}[t]
     \centering
     %\setlength{\abovecaptionskip}{-0.1cm} 
@@ -165,6 +152,21 @@ $\boldsymbol Y_p^{N_y}=[\boldsymbol y(-N_y),\boldsymbol y(-N_y+1),\dots, \boldsy
     \label{fig:model_structure}
 %\vspace*{-0.4cm}
 \end{figure}
+该模型的预测过程分成以下几个步骤：
+首先，采用基于循环神经网络的\textbf{序列编码器}，将历史轨迹序列$\boldsymbol{X}_{p}^{N_{X}}$和$\boldsymbol{Y}_{p}^{N_{Y}}$编码为隐状态$\b h(t_0)$。
+
+然后，将$\b h(t_0)$作为预测阶段待求解常微分方程的初始状态。
+常微分方程的一阶导数由模型中的\textbf{导数模块}定义，模型将隐状态$\b h(t)$和连续时间域中任意时刻的外部控制信号$\b x(t)$作为输入，以估计隐状态$\b h(t)$的瞬时导数$\dot{\b h}(t)$。
+模型中引入的\textbf{并行样条插值}模块将离散的外部输入序列$\boldsymbol{X}_{f}^{M}$插值为连续时间形式$\b x(t)$以作为导数模块的输入。
+接下来，基于初始状态$\b h(t_0)$和导数模块定义的常微分方程，利用ODE求解器对微分方程进行求解可以得到时间范围$[t_0\leq t \leq t_M]$内的系统隐状态$\b h(t)$。
+% 其中$[t_0,t_M]$代表与离线时间点序列$-1, \cdots, M-1$相对应的连续时间区间。
+% The derivative of the hidden state with respect to the time variable $ \dot{\b h}(t)$ in the state space model is determined based on a neural network differential function $\b d(\b h(t), t)$. 
+
+最后，模型利用多层感知器（MLP）网络构建\textbf{状态解码器}，将求解出的隐状态$\b h(t)$映射为待预测的系统输出$\hat{\boldsymbol{Y}}_{f}^{M}$。
+% We then provide a detailed introduction of each network module. 
+
+下面，本章将详细介绍所述模型的每个模块的技术细节。
+
 
 \subsection{利用历史序列编码器构建常微分方程初始状态}
 % In our formulation\eqref{equ:discrete_seq2seq}, the input sequences consist of three parts:
@@ -216,7 +218,7 @@ L\left(\boldsymbol{h}\left(t_{k}\right)\right)&=L\left(\boldsymbol{h}\left(t_{0}
 \end{align}
 本章待求解的常微分方程是参数化的，
 为了训练参数$\theta _d$以最小化$L(\cdot)$，需要根据上式计算损失函数对模型参数的梯度$\partial L / \partial \theta _d$。
-此处需要引入伴随状态(adjoint)，即损失函数对隐状态的梯度$\boldsymbol{a}(t)=\partial L / \partial \boldsymbol{h}(t)$.
+此处需要引入伴随状态（Adjoint state），即损失函数对隐状态的梯度$\boldsymbol{a}(t)=\partial L / \partial \boldsymbol{h}(t)$.
 
 利用链式法则可以证明任一时刻的伴随状态可由另一个ODE描述~\cite{NIPS2018_7892}:
 \begin{equation}
@@ -263,7 +265,7 @@ L\left(\boldsymbol{h}\left(t_{k}\right)\right)&=L\left(\boldsymbol{h}\left(t_{0}
 \label{equ:3_non_stationary}
 d\left(\boldsymbol{h}(t), \boldsymbol{x}(t), \theta_{d}\right)=\text{MLP}\left(\boldsymbol{h}(t), \boldsymbol{x}(t), \theta_{d}\right)
 \end{equation}
-该结构与普通的残差网络(ResNet)有很强的相似性。
+该结构与普通的残差网络（ResNet）有很强的相似性。
 在随机过程分析领域，非平稳系统指时间序列各个时刻的统计量（如均值和方差）随时间变化的随机过程~\cite{GUIDOLIN2018113}。
 一般来说，复杂工业系统的输出往往属于非稳定时间序列，带有较强的趋势性。
 差分操作~\cite{christoffersen2001forecasting}是一种消除序列趋势和季节性的有效方法。
@@ -312,7 +314,7 @@ d\left(\boldsymbol{h}(t), \boldsymbol{x}(t), \theta_{d}\right)=\frac{1}{\mu _t}(
 而训练数据中的外部输入序列$\boldsymbol X_f^M$是离散采样的。
 因此，在网络前向传播之前，需要将离散的外部输入序列转换到连续时间域中。
 
-训练深度神经网络时，通常需要利用图形处理单元(GPU)的并行计算能力，将数据批量地送入模型并进行参数更新。这要求模型中的所有运算操作能够并行执行。
+训练深度神经网络时，通常需要利用图形处理单元（GPU）的并行计算能力，将数据批量地送入模型并进行参数更新。这要求模型中的所有运算操作能够并行执行。
 因此，本章基于标准的样条插值算法，实现了一种可微且并行的样条插值算法，能够将批量输入的离散序列并行地插值为连续时间信号。
 
 不失一般性地，本节假设系统输入的维度$m$为1。
@@ -451,7 +453,7 @@ $y_1(t)$和$y_2(t)$均受到控制输入$\b x(t)\in \mathbb{R}^5$影响，包括
 % 为了从中的多个数据序列构建样本对$(\b X _p^N， \b Y _p^N， \b X _f^M， \b Y _f^M)$，
 当窗口到达位置$i$时，采集四个序列$\b X _p^N =\b X[i:i+N]$， $\b Y _p^N =\b Y[i:i+N]$， $\b X _f^M=\b X[i+N:i+N+M]$， $\b Y _f^M=\b Y[i+N:i+N+M]$作为训练和验证样本。
 
-在生成测试集数据时，滑动窗口的大小设置为$N+L$，其中$L$表示待预测序列的长度(可能不等于训练集中预测序列的长度$M$)。
+在生成测试集数据时，滑动窗口的大小设置为$N+L$，其中$L$表示待预测序列的长度（可能不等于训练集中预测序列的长度$M$）。
 相应地，在位置$i$采集的四个序列为$\b X _p^N =\b X[i:i+N]$， $\b Y _p^N =\b Y[i:i+N]$， $\b X _f^L=\b X[i+N:i+N+L]$， $\b Y _f^L=\b Y[i+N:i+N+L]$作为测试样本。
 使用不同的$L$将生成不同的测试集。
 
@@ -481,7 +483,7 @@ $y_1(t)$和$y_2(t)$均受到控制输入$\b x(t)\in \mathbb{R}^5$影响，包括
 
 \subsection{实验参数及评价指标}
 
-实验中，使用mini-batch随机梯度下降(SGD)和Adam优化器\cite{kingma2014adam}对模型进行训练。
+实验中，使用mini-batch随机梯度下降（SGD）和Adam优化器\cite{kingma2014adam}对模型进行训练。
 批大小为$512$，初始学习率为$0.001$且按衰减率$0.95$指数衰减。衰减周期为10个训练轮次。
 ODE-Net中隐藏状态$\b h(t)$的大小为$32$。
 RNN序列编码器模块包含一个隐藏层，隐状态大小等于$32$（与$\boldsymbol h(t)$大小一致）。
@@ -500,7 +502,7 @@ RNN序列编码器模块包含一个隐藏层，隐状态大小等于$32$（与$
 \end{align}
 % \end{equation}
 
-本节使用预测底流浓度的平均根相对平方误差(RRSE)和平均平方误差(MSE)评价不同模型的预测精度。RRSE是被归一化的均方根(RMS)误差。对于预测长度$L$，RRSE定义如下：
+本节使用预测底流浓度的平均根相对平方误差（RRSE）和平均平方误差（MSE）评价不同模型的预测精度。RRSE是被归一化的均方根（RMS）误差。对于预测长度$L$，RRSE定义如下：
 \begin{equation}
 \begin{aligned}
     \text{RRSE}=\sqrt{\sum_{j=1}^{L} \frac{e_{j}^{2}}{\left(\hat{y}_{j}-\bar{y}\right)^{2}}}, \quad e_{j}=\hat{y}_{j}-y_{j}.
@@ -525,12 +527,12 @@ RNN序列编码器模块包含一个隐藏层，隐状态大小等于$32$（与$
 
 \subsection{不同模型预测结果对比}
 首先，本节研究了不同ODE求解器和导数模块对预测精度的影响。
-对比的ODE求解器包括五种：欧拉法（Euler）、中值法（Midpoint）、四阶龙格库塔(Runge—Kutta，RK4)、 Dormand—Prince (Dopri5)\cite{NIPS2018_7892}、以及三阶Bogacki—Shampine(Bosh)\cite{bogacki19893}。
+对比的ODE求解器包括五种：欧拉法（Euler）、中值法（Midpoint）、四阶龙格库塔（Runge—Kutta，RK4）、 Dormand—Prince（Dopri5）\cite{NIPS2018_7892}、以及三阶Bogacki—Shampine（Bosh）\cite{bogacki19893}。
 % 微分方程求解器在设定自适应微分方程求解器参数时，由于降低近似误差的容忍度，会导致求解常微分方程的时间剧烈增加。
 为了平衡时间消耗和预测精度，本节将所有自适应求解器的相对误差限设置为$1\mathrm{e}-4$，绝对误差限设置为$1\mathrm{e}-5$。
 本节研究了上述微分方程求解器在非稳定和稳定系统两种情况下的求解性能。
-此外，我们还评估了部分离散时间深度序列模型的预测效果，包括深度状态空间模型(DT-State-Space)、基于注意力机制的Seq2Seq模型(Attention-Seq2Seq)\cite{Member2019}和Transformer模型\cite{Wu2020}。
-DT-State-Space~\cite{Rangapuram2018}模型采用循环神经网络(RNN)建模线性状态空间模型的动态参数，并利用预测得到的状态空间模型预测时间序列，其状态空间和RNN隐藏层的大小分别设置为16和32。
+此外，我们还评估了部分离散时间深度序列模型的预测效果，包括深度状态空间模型（DT-State-Space）、基于注意力机制的Seq2Seq模型（Attention-Seq2Seq）\cite{Member2019}和Transformer模型\cite{Wu2020}。
+DT-State-Space~\cite{Rangapuram2018}模型采用循环神经网络（RNN）建模线性状态空间模型的动态参数，并利用预测得到的状态空间模型预测时间序列，其状态空间和RNN隐藏层的大小分别设置为16和32。
 Transformer和Attention-Seq2Seq的超参数设置与原文献保持一致。
 
 % Table~\ref{tab:3_exp_all} presents the results of the predicted underflow concentrations. 
@@ -553,7 +555,7 @@ Transformer和Attention-Seq2Seq的超参数设置与原文献保持一致。
 \begin{tabular}{c|c|ccccccccc}
 \toprule
 \multicolumn{2}{c|}{\multirow{2}{*}{模型}}                                                                        & \multicolumn{3}{c|}{$L=60$}                                                           & \multicolumn{3}{c|}{$L=200$}                                                           & \multicolumn{3}{c}{$L=500$}                                         \\ \cline{3-11} 
-\multicolumn{2}{c|}{}                                                                                              & RRSE                 & MSE                  & \multicolumn{1}{c|}{时间 (s)}             & RRSE                 & MSE                  & \multicolumn{1}{c|}{时间 (s)}              & RRSE                 & MSE                  & 时间 (s)                \\ \hline
+\multicolumn{2}{c|}{}                                                                                              & RRSE                 & MSE                  & \multicolumn{1}{c|}{时间（s）}             & RRSE                 & MSE                  & \multicolumn{1}{c|}{时间（s）}              & RRSE                 & MSE                  & 时间 (s)                \\ \hline
 \multirow{4}{*}{\begin{tabular}[c]{@{}c@{}}非稳定\\ 系统\end{tabular}} & \multicolumn{1}{c|}{Euler}     & 3.18                 & 9.07                 & \multicolumn{1}{c|}{1.71}             & 5.09                 & 80.25                & \multicolumn{1}{c|}{3.81}              & 3.95                 & 152.21               & 4.65                 \\
                                                                                  & \multicolumn{1}{c|}{Mid-Point} & 3.10                 & 8.95                 & \multicolumn{1}{c|}{3.23}             & 5.24                 & 80.29                & \multicolumn{1}{c|}{7.36}              & 4.16                 & 172.43               & 9.15                 \\
                                                                                  & \multicolumn{1}{c|}{RK4}       & 3.10                 & 8.97                 & \multicolumn{1}{c|}{6.95}             & 5.24                 & 83.90                & \multicolumn{1}{c|}{14.82}             & 4.16                 & 172.64               & 18.76                \\
@@ -713,7 +715,7 @@ Dopri5和Bosh方法作为自适应步长的求解器，
 % The model with non-stationary system dynamic identifies the system smoothly because the structures constraint hidden state can only change in a continuous and slow form.
 % TODO: 真的不想删，但是受篇幅限制暂时注释，以后有机会偷偷补上
 此外，由于非稳定系统结构限制了隐状态只能以连续、缓慢的方式变化。该约束符合浓密机系统运行缓慢的特性，等价于减小模型参数的搜索空间，抑制模型过拟合的情况。
-图\ref{fig:predict_cmp_200}展示了在长期预测任务($L=200$)中的模型预测结果。
+图\ref{fig:predict_cmp_200}展示了在长期预测任务（$L=200$）中的模型预测结果。
 % ($L=500$的类似结果可以在Table~\ref{tab:3_exp_all}中找到)。
 \begin{figure}[htpb]
 %\setlength{\abovecaptionskip}{-0.1cm} 
@@ -806,8 +808,8 @@ Dopri5和Bosh方法作为自适应步长的求解器，
 
 
 
-本节额外进行了数组实验，以评估在其他预测长度$L$下，稳定系统和非稳定系统预测的底流浓度误差($\log_{10}{\text{MSE}}$)。
-图~\ref{fig:length_cmp}展示了五次重复实验中，底流浓度的预测误差波动情况($\mu \pm 2\sigma$)。
+本节额外进行了数组实验，以评估在其他预测长度$L$下，稳定系统和非稳定系统预测的底流浓度误差（$\log_{10}{\text{MSE}}$）。
+图~\ref{fig:length_cmp}展示了五次重复实验中，底流浓度的预测误差波动情况（$\mu \pm 2\sigma$）。
 虽然在短期预测任务中非稳定系统精度优于稳定系统，但当$L$超过$120$时，稳定系统表现更优。
 % (如$L>100$)。
 % 大约，非稳定系统的预测性能差于稳定系统。
@@ -849,7 +851,7 @@ Dopri5和Bosh方法作为自适应步长的求解器，
 % \renewcommand{\arraystretch}{1.5}
 \begin{tabular}{c|cc|cc|cc}
     \toprule
-\multirow{2}{*}{$N$}                                                & \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}$L=60$ \\ (120 分钟)\end{tabular}}                 & \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}$L=200$ \\ (400 分钟)\end{tabular}}                  & \multicolumn{2}{c}{\begin{tabular}[c]{@{}c@{}}$L=500$ \\ (1000 分钟)\end{tabular}}                \\
+\multirow{2}{*}{$N$}                                                & \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}$L=60$ \\ （120 分钟）\end{tabular}}                 & \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}$L=200$ \\ （400 分钟）\end{tabular}}                  & \multicolumn{2}{c}{\begin{tabular}[c]{@{}c@{}}$L=500$ \\ （1000 分钟）\end{tabular}}                \\
 \cline{2-7}
                                                                                      & RRSE                & MSE                 & RRSE                & MSE                  & RRSE                & MSE                  \\ \hline
 160                                                                               & 3.11                & 9.08                &  \uline{\textbf{3.56}} & 34.13                & 1.61                & 35.88                \\
@@ -883,7 +885,7 @@ $N=0$，令  $\b h(t_0)=\b 0$                                                   
 \label{tab:interolopation_cmp}
 \begin{tabular}{c|cc|cc|cc}
 \toprule
- \multirow{2}{*}{模型}         & \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}$L=60$ \\ (120 分钟)\end{tabular}}                 & \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}$L=200$ \\ (400 分钟)\end{tabular}}                  & \multicolumn{2}{c}{\begin{tabular}[c]{@{}c@{}}$L=500$ \\ (1000 分钟)\end{tabular}}                 \\
+ \multirow{2}{*}{模型}         & \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}$L=60$ \\ （120 分钟）\end{tabular}}                 & \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}$L=200$ \\ （400 分钟）\end{tabular}}                  & \multicolumn{2}{c}{\begin{tabular}[c]{@{}c@{}}$L=500$ \\ （1000 分钟）\end{tabular}}                 \\
     & RRSE                 & MSE                  & RRSE                 & MSE                   & RRSE                 & MSE                   \\ \hline
 三次样条插值     &  \uline{\textbf{3.083}} & \uline{ \textbf{8.565}} & \uline{ \textbf{3.581}} & 32.90                & 1.615                & \uline{\textbf{ 34.88}} \\
 二次样条插值 & 3.097                & 8.993                & 3.593                &\uline{ \textbf{32.585}} &\uline{ \textbf{1.613}} & 36.741                \\
