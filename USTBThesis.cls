@@ -285,9 +285,9 @@
 }
 %%%%%%%四级级标题
 \renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}%
-    {13pt \@plus 2pt \@minus 2pt}%
-    {13pt \@plus 2pt \@minus 2pt}%
-    { \zihao{4} \raggedright \bf \heiti}%
+    {5pt \@plus 2pt \@minus 2pt}%
+    {5pt \@plus 2pt \@minus 2pt}%
+    { \zihao{-4} \raggedright \bf \heiti}%
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% 设置行距

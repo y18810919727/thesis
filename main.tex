@@ -13,9 +13,11 @@
 \floatname{algorithm}{算法}
 
 \newcommand{\tabref}[1]{表\ref{#1}}
+\newcommand{\figref}[1]{图\ref{#1}}
 \newcommand{\equref}[1]{式(\ref{#1})}
 \newcommand{\secref}[1]{\ref{#1}节}
 \renewcommand{\algref}[1]{算法\ref{#1}}
+\renewcommand{\b}{\boldsymbol}
 
 % \usepackage{enumitem}
 \setenumerate[1]{itemsep=0pt,partopsep=0pt,parsep=\parskip,topsep=5pt}
@@ -25,9 +27,12 @@
 
 %论文信息
 \include{ThesisInfo}
+% 盲审信息
+% \include{ThesisInfo_blind}
 
 %论文封面
 \include{ThesisCover}
+% \include{ThesisCover_blind}
 
 \pagenumbering{Roman}
 \setcounter{page}{1}
@@ -36,11 +41,12 @@
   \pagestyle{fancy}
 }
 \fancyhead{}
-\fancyhead[CO]{\zihao{5}北京科技大学博士中期报告}
+\fancyhead[CO]{\zihao{5}北京科技大学博士学位论文}
 \fancyhead[CE]{\zihao{5} \ThesisTitleCN}
 
 %致谢
 \include{MyThanks}
+% \include{MyThanks_blind}
 
 %摘要
 \include{MyAbstract}
@@ -51,15 +57,30 @@
 %目录
 \tableofcontents
 
-%表格目录，如果不使用请注释掉
-\renewcommand{\listtablename}{\centering 表格清单}
-\addcontentsline{toc}{chapter}{表格清单}
-\listoftables
+% %表格目录，如果不使用请注释掉
+% \renewcommand{\listtablename}{\centering 表格清单}
+% \addcontentsline{toc}{chapter}{表格清单}
+% \listoftables
 
-%图像目录，如果不使用请注释掉
-\renewcommand{\listfigurename}{\centering 插图清单}
-\addcontentsline{toc}{chapter}{插图清单}
-\listoffigures
+% %图像目录，如果不使用请注释掉
+% \renewcommand{\listfigurename}{\centering 插图清单}
+% \addcontentsline{toc}{chapter}{插图清单}
+% \listoffigures
+
+\begingroup
+	\renewcommand*{\addvspace}[1]{}
+	\newcommand{\loflabel}{图} 
+	\renewcommand{\numberline}[1]{\loflabel~#1\hspace*{1em}}	
+  \renewcommand{\listfigurename}{\centering 插图清单}
+  \addcontentsline{toc}{chapter}{插图清单}
+	\listoffigures
+	
+	\newcommand{\lotlabel}{表}
+	\renewcommand{\numberline}[1]{\lotlabel~#1\hspace*{1em}}
+  \renewcommand{\listtablename}{\centering 表格清单}
+  \addcontentsline{toc}{chapter}{表格清单}
+	\listoftables
+\endgroup
 
 \pagestyle{fancy}
 \fancyhead{}
@@ -87,6 +108,7 @@
 % 总结
 \include{conclusion}
 
+
 \addcontentsline{toc}{chapter}{参考文献}  %在目录中添加“参考文献”的标记
 \bibliographystyle{gbt7714-2005}
 \bibliography{ref}
@@ -95,6 +117,7 @@
 \include{appendix}
 
 % 作者简历及在学研究成果
+% \include{biography_blind}
 \include{biography}
 % \include{achievement}
 

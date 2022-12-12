@@ -10,17 +10,22 @@
 并利用采集到的数据集以数据驱动方法训练时序预测模型\cite{larsson2002identification}。
 为了获得鲁棒、高精度的预测模型，需要对复杂工业系统的内在特性进行深入分析，大部分复杂工业系统通常具有以下典型特征：
 \begin{itemize}
+    \setlength{\itemsep}{0pt}
+    \setlength{\parsep}{0pt}
+    \setlength{\parskip}{0pt}
+    \setlength{\topsep}{0pt}
+    \setlength{\partopsep}{0pt}
 \item \textbf{非线性系统:}大多数工业系统的运行过程具有极强的非线性，而非简单的仿射系统或线性系统。
-\item \textbf{系统的部分观测性}:一般情况下，从传感器或利用其他感知方法提取的系统信息是不完整的，导致这样的系统中存在许多未知的隐变量。
-\item \textbf{长延迟的影响}:系统当前状态的变化受很长一段时间之前外部输入及内部状态的影响。
+\item \textbf{系统的部分观测性}:一般情况下，从传感器或利用其他感知方法提取的系统信息是不完整的，导致系统中存在许多未知的隐变量。
+\item \textbf{长时延的影响}:系统当前状态的变化受很长一段时间之前外部输入及内部状态的影响。
 \item \textbf{连续时间演化}:由于真实的工业系统遵循各种物理规律，它们的时间演化可以用连续时间的微分方程表示。
 \end{itemize}
 
-对于上述复杂工业系统特点，许多工业界和学术界的研究人员通过构建不同预测模型来解决这些问题。
+对于上述复杂工业系统特点，许多工业界和学术界的研究人员通过构建不同的预测模型来解决这些问题。
 特别地，在基于数据的连续时间系统预测及辨识领域中，研究人员主要利用采样于真实系统的有噪数据来拟合高阶微分方程。
-然而，这种方法不适用于建模部分可观测系统（Partially Observed System）和极端复杂的工业系统.
+然而，这种方法不适用于建模部分可观测系统（Partially Observed System）和极端复杂的工业系统。
 伴随着深度神经网络技术的不断发展，得益于其强大的特征表示能力和可扩展的参数结构，深度学习在解决复杂工业系统的预测及分析问题时被广泛使用。如时间序列预测~\cite{Member2019,Essien2020,9161367,9522017,neu2021systematic}、设备异常检测等~\cite{9326384}。
-然而，现有的大多数基于深度学习的系统建模及预测方法都是基于离散时间域的，忽略了系统的连续时间特性。从模型结构与系统本体的一致性角度来看，忽视系统本身具备的连续时间先验特性会增加模型的自由度及拟合难度，最终限制了模型精度。
+然而，现有的大多数基于深度学习的系统建模及预测方法都是基于离散时间域的，忽略了系统的连续时间特性。从模型结构与系统本体的一致性角度来看，忽视系统本身具备的连续时间先验特性会增加模型的自由度及拟合难度，最终限制模型精度。
 % The above features of a thickening system create challenges for predictive control. There are a number of studies addressing these challenges. 
 % Data-driven methods are emerging as one of the most successful techniques for modeling complex processes~\cite{larsson2002identification}. 
 % Traditional data-based CT system prediction methods focus on fitting high-order differential equations based on sampled noisy data from real systems. 
@@ -29,10 +34,10 @@
 
 % 另一方面，利用本章节所介绍的复杂系统预测模型，可以从两方面辅助系统控制的研究：
 另一方面，复杂系统预测模型一般需要从两方面辅助系统控制的研究：
-首先，模型的预测结果能够为基于模型的控制算法提供短期预测功能。如MPC方法中，预测模型提供了被控系统会如何受控制输入影响的先验知识，从而将系统最优控制近似为了序列优化问题。
-其次，预测模型可以模拟系统在长控制输入信号下的系统输出~\cite{Demeester2020SystemIW}，因此可以作为验证系统控制策略可行性的试错仿真场景。在复杂的过程工业系统控制领域中，验证控制器的性能和安全性是有极其必要的。
-与短期预测相比，系统输出模拟需要预测模型有更高的稳健性和鲁棒性以提供长期的无反馈开环预测。
-然而，在现有围绕工业系统预测的方法研究中，很少工作关注于如何设计预测模型以同时适用于短期和长期预测。
+首先，模型的预测结果能够为基于模型的控制算法提供短期预测功能。如MPC方法中，预测模型能够模拟被控系统会如何受控制输入影响的，从而将系统最优控制近似为序列优化问题。
+其次，预测模型可以模拟系统在长控制输入信号下的系统输出~\cite{Demeester2020SystemIW}，因此可以作为验证系统控制策略可行性的试错仿真环境。在复杂的过程工业系统控制领域中，验证控制器的性能和安全性是有极其必要的。
+与短期预测相比，系统模拟需要预测模型有更高的稳健性和鲁棒性以提供长期的无反馈开环预测。
+然而，在现有围绕工业系统预测的方法研究中，很少有工作关注于如何设计预测模型以同时适用于短期和长期预测。
 % ，进而服务于MPC控制及系统仿真。
 
 % 针对上述工业系统存在的复杂特性以及长短期预测需求，本章节以ODE-Net作为模型骨架结构，从连续时间域角度拟合复杂工业系统的动态过程，由此提出了一种连续时间域
@@ -43,14 +48,20 @@
 
 % 因此，本章将以ODE-Net作为模型骨架结构，从连续时间域角度拟合复杂工业系统的动态过程，以实现给定历史系统输出序列及未来系统控制输入序列情况下，预测系统输出的未来变化。
 具体地，由于工业系统往往存在长时间的系统延迟，因此本章节引入序列编码器以从历史系统运行轨迹中提取特征。
-在预测时，本章提出方法构建了基于深度连续时间状态空间的导数模块。该模块相比于传统的离散序列模型，如循环神经网络（Recurrent Neural Network， RNN）等，更适用于建模系统在连续时间域下的非线性演化，并且在模块中通过引入隐状态可以辅助推断系统的不可观测信息。
+
+在预测时，本章提出方法构建了基于深度网络的连续时间状态空间模型。该模块相比于传统的离散序列模型，如循环神经网络（Recurrent Neural Network， RNN）等，更适用于建模系统在连续时间域下的非线性演化，并且在模块中通过引入隐状态可以辅助推断系统的不可观测信息。
 最后，本方法将非平稳系统和平稳系统概念融入在模型的导数模块设计中，可以有效解决系统的短期和长期预测问题。
 % 通过将历史系统轨迹和任意长度的系统输入输入到模型中，解决了短期和长期预测问题。然后预测未来的系统输出。
 本章研究在工业系统预测领域有三个方面贡献:
 %%%%%%%%%%%%%%%%%%%%%
 \begin{itemize}
-\item 提出了一种新的基于深度学习的工业系统连续时间预测模型。深度学习网络由三个部分组成:序列编码器、状态解码器和导数模块。
-\item 基于平稳系统和非平稳系统概念，本章设计了两种导数模块，分别处理短期和长期预测任务。
+    \setlength{\itemsep}{0pt}
+    \setlength{\parsep}{0pt}
+    \setlength{\parskip}{0pt}
+    \setlength{\topsep}{0pt}
+    \setlength{\partopsep}{0pt}
+\item 提出了一种基于深度学习的工业系统连续时间预测模型。网络由三个部分组成：序列编码器、状态解码器和导数模块。
+\item 基于平稳系统和非平稳系统概念，本章设计了两种导数模块，分别用于处理短期和长期预测任务。
 \item 利用来源于某真实铜矿场中膏体浓密机的历史运行数据验证了本章提出方法的有效性。结果表明，该模型在预测具有非线性和高时滞特性的浓密机系统时具有较好性能。此外，本章节还进行了消融实验，以评估模型中每个模块的有效性。
 \end{itemize}
 
@@ -65,23 +76,24 @@
 % ~\ref{sec:interpolation}节具体介绍了用于连续化系统输入序列的并行插值方法。
 % ~\ref{{sec:train}介绍了用于连续化系统输入序列的并行插值方法
 % We next present the CT deep sequential model in Section~\ref{sec:CTDSM}. 
-\ref{sec:case}节为实验章节，首先介绍了膏体浓密机系统预测问题以及数据集形式，然后对比了本章所述方法相比于其他时间序列预测模型的优势。最后通过消融实验探究了导数模块形式、序列编码长度、插值阶数对于预测效果的影响。
+\ref{sec:case}节为实验章节，首先介绍了膏体浓密机系统预测问题以及数据集形式，然后对比了本章所述方法相比于其他系统建模预测模型的优势。最后通过消融实验探究了导数模块形式、序列编码长度、插值阶数对于预测效果的影响。
 % 领域的其他模型，本章所述方法用于膏体浓密机系统预测问题的实验结果。
-\ref{sec:conc}节对本章工作进行了总结，并展望了未来的研究方向。
+\ref{sec:conc}节对本章工作进行了总结，并对未来的研究方向做出展望。
 
 \section{问题形式化描述}
 \label{sec:formulate}
-在复杂工业系统中，系统输出量定义为$\b y(k) \in \mathbb{R}^n$,
+% 在复杂工业系统中，
+对于一般的动态系统，系统输出量定义为$\b y(k) \in \mathbb{R}^n$,
 系统控制输入量定义为$\b x(k)\in \mathbb{R}^m$，其中$k$为采样时间点。
 在诸多复杂工业场景中，系统输入对系统输出的影响本质上是非线性、高时滞的。且由于监测技术的限制，系统的一些关键参数无法获得，系统的观测空间往往是不完备的。
 同时，观测数据会受到环境噪音以及系统本体中未知扰动的干扰。
 % 此类复杂特性使得传统系统辨识方法\cite{larsson2002identification}或预测模型\cite{box2015time}难以对复杂工业系统进行有效的学习。
 % 因此本章采用基于深度学习的黑箱数据驱动方法建模复杂系统的状态空间模型，使模型能够利用序列数据推断系统的隐状态。
 因此需要从时序角度引入目标系统的历史信息以消除不完全观测带来的非确定性。
-具体地，本章将系统预测问题建模为在已知未来系统输入和历史系统运行轨迹下估计未来系统输出。
+具体地，本章关注的系统预测问题为在已知未来系统输入和历史系统运行轨迹下预测系统未来输出。
 % we formulate the problem as a sequential prediction structure with symbolic modules:
 首先定义系统的历史输入序列为 $\boldsymbol X_p^{N_x}=[\boldsymbol x(-N_x),\boldsymbol x(-N_x+1), \dots, \boldsymbol x(-1)]$， 历史系统输出为 
-$\boldsymbol Y_p^{N_y}=[\boldsymbol y(-N_y),\boldsymbol y(-N_y+1),\dots, \boldsymbol y(-1)]$，系统的未来输入为 $\boldsymbol y_f^{M}=[\boldsymbol y(0),\boldsymbol y(1),\dots,\boldsymbol y(M-1)]$，模型需要预测系统的未来输出$\boldsymbol Y_f^{M}=[\boldsymbol y(0),\boldsymbol y(1),\dots,\boldsymbol y(M-1)]$。
+$\boldsymbol Y_p^{N_y}=[\boldsymbol y(-N_y),\boldsymbol y(-N_y+1),\dots, \boldsymbol y(-1)]$，系统的未来输入为 $\boldsymbol X_f^{M}=[\boldsymbol x(0),\boldsymbol x(1),\dots,\boldsymbol x(M-1)]$，模型需要预测系统的未来输出$\boldsymbol Y_f^{M}=[\boldsymbol y(0),\boldsymbol y(1),\dots,\boldsymbol y(M-1)]$。
 其中，$\boldsymbol X_f^{M}$之所以已知，是因为在模型预测控制及系统仿真问题中，系统输入是已知的。
 序列预测问题可用如下符号及公式表示：
 % we reformulate the thickening system prediction problem as a sequential prediction structure to improve the accuracy of multi-step predictions:
@@ -98,7 +110,7 @@ $\boldsymbol Y_p^{N_y}=[\boldsymbol y(-N_y),\boldsymbol y(-N_y+1),\dots, \boldsy
 
 模块$\mathcal{F}(\cdot)$ 用于估计初始隐状态 $\b h(0)$，该隐状态携带了历史序列 $\boldsymbol X_p^{N_x} \text{ 和 } \boldsymbol Y_p^{N_x}$的信息。
 通过构建合理的模型$D(\cdot, \cdot)$，即可利用初始的隐状态以及未来的系统输入，估计完整的系统状态序列$\b H^M$。序列中的每个隐状态$\boldsymbol h(k)$携带了、或编码了系统在$k$时刻的系统信息。
-另外，通过非线性函数$g(\cdot)$解码$\boldsymbol h(k)$即可得到估计的系统输出。
+另外，通过非线性函数$g(\cdot)$解码$\boldsymbol h(k)$即可估计系统输出。
 %%%%%%%%%%%%%%%%%%%%%%%
 % seeking help: 我们扩展了\eqref{equ:discrete_state_space}中的单步预测到预测系统的序列输出. 被优化的loss 来源于整个预测序列各个位置loss的累计。
 %We generalize the single-step prediction in \eqref{equ:discrete_state_space} to predicting sequential system outputs.
@@ -117,15 +129,16 @@ $\boldsymbol Y_p^{N_y}=[\boldsymbol y(-N_y),\boldsymbol y(-N_y+1),\dots, \boldsy
 为了在预测模型中构造合理有效的模块$D$，一种简单有效的解决方案是采用单步自回归的离散时间状态空间模型 \cite{4019326}:
 % From the perspective of discrete-time setting, a thickening system with long time delay and incomplete observations can be formulated by a state space model~\cite{4019326} which introduces hidden state $\boldsymbol h(t)$:
 \begin{equation}
-    \begin{aligned}
+\left\{    \begin{aligned}
 \boldsymbol{h}(k)&=d\big(\boldsymbol{h}(k-1), \boldsymbol{x}(k-1)\big)\\
 \boldsymbol{y}(k)&=g(\boldsymbol{h}(k)),
     \end{aligned}
+    \right.
 \end{equation}
 其中隐状态$\boldsymbol{h}(k)$将系统的历史轨迹编码为紧密、定长的向量。
 控制输入对系统的影响可以看作是对系统当前隐状态的单步非线性变换。
 当给定某一时刻输入$\boldsymbol{x}(k-1)$和上一时刻隐状态$\boldsymbol{h}(k-1)$时，模型可以立即预测新的隐状态$\boldsymbol{h}(k)$。
-一些先前的研究~\cite{CHAI201661}~\cite{KIM2004403}表明，大部分过程工业系统的运行本质为物理变化或化学变化，系统的动态过程更适合建模为连续域下的微分方程。
+一些先前的研究~\cite{CHAI201661,KIM2004403}表明，大部分过程工业系统的运行本质为物理变化或化学变化，系统的动态过程更适合建模为连续域下的微分方程。
 因此，本章遵照工业系统的先验知识，构建参数化连续时间微分方程模型，以拟合隐状态的一阶导数:
 \begin{equation}
     \label{equ:derivative_model}
@@ -139,7 +152,7 @@ $\boldsymbol Y_p^{N_y}=[\boldsymbol y(-N_y),\boldsymbol y(-N_y+1),\dots, \boldsy
 \label{sec:model}
 本章采用集成的深度神经网络以参数化拟合式~\eqref{equ:discrete_seq2seq}和~\eqref{equ:derivative_model}。
 图~\ref{fig:model_structure}展示了网络中包含的各个组件及其连接。
-对于给定条件范围内的历史序列轨迹 $\boldsymbol{X}_{p}^{N_{x}}$ 和 $\boldsymbol{Y}_{p}^{N_{y}}$，以及预测范围 内的系统输入序列$\boldsymbol{X}_{f}^{M}$，模型输出$\hat{\boldsymbol{Y}}_{f}^{M}$以近似估计系统输出 $\boldsymbol{Y}_{f}^{M}$。
+对于给定条件范围内的历史序列轨迹 $\boldsymbol{X}_{p}^{N_{x}}$ 和 $\boldsymbol{Y}_{p}^{N_{y}}$，以及预测范围 内的系统输入序列$\boldsymbol{X}_{f}^{M}$，模型输出$\hat{\boldsymbol{Y}}_{f}^{M}$以近似系统的真实输出 $\boldsymbol{Y}_{f}^{M}$。
 % We separately introduce a recurrent neural network (RNN) network to encode historical system trajectories to the initial hidden state and an ODE system to describe the state space model in the given time range.
 \begin{figure}[t]
     \centering
@@ -157,8 +170,8 @@ $\boldsymbol Y_p^{N_y}=[\boldsymbol y(-N_y),\boldsymbol y(-N_y+1),\dots, \boldsy
 
 然后，将$\b h(t_0)$作为预测阶段待求解常微分方程的初始状态。
 常微分方程的一阶导数由模型中的\textbf{导数模块}定义，模型将隐状态$\b h(t)$和连续时间域中任意时刻的外部控制信号$\b x(t)$作为输入，以估计隐状态$\b h(t)$的瞬时导数$\dot{\b h}(t)$。
-模型中引入的\textbf{并行样条插值}模块将离散的外部输入序列$\boldsymbol{X}_{f}^{M}$插值为连续时间形式$\b x(t)$以作为导数模块的输入。
-接下来，基于初始状态$\b h(t_0)$和导数模块定义的常微分方程，利用ODE求解器对微分方程进行求解可以得到时间范围$[t_0\leq t \leq t_M]$内的系统隐状态$\b h(t)$。
+模型中引入的\textbf{并行样条插值}模块将离散的外部输入序列$\boldsymbol{X}_{f}^{M}$插值为连续时间形式$\b x(t)$作为导数模块的输入。
+接下来，基于初始状态$\b h(t_0)$和导数模块定义的常微分方程，利用ODE求解器对微分方程进行求解得到时间范围$[t_0\leq t \leq t_M]$内的系统隐状态$\b h(t)$。
 % 其中$[t_0,t_M]$代表与离线时间点序列$-1, \cdots, M-1$相对应的连续时间区间。
 % The derivative of the hidden state with respect to the time variable $ \dot{\b h}(t)$ in the state space model is determined based on a neural network differential function $\b d(\b h(t), t)$. 
 
@@ -169,6 +182,7 @@ $\boldsymbol Y_p^{N_y}=[\boldsymbol y(-N_y),\boldsymbol y(-N_y+1),\dots, \boldsy
 
 
 \subsection{利用历史序列编码器构建常微分方程初始状态}
+\subsection{基于序列编码器的常微分方程初态构建}
 % In our formulation\eqref{equ:discrete_seq2seq}, the input sequences consist of three parts:
 % historical system output sequence $\boldsymbol{Y}_P^{N_y})$, historical system input sequence $\boldsymbol X_p^{N_x}$ and future system input sequence $\boldsymbol X_f^{M}$. 
 由于大部分工业过程具有较长的时间延迟，因此系统的历史运行轨迹数据对于模型预测极其重要。本章引入了历史运行数据$\boldsymbol {X}_{p}^{N_{X}}$和$\boldsymbol {Y}_{p}^{N_{Y}}$作为模型输入的一部分。
@@ -188,7 +202,7 @@ $\boldsymbol Y_p^{N_y}=[\boldsymbol y(-N_y),\boldsymbol y(-N_y+1),\dots, \boldsy
 % \end{equation}
 在大部分工业系统中，当前系统状态与短期内的历史轨迹之间的互信息更大。
 也正是因为该性质，本章利用了RNN的遗忘特性，并将其用于编码系统的历史轨迹。
-利用序列编码器得到的隐状态$\b h(t_0)$编码了历史系统轨迹中对于预测所需的信息，该状态将作为待解ODE-Net的初始状态。
+利用序列编码器得到的隐状态$\b h(t_0)$编码了历史系统轨迹中对于预测有帮助的信息，该状态将作为待解ODE-Net的初始状态。
 
 \subsection{利用可微常微分方程网络构建系统状态空间模型}
 \label{sec:ODE-Net}
@@ -201,7 +215,7 @@ $\boldsymbol Y_p^{N_y}=[\boldsymbol y(-N_y),\boldsymbol y(-N_y+1),\dots, \boldsy
     \label{equ:ct_state_space}
 \end{equation}
 状态空间模型中将系统状态表示为定长的编码向量$\b h(t)$，
-隐状态$\b h(t)$表征了系统的长时延特征以及非确定性。将原始的非马尔科夫系统转换为以$\b h(t)$所在状态空间的为核心的马尔科夫系统。
+该状态表征了系统的长时延特征以及非确定性。将原始的非马尔科夫系统转换为以$\b h(t)$所在状态空间为核心的马尔科夫系统。
 
 对于长度为$M$的待预测序列，本章在整数离散索引$[0,1，\dots,M]$和连续时间范围$[t_0\leq t_k \leq t_{M}]$之间构造双向映射。
 给定初始状态为$\boldsymbol{h}(t_0)$，每个$\boldsymbol{h}(t_k)$为ODE方程在$t=t_k$处的解。
@@ -212,7 +226,7 @@ $\boldsymbol Y_p^{N_y}=[\boldsymbol y(-N_y),\boldsymbol y(-N_y+1),\dots, \boldsy
 \begin{align}
 \label{equ:loss_ode_solver}
 % \begin{aligned}
-L\left(\boldsymbol{h}\left(t_{k}\right)\right)&=L\left(\boldsymbol{h}\left(t_{0}\right)+\int_{t_{0}}^{t_{k}} d(\boldsymbol{h}(t), \boldsymbol x(t), \theta_d) d t\right)\nonumber\\
+L\left(\boldsymbol{h}\left(t_{k}\right)\right)&=L\left(\boldsymbol{h}\left(t_{0}\right)+\int_{t_{0}}^{t_{k}} d(\boldsymbol{h}(t), \boldsymbol x(t), \theta_d) \mathrm{~d} t\right)\nonumber\\
 &=L\left(\operatorname{ODESolve}\left(\boldsymbol{h}\left(t_{0}\right), d, t_{0}, t_{k}, \theta_d \right)\right).
 % \end{aligned}
 \end{align}
@@ -220,22 +234,21 @@ L\left(\boldsymbol{h}\left(t_{k}\right)\right)&=L\left(\boldsymbol{h}\left(t_{0}
 为了训练参数$\theta _d$以最小化$L(\cdot)$，需要根据上式计算损失函数对模型参数的梯度$\partial L / \partial \theta _d$。
 此处需要引入伴随状态（Adjoint state），即损失函数对隐状态的梯度$\boldsymbol{a}(t)=\partial L / \partial \boldsymbol{h}(t)$.
 
-利用链式法则可以证明任一时刻的伴随状态可由另一个ODE描述~\cite{NIPS2018_7892}:
+利用链式法则可以证明任一时刻的伴随状态可由另一ODE描述~\cite{NIPS2018_7892}:
 \begin{equation}
 \label{equ:ode_at}
-\frac{d \boldsymbol{a}(t)}{d t}=-\boldsymbol{a}^{\top}(t) \frac{\partial d(\boldsymbol{h}(t), \boldsymbol x(t), \theta_d)}{\partial \boldsymbol{h}(t)}.
+\frac{\mathrm{~d} \boldsymbol{a}(t)}{\mathrm{~d} t}=-\boldsymbol{a}^{\top}(t) \frac{\partial \mathrm{~d}(\boldsymbol{h}(t), \boldsymbol x(t), \theta_d)}{\partial \boldsymbol{h}(t)}.
 \end{equation}
 依赖于伴随状态，损失函数 $L(\cdot)$对参数$\theta _d$的梯度可以通过求解第三个常微分方程得到：
 \begin{equation}
 \label{equ:grad_ode}
-\frac{\partial L}{\partial \theta _d}=-\int_{t_0}^{t_{M}} \boldsymbol{a}^{\top}(t) \frac{\partial d(\boldsymbol{h}(t), \boldsymbol x(t), \theta _d)}{\partial \theta_d} d t.
+\frac{\partial L}{\partial \theta _d}=-\int_{t_0}^{t_{M}} \boldsymbol{a}^{\top}(t) \frac{\partial d(\boldsymbol{h}(t), \boldsymbol x(t), \theta _d)}{\partial \theta_d} \mathrm{~d} t.
 \end{equation}
 在确定的网络结构$d$和参数$\theta _d$下，
 任意的ODE数值求解方法，如欧拉法（Euler）、中点法（Mid-point）和龙格-库塔法（Runge Kutta），均可同时求解三个微分方程，进而获得$\b h (t)$、$\alpha (t)$和${\partial L}/{\partial \theta}$在任意时刻的解。
-一般情况下，在使用数值方法求解常微分方程时，具有较低误差容忍度的ODE求解器会增加调用微分函数$d$的频率。
-造成更多的时间消耗，但其估计结果具有更高的准确性。
-当使用神经ODE网络建模时间序列数据集时，这个准则同样是成立的。在实验环节，本章也探讨了不同微分方程求解器对于预测精度和消耗时间的影响。
-时间成本和准确性的详细比较见~\ref{sec:case}节。
+一般情况下，在使用数值方法求解常微分方程时，具有较低误差容忍度的ODE求解器会增加调用微分函数$d$的频率，
+造成更多的时间消耗，但方程求解结果的准确性更高。
+当使用神经ODE网络建模时间序列数据集时，该准则同样是成立的。在实验环节，本章\ref{sec:case}节也探讨了不同微分方程求解器对于预测精度和消耗时间的影响，
 
 对于给定时刻ODE-Net输出的状态$\b h(t)$，需要使用状态解码器将其转换为系统的预测输出。
 本章采用的状态解码器为普通的多层感知机网络:
@@ -245,14 +258,14 @@ L\left(\boldsymbol{h}\left(t_{k}\right)\right)&=L\left(\boldsymbol{h}\left(t_{0}
 % A neural network with single hidden layer composed with learnable input layer ($\boldsymbol{W}$,
 % $\boldsymbol{b}_w$) and hidden layer($\boldsymbol{V}$, $\boldsymbol{b_v}$) is utilized to predict the system output.
 一般的状态空间模型多使用普通的矩阵变换以构建编码空间到系统输出空间的映射。本章中，由于公式
-~ \eqref{equ:3_non_stationary}中的累加形式使输入$\b h(t)$的范围是非确定的，而实际系统的输出空间是有界的，因此选择带有$\tanh$非线性归一化的解码器以保证状态解码器的输出在合理的范围内。
+~ \eqref{equ:3_non_stationary}中的累加形式使输入$\b h(t)$的范围是无界的，而实际系统的输出空间是有界的，因此选择带有$\tanh$非线性归一化的解码器以保证状态解码器的输出在合理的范围内。
 
 
 
 \subsection{面向不同预测时长需求的常微分方程导数模块定义}
 \label{sec:derivative}
-\ref{sec:ODE-Net}节介绍了ODE-Net的求解和网络参数梯度的求解方法。
-在本节中，将具体探讨ODE网络的结构细节。
+\ref{sec:ODE-Net}节介绍了求解ODE-Net和网络参数梯度的方法。
+在本节中，将更进一步探讨ODE网络结构的设计方法。
 最基本的ODE-Net模型采用普通的多层感知机神经网络估计状态导数\cite{chen2018neural}，本章将此模型称为非平稳模型:
 % We name 
 % In this paper, the structures of derivative module $d$ are categorized into two types~\cite{Demeester2020SystemIW}: 
@@ -274,10 +287,10 @@ d\left(\boldsymbol{h}(t), \boldsymbol{x}(t), \theta_{d}\right)=\text{MLP}\left(\
 在公式\eqref{equ:3_non_stationary}中，导数模块本质上学习了隐空间中隐状态的一阶差分。
 相比于ARIMA模型等直接对系统输出进行差分，面向隐状态的差分模型具有同等或更强的表示能力，进而能够建模更高阶的非平稳系统。
 
-然而，非平稳系统\eqref{equ:3_non_stationary}在处理长期预测任务时也面临着严重的问题。
+然而，非平稳形式\eqref{equ:3_non_stationary}在处理长期预测任务时面临着严重的问题。
 在长时区间内求解ODE-Net时，对连续时间域内隐状态导数的不断积分会导致隐状态的值域范围显著扩增。
 % 因此，模型的估计误差会相应增大，导致解码器难以准确地估计系统输出。
-假设ODE-Net的预测误差服从白噪音分布$\mathcal{N}(0,\delta)$，经过时间$t_M-t_0$之后的累积误差服从分布$\mathcal{N}(0,(t_M-t_0)\delta)$。
+假设ODE-Net的预测误差服从白噪音分布$\mathcal{N}(0,\delta^2)$，经过时间$t_M-t_0$之后的累积误差服从分布$\mathcal{N}(0,(t_M-t_0)^2\delta^2)$。
 由此可见，在预测长度足够长时，模型预测的误差将被持续累积，解码器难以准确地估计系统输出。
 
 为了解决上述非稳定结构带来的误差累积问题，本章设计了一种基于平稳系统的导数模块形式，以处理模型的长期预测问题。
@@ -290,7 +303,7 @@ d\left(\boldsymbol{h}(t), \boldsymbol{x}(t), \theta_{d}\right)=\frac{1}{\mu _t}(
 其中$\text{GRU}$表示门控循环单元。
 对于无穷小时间步$\text{d}t$，可得：
 \begin{equation}
-    \lim_{\text{d}t \rightarrow 0}\boldsymbol{h}(t+\text{d}t) =(1-\frac{1}{\mu _t})\boldsymbol{h}(t)+\frac{1}{\mu _t}\text{GRU}\left(\boldsymbol{h}(t), \boldsymbol{x}(t), \theta_{d}\right)
+    \lim_{\mathrm{~d}t \rightarrow 0}\boldsymbol{h}(t+\mathrm{~d}t) =(1-\frac{\mathrm{~d}t}{\mu _t})\boldsymbol{h}(t)+\frac{\mathrm{~d}t}{\mu _t}\text{GRU}\left(\boldsymbol{h}(t), \boldsymbol{x}(t), \theta_{d}\right)
 \end{equation}
 平稳系统能够根据当前外部输入$\b x(t)$和隐状态$\b h(t)$确定隐状态的移动目标点。
 隐状态$\b h (t)$将始终朝向GRU网络输出的目标值移动，
@@ -298,11 +311,11 @@ d\left(\boldsymbol{h}(t), \boldsymbol{x}(t), \theta_{d}\right)=\frac{1}{\mu _t}(
 同时，由GRU网络的特性可知，其输出范围始终在$(-1,1)$中。
 % It also restricts when $\b h_t$ moves toward GRU output.
 因此无论微分方程求解时间区间有多大，求解ODE方程得到的任意时刻隐状态的解也在$(-1,1)$中，更便于解码器模块构建从隐空间到系统输出空间的稳定映射。
-在长期预测任务中，相比于非稳定系统，这一特性能够显著地提升模型预测的准确性与稳定性。
+在长期预测任务中，相比于非稳定系统，这一特性能够显著提升模型预测的准确性与稳定性。
 % ，我们主要将其用于长期预测。
-由于GRU具有较强的携带长时间信息的能力，所以我们使用GRU网络来构造导数模块。
+由于GRU具有较强的携带长时间信息的能力，所以我们使用GRU网络构造导数模块。
 
-考虑到非稳定系统和稳定系统的在不同的预测长度各有各的优势，本章将非平稳系统应用于短期预测，将平稳系统应用于长期预测。
+考虑到非稳定系统和稳定系统在不同预测长度下中各具优势，本章将非平稳系统应用于短期预测，将平稳系统应用于长期预测。
 % 对于非平稳系统中，主要将其用于短期预测。
 % 由于隐状态导数的连续累积，隐状态的变化类似于维纳过程，将会在无约束的范围内不断扩散。
 % 而GRU、LSTM等网络均假设模型输入应限定在有界范围内。因此，
@@ -324,8 +337,8 @@ $\b X = [\b x ^1, \b x ^2,\cdots\b x^B]$，其中$B$为批大小。
 为独立的输入序列，由$M$个采样数据组成，相邻数据点之间的采样间隔是一致的。
 假定与$M$个采样点相对应的常微分方程求解时间区间为$[0,T]$。
 % 对于任意给定的时间索引$T$，在这个间隔中约束为$0\leq T \leq T$。
-对于任一给定的时间索引$t$，$0\leq t \leq T$，我们希望并行化地估计$\b X(t) = [\b x ^1(t),\b x ^2(t),\cdots,\b x^B(t)]$。
-为了实现这一目标，首先构造从连续时间点到离散下标的转换。定义$k=\lfloor \frac{tM}{T} \rfloor$，给定$n+1$个数据点，$\{(k, \b x_k),(k+1, \b x_{k+1}),\cdots,(k+n, \b x_{k+n})\}$
+对于任一给定的时间索引$t$，$0\leq t \leq T$，我们希望并行地估计$\b X(t) = [\b x ^1(t),\b x ^2(t),\cdots,\b x^B(t)]$。
+为了实现这一目标，首先构造从连续时间点与输入序列离散下标之间的转换。定义$k=\lfloor \frac{tM}{T} \rfloor$，给定$n+1$个数据点，$\{(k, \b x_k),(k+1, \b x_{k+1}),\cdots,(k+n, \b x_{k+n})\}$
 可以计算时间$t$局部的$n$阶样条插值函数的系数矩阵$\b A\in\mathbb{R}^{(n+1)\times B}$：
 
 % 首先，在区间$[0,t]$中，找到最接近$t$的且在$\{1,\cdots,M\}$中出现的整数索引$k=\lfloor \frac{tM}{T} \rfloor$。
@@ -342,9 +355,9 @@ x_{k+1}^{1} & \cdots & x_{k+1}^{B} \\
 x_{k+n}^{1} & \cdots & x_{k+n}^{B}
 \end{array}\right].
 \end{equation}
-一批数据中，所有离散序列在$t$时刻的插值为:
+批数据中，原始离散序列在$t$时刻的插值为:
 \begin{equation}
-\left[ x^1(t), x^2(t),\cdots, x^B(t)\right]= \Bigg(\left[ 1, \frac{tM}{T},\cdots, (\frac{tM}{T})^n\right]\boldsymbol{A}\Bigg). 
+\left[ \b x^1(t), \b x^2(t),\cdots, \b x^B(t)\right]= \Bigg(\left[ 1, \frac{tM}{T},\cdots, (\frac{tM}{T})^n\right]\boldsymbol{A}\Bigg). 
 \end{equation}
 在一般的深度学习框架中，上述矩阵乘法和求逆矩操作可以高效地并行实现。
 由于上述并行插值过程以及模型中的编码、解码以及常微分方程求解过程都是可微的，本章采用标准的反向传播算法训练完整模型，损失函数定义为标准的均方误差损失函数:
@@ -384,7 +397,7 @@ x_{k+n}^{1} & \cdots & x_{k+n}^{B}
 本节将采用真实工业系统数据对所提出的基于常微分方程网络的系统建模方法进行验证。
 实验主要探究三个问题:
 \begin{itemize}
-\item \textbf{问题1}：相比于直接采用离散时序预测模型，使用深度连续时间网络和高精度ODE求解器建模预测工业系统能否获得更优的效果?
+\item \textbf{问题1}：对于工业系统建模预测问题，相比于直接采用离散时序预测模型，使用连续时间的微分方程网络和高精度ODE求解器能否获得更优的效果?
 \item \textbf{问题2}：在不同预测长度下，使用平稳系统和非平稳系统会对预测效果产生怎样的影响?
 \item \textbf{问题3}：不同的离散序列插值阶数和不同的序列编码长度会如何影响预测模型的准确性?
 \end{itemize}
@@ -475,10 +488,10 @@ $y_1(t)$和$y_2(t)$均受到控制输入$\b x(t)\in \mathbb{R}^5$影响，包括
 
 构造数据集的详细过程如图~\ref{fig:dataset}所示。
 训练时，历史序列的长度为$N=80$，预测序列长度为$M=60$。
-测试环节探究了$L=60, 200, 500$三种情况下，模型的预测性能。
+测试环节探究了$L=60\text{，}200\text{，} 500$三种情况下，模型的预测性能。
 模型仅利用训练集进行训练，验证集上表现最好的模型将被保留，并评估其在三个测试集上的表现。
 % 然后使用不同的$L$生成不同的验证集和测试集，在其上进行验证和评估。
-根据图~\ref{fig:dataset}所示的构建输入-输出序列对的方法，共计17,131个样本用于训练。对于不同预测长度$L=60、200、500$，分别有3561、3421、3121个样本用于测试。
+根据图~\ref{fig:dataset}所示的构建输入-输出序列对的方法，共计17,131个样本用于训练。对于不同预测长度$L=60\text{，}200\text{，}500$，分别有3561、3421、3121个样本用于测试。
 所有的数据在训练和测试之前均被归一化为标准正态分布。
 
 \subsection{实验参数及评价指标}
@@ -491,7 +504,7 @@ RNN序列编码器模块包含一个隐藏层，隐状态大小等于$32$（与$
 % 训练时，找到在验证集上预测精度最高的模型，将其用于测试数据集精度评估。
 训练和测试均在单个Nvidia V100 GPU上进行。
 代码基于PyTorch框架实现。
-对于给定的离散整数下标序列$[0,1,\dots, M]$, 我们定义其连续时间区间为 $0\leq t\leq M\delta_t$.
+对于给定的离散整数下标序列$[0,1,\dots, M]$, 本章定义其连续时间区间为 $0\leq t\leq M\delta_t$。
 相邻数据点的时间间隔$\delta _t$被设置为0.1。
 因此，式\eqref{equ:stationary}中的归一化因子$\mu _t$也被设置为0.1。
 当使用欧拉数值求解器求解稳定系统的ODE方程时，模型将等价于直接使用GRU网络在离散时间系统下进行预测:
@@ -502,7 +515,7 @@ RNN序列编码器模块包含一个隐藏层，隐状态大小等于$32$（与$
 \end{align}
 % \end{equation}
 
-本节使用预测底流浓度的平均根相对平方误差（RRSE）和平均平方误差（MSE）评价不同模型的预测精度。RRSE是被归一化的均方根（RMS）误差。对于预测长度$L$，RRSE定义如下：
+本节使用底流浓度预测值的平均根相对平方误差（RRSE）和平均平方误差（MSE）评价不同模型的预测精度。RRSE是被归一化的均方根（RMS）误差。对于预测长度$L$，RRSE定义如下：
 \begin{equation}
 \begin{aligned}
     \text{RRSE}=\sqrt{\sum_{j=1}^{L} \frac{e_{j}^{2}}{\left(\hat{y}_{j}-\bar{y}\right)^{2}}}, \quad e_{j}=\hat{y}_{j}-y_{j}.
@@ -529,7 +542,7 @@ RNN序列编码器模块包含一个隐藏层，隐状态大小等于$32$（与$
 首先，本节研究了不同ODE求解器和导数模块对预测精度的影响。
 对比的ODE求解器包括五种：欧拉法（Euler）、中值法（Midpoint）、四阶龙格库塔（Runge—Kutta，RK4）、 Dormand—Prince（Dopri5）\cite{NIPS2018_7892}、以及三阶Bogacki—Shampine（Bosh）\cite{bogacki19893}。
 % 微分方程求解器在设定自适应微分方程求解器参数时，由于降低近似误差的容忍度，会导致求解常微分方程的时间剧烈增加。
-为了平衡时间消耗和预测精度，本节将所有自适应求解器的相对误差限设置为$1\mathrm{e}-4$，绝对误差限设置为$1\mathrm{e}-5$。
+为了平衡时间消耗和预测精度，实验中所有自适应求解器的相对误差限设置为$1\mathrm{e}-4$，绝对误差限设置为$1\mathrm{e}-5$。
 本节研究了上述微分方程求解器在非稳定和稳定系统两种情况下的求解性能。
 此外，我们还评估了部分离散时间深度序列模型的预测效果，包括深度状态空间模型（DT-State-Space）、基于注意力机制的Seq2Seq模型（Attention-Seq2Seq）\cite{Member2019}和Transformer模型\cite{Wu2020}。
 DT-State-Space~\cite{Rangapuram2018}模型采用循环神经网络（RNN）建模线性状态空间模型的动态参数，并利用预测得到的状态空间模型预测时间序列，其状态空间和RNN隐藏层的大小分别设置为16和32。
@@ -576,11 +589,11 @@ Transformer和Attention-Seq2Seq的超参数设置与原文献保持一致。
 本节共进行了三组实验以探究不同预测长度$L=60$、$200$和$500$下，不同模型预测结果的RRSE、MSE和预测时间。
 从表~\ref{tab:3_exp_all}可以发现，离散时间域下的Attention-Seq2Seq模型、DT-State-Space模型和Transformer的性能稍优于使用Euler求解器时的预测效果，但差于使用高阶ODE求解器的预测效果，特别是在长期预测$L=200, 500$时表现更为明显。
 结果表明，采用连续时间模型可以更好地反映浓密机系统的连续时间演化特征，从而相比于离散时间模型具有更高的预测精度。
+另外，Transformer、Seq2Seq模型侧重于提取长时关联信息以进行序列预测。而本文所关注的是系统辨识问题，模型需要及时提取来自系统输入的信息以估计系统的当前输出。纯时间序列预测模型只能有效利用$\b X_P^N$和$\b X_P^N$中的信息而难以充分$\b X_f^M$的实时信息。因此，在长序列预测时，伴随着历史序列对于未来系统长期输出的影响逐渐变小，Transformer、Seq2Seq模型精度明显变差。
 
 \subsection{不同ODE求解器下稳定系统以及非稳定系统对比}
 表~\ref{tab:3_exp_all}分别评估了稳定系统模型和非稳定系统模型在不同ODE求解器下的预测误差。
-
-当导数模块为非稳定系统时，对于短期预测任务（$L = 60$），
+导数模块为非稳定系统时，对于短期预测任务（$L = 60$），
 虽然Euler求解器的时间消耗低于其他ODE求解器，但其预测结果的RRSE和MSE较高，预测精度差于其他四个ODE求解器。
 原因在于欧拉方法作为求解ODE方程最简单的方法，它在两个相邻时间点之间仅调用一次导数模块以计算隐状态的单步差分。
 其运行本质等同于离散时间序列模型，因为并没有充分利用模型为连续时间系统的性质，所得ODE方程的解的精度较差。
@@ -600,10 +613,10 @@ Dopri5和Bosh方法作为自适应步长的求解器，
 % 实验中，我们还发现，同一ODE求解器在预测精度和时间消耗上表现也会受到导数模块定义的影响。
 当导数模块定义为平稳系统时。
 两种自适应方法Bosh和Dopri5求解ODE方程的时间消耗将显著增加。
-在表\ref{tab:3_exp_all}中，我们没有列出Dopri5和Bosh在稳定系统中的预测精度，因为其计算速度极慢，无法在限定时间内给出ODE的解。
-求解ODE所需的时间会大幅增加，其原因是相比于非稳定系统，稳定系统会使得隐状态的轨迹波动更加剧烈。
-本质上，稳定系统中的$\text{GRU}\left(\mathbf{h}(t), \mathbf{x}(t), \theta_{d}\right)$根据$\b h^{\infty}(t)$定义了目标状态$\b h^{\infty}(t)$，满足$\text{GRU}\left(\mathbf{h}^{\infty}(t), \mathbf{x}(t), \theta_{d}\right)=\mathbf{h}^{\infty}(t)$。
-隐状态沿着方向$\overrightarrow{\mathbf{h}^\infty-\mathbf h(t)}$向目标状态移动。
+表\ref{tab:3_exp_all}中没有列出Dopri5和Bosh在导数模块定义为稳定系统时的预测精度，因为其计算速度极慢，无法在限定时间内给出ODE的解。
+求解和训练ODE所需的时间会大幅增加，其原因是相比于非稳定系统，稳定系统会使得隐状态的轨迹波动更加剧烈。
+本质上，稳定系统中的$\text{GRU}\left(\boldsymbol{h}(t), \boldsymbol{x}(t), \theta_{d}\right)$根据$\b x(t)$定义了目标状态$\b h^{\infty}(t)$，满足$\text{GRU}\left(\boldsymbol{h}^{\infty}(t), \boldsymbol{x}(t), \theta_{d}\right)=\boldsymbol{h}^{\infty}(t)$。
+隐状态沿着方向$\overrightarrow{\boldsymbol{h}^\infty-\boldsymbol h(t)}$向目标状态移动。
 由于数据集中外部输入$\b x(t)$是持续变化且不稳定的，因此会导致$\b h^{\infty}(t)$剧烈变化。
 % When the ODE equation is solved numerically with other ODE solvers whose orders are constant, such as Euler or Mid-point method, the number of times for evaluating derivative module is constant and the step size $\Delta t$ is not short enough to estimate the system trajectory accurately under unstable $\b x(t)$.
 当采用Euler、rk4等导数访问次数固定的求解器时，使用固定步长$\Delta t$无法在$\b x(t)$持续变化的情况下精确地求解系统轨迹。
@@ -770,7 +783,7 @@ Dopri5和Bosh方法作为自适应步长的求解器，
 \label{fig:predict_cmp_200}
 %\vspace*{-0.3cm}
 \end{figure}
-图中呈现的预测效果与表\ref{tab:3_exp_all}中的结果几乎一致。在长期预测任务中，非平稳模型的RRSE和MSE远远高于平稳模型，模型预测效果较差。
+图中呈现的预测效果说明稳定型的导数模块在长序列预测时的表现更优，与表\ref{tab:3_exp_all}中的结果几乎一致。而非平稳模型在长期预测任务中的RRSE和MSE远远高于平稳模型，模型预测效果较差。
 %It is meaningless to compare RRSE indices of results with different $L$, despite the RRSE in the experiments with $L=500$ is lower than $L=200$.
 % When , we find that the model with stationary system performs lower prediction error than the non-stationary method.
 % The illustrations of predicted results shown in Fig. \ref{fig:predict_cmp_200} and Fig. \ref{fig:predict_cmp_500} demonstrate that the non-stationary model only performs well in early period.
@@ -783,7 +796,7 @@ Dopri5和Bosh方法作为自适应步长的求解器，
 在由非稳定系统定义的导数模块中，其内部结构导致隐状态在积分过程中是无约束的，状态的取值范围将逐渐扩张。
 虽然本章在状态解码器网络中嵌入$\tanh$函数，能够将预测的系统输出限制在合理的范围内，但解码器模块难以学习从极大的隐状态空间到系统输出空间的准确映射。
 
-同样地，图~\ref{fig:predict_cmp_200}也证明了在长期预测问题中，高阶ODE求解器（如4阶Runge—Kutta）能够获得比低阶ODE求解器（如Euler）更好的预测效果，说明微分方程求解的精度会严重影响模型预测的精度，
+同样地，图~\ref{fig:predict_cmp_200}也证明了在长期预测问题中，高阶ODE求解器（如4阶Runge—Kutta）能够获得比低阶ODE求解器（如Euler）更好的预测效果，说明微分方程求解的精度会影响模型预测的精度，
 结果与表\ref{tab:3_exp_all}一致。
 
 
@@ -832,13 +845,13 @@ Dopri5和Bosh方法作为自适应步长的求解器，
 \label{sec:3_enc_length}
 最后，本节探究了引入序列编码器对于解决长时延系统预测问题的有效性。
 % 具体地，该节对比了在引入序列编码器前后以及设定不同编码长度$N$对模型预测精度的影响。
-具体地，该节对比了没有序列编码器，以及引入序列编码器并将编码长度$N$设置为不同值时，模型预测精度的变化情况。
+具体地，该节对比了没有序列编码器以及引入序列编码器并将编码长度$N$设置为不同值时，模型预测精度的变化情况。
 特别地，当$N$设置为1时，将序列编码器替换为具有单一隐藏层的神经网络，该网络将单步系统输出$\b y(k-1)$及输入$\b x(k-1)$编码为ODE系统的初始隐状态$\b h(t_0)$。
 当$N$为0时，初始状态$\b h(t_0)$被设定为可学习的初始隐状态\cite{Demeester2020SystemIW}或零向量，与历史系统轨迹无关。
 
 % 在不同的预测序列长度$L=60$、$200$和$500$的三个实验中，我们测试了不同的$N$对预测精度的影响。
 该实验仍然在$L=60$、$200$和$500$三种情况下比较不同初态估计方法对预测精度的影响。
-在$L=60$的实验中，导数模块被为非平稳系统。
+在$L=60$的实验中，导数模块被定义为非平稳系统。
 当$L=200$和$500$时，导数模块定义为带有GRU单元的稳定系统。
 六组实验中，均采用四阶龙格-库塔求解器求解ODE方程。
 
@@ -868,12 +881,12 @@ $N=0$，令  $\b h(t_0)=\b 0$                                                   
 根据实验发现，被编码序列的最优长度约为$N=80$，这与浓密机系统存在2至3小时时延的先验经验几乎一致。
 
 另外，引入序列编码模块的收益在短期预测任务更加明显。
-随着被预测序列长度的增加，引入序列编码器带来的优势也随之降低。
+随着被预测序列长度的增加，引入序列编码器带来的优势也随之变弱。
 
 \subsection{探究序列插值阶数的对预测精度的影响}
 % 本小节进行消融实验以探究不同离散输入序列进行插值的方法是否对预测精度产生影响。
 本小节进行消融实验以探究不同离散输入序列插值方法对预测精度的影响。
-测试对象包括四种不同阶数的样条插值方法，最终比较模型在不同预测长度的预测精度。
+测试对象包括四种不同阶数的样条插值方法，最终比较模型在不同预测长度下的预测精度。
 预测长度设置、导数形式、以及ODE求解器选择均与实验\ref{sec:3_enc_length}一致。
 % The recurrent cell in experiment is RNN and the schema for solving ODE is RK4 uniformly.
 表~\ref{tab:interolopation_cmp}所示结果表明，采用高阶样条插值时的精度将稍优于低阶插值。
@@ -905,7 +918,7 @@ $N=0$，令  $\b h(t_0)=\b 0$                                                   
 % 在真实膏体浓密机系统运行数据集，本章进行了大量实验对所提出模型的各个部分进行研究，包括平稳系统和非平稳系统的选择以及不同ODE求解器的设定。
 结果表明，非平稳系统在短期预测任务中的表现优于平稳系统。
 % 但是，非平稳模型由于存在累加计算，会造成隐状态的波动范围过大，进而导致长期预测性能较差。
-在实际应用中，当构建基于模型的反馈控制器时，可使用非平稳系统作为短期预测模型辅助控制器输出。
+在实际应用中，当构建基于模型的反馈控制器时，可使用非平稳系统作为短期预测模型辅助控制序列优化。
 但是，非平稳模型在长期预测时隐状态的波动范围过大且存在较大的累积误差，
 而平稳系统通过修改导数模块结构，避免了隐状态漂移问题，因此在长期预测中表现较好。
 当需要具有稳定鲁棒的系统识别模型进行长期预测时，如系统仿真或控制器测试，平稳系统模型是更好的选择。

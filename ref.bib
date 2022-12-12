@@ -121,10 +121,12 @@ MathML},
   organization={OpenReview. net}
 }
 
-@article{gupta2019general,
+@online{gupta2019general,
   title={A general framework for structured learning of mechanical systems},
   author={Gupta, Jayesh K and Menda, Kunal and Manchester, Zachary and Kochenderfer, Mykel J},
   journal={arXiv preprint arXiv:1902.08705},
+  url={https://arxiv.org/abs/1902.08705},
+  doi={,},
   year={2019}
 }
 
@@ -241,10 +243,12 @@ numpages = {9}
   publisher={American Association for the Advancement of Science}
 }
 
-@article{yang2018physics,
+@online{yang2018physics,
   title={Physics-informed deep generative models},
   author={Yang, Yibo and Perdikaris, Paris},
   journal={arXiv preprint arXiv:1812.03511},
+  doi={,},
+  url={https://arxiv.org/abs/1812.03511},
   year={2018}
 }
 
@@ -298,12 +302,19 @@ author = {M. Raissi and P. Perdikaris and G.E. Karniadakis},
   year={2018}
 }
 
-@article{kidger2020neural,
-  title={Neural controlled differential equations for irregular time series},
-  author={Kidger, Patrick and Morrill, James and Foster, James and Lyons, Terry},
-  journal={arXiv preprint arXiv:2005.08926},
-  year={2020}
+@inproceedings{kidger2020neural,
+ author = {Patrick Kidger and
+James Morrill and
+James Foster and
+Terry J. Lyons},
+ bibsource = {dblp computer science bibliography, https://dblp.org},
+ biburl = {https://dblp.org/rec/conf/nips/KidgerMFL20.bib},
+ booktitle = {NeurIPS 2020, December
+6-12, 2020, virtual},
+ title = {Neural Controlled Differential Equations for Irregular Time Series},
+ year = {2020}
 }
+
 
 @inproceedings{brouwer2019gru,
   title={GRU-ODE-Bayes: continuous modeling of sporadically-observed time series},
@@ -405,39 +416,31 @@ volume = {2018-Decem},
 year = {2018}
 }
 
-@article{Fraccaro2017,
-abstract = {This paper takes a step towards temporal reasoning in a dynamically changing video, not in the pixel space that constitutes its frames, but in a latent space that describes the non-linear dynamics of the objects in its world. We introduce the Kalman variational auto-encoder, a framework for unsupervised learning of sequential data that disentangles two latent representations: an object's representation, coming from a recognition model, and a latent state describing its dynamics. As a result, the evolution of the world can be imagined and missing data imputed, both without the need to generate high dimensional frames at each time step. The model is trained end-to-end on videos of a variety of simulated physical systems, and outperforms competing methods in generative and missing data imputation tasks.},
-archivePrefix = {arXiv},
-arxivId = {1710.05741},
-author = {Fraccaro, Marco and Kamronn, Simon and Paquet, Ulrich and Winther, Ole},
-eprint = {1710.05741},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/6951-a-disentangled-recognition-and-nonlinear-dynamics-model-for-unsupervised-learning.pdf:pdf},
-issn = {10495258},
-journal = {Advances in Neural Information Processing Systems},
-mendeley-groups = {VAE},
-number = {section 5},
-pages = {3602--3611},
-title = {{A disentangled recognition and nonlinear dynamics model for unsupervised learning}},
-volume = {2017-Decem},
-year = {2017}
-}
 
-@article{Knauf2018,
-abstract = {Differential equations are as varied as the phenomena of nature described by them.},
-archivePrefix = {arXiv},
-arxivId = {1806.07366},
-author = {Knauf, Andreas},
-eprint = {1806.07366},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/Knauf - 2018 - Neural Ordinary Differential Equations.pdf:pdf},
-issn = {20385757},
-journal = {UNITEXT - La Matematica per il 3 piu 2},
-mendeley-groups = {machine learning},
-number = {NeurIPS},
-pages = {31--60},
-title = {{Neural Ordinary Differential Equations}},
-volume = {109},
-year = {2018}
-}
+@inproceedings{Fraccaro2017,
+	author = {Fraccaro, Marco and Kamronn, Simon and Paquet, Ulrich and Winther, Ole},
+	booktitle = {Advances in Neural Information Processing Systems},
+	editor = {I. Guyon and U. Von Luxburg and S. Bengio and H. Wallach and R. Fergus and S. Vishwanathan and R. Garnett},
+	publisher = {Curran Associates, Inc.},
+	title = {A Disentangled Recognition and Nonlinear Dynamics Model for Unsupervised Learning},
+	url = {https://proceedings.neurips.cc/paper/2017/file/7b7a53e239400a13bd6be6c91c4f6c4e-Paper.pdf},
+	volume = {30},
+	year = {2017},
+	Bdsk-Url-1 = {https://proceedings.neurips.cc/paper/2017/file/7b7a53e239400a13bd6be6c91c4f6c4e-Paper.pdf}}
+
+
+
+@inproceedings{Knauf2018,
+	author = {Chen, Ricky T. Q. and Rubanova, Yulia and Bettencourt, Jesse and Duvenaud, David K},
+	booktitle = {Advances in Neural Information Processing Systems},
+	editor = {S. Bengio and H. Wallach and H. Larochelle and K. Grauman and N. Cesa-Bianchi and R. Garnett},
+	publisher = {Curran Associates, Inc.},
+	title = {Neural Ordinary Differential Equations},
+	url = {https://proceedings.neurips.cc/paper/2018/file/69386f6bb1dfed68692a24c8686939b9-Paper.pdf},
+	volume = {31},
+	year = {2018},
+	Bdsk-Url-1 = {https://proceedings.neurips.cc/paper/2018/file/69386f6bb1dfed68692a24c8686939b9-Paper.pdf}}
+
 
 @article{nason2006stationary,
   title={Stationary and non-stationary time series},
@@ -447,15 +450,14 @@ year = {2018}
   year={2006},
   publisher={Geological Society of London, London}
 }
-@article{Demeester2019,
-archivePrefix = {arXiv},
-arxivId = {1911.09431},
-author = {Demeester, Thomas},
-eprint = {1911.09431},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/Demeester - 2019 - System Identification with Time-Aware Neural Sequence Models.pdf:pdf},
-mendeley-groups = {system_identify},
-title = {{System Identification with Time-Aware Neural Sequence Models}},
-year = {2019}
+@inproceedings{Demeester2019,
+  title={System identification with time-aware neural sequence models},
+  author={Demeester, Thomas},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={34},
+  number={04},
+  pages={3757--3764},
+  year={2020}
 }
 @inbook{10.5555/3454287.3454765,
 author = {Rubanova, Yulia and Chen, Ricky T. Q. and Duvenaud, David},
@@ -476,21 +478,15 @@ booktitle = {Proceedings of the 33rd International Conference on Neural Informat
 articleno = {478},
 numpages = {11}
 }
-@article{Hafner2019,
-abstract = {Planning has been very successful for control tasks with known environment dynamics. To leverage planning in unknown environments, the agent needs to learn the dynamics from interactions with the world. However, learning dynamics models that are accurate enough for planning has been a long-standing challenge, especially in image-based domains. We propose the Deep Planning Network (PlaNet), a purely model-based agent that learns the environment dynamics from images and chooses actions through fast online planning in latent space. To achieve high performance, the dynamics model must accurately predict the rewards ahead for multiple time steps. We approach this using a latent dynamics model with both deterministic and stochastic transition components. Moreover, we propose a multi-step variational inference objective that we name latent overshooting. Using only pixel observations, our agent solves continuous control tasks with contact dynamics, partial observability, and sparse rewards, which exceed the difficulty of tasks that were previously solved by planning with learned models. PlaNet uses substantially fewer episodes and reaches final performance close to and sometimes higher than strong model-free algorithms.},
-archivePrefix = {arXiv},
-arxivId = {1811.04551},
-author = {Hafner, Danijar and Lillicrap, Timothy and Fischer, Ian and Villegas, Ruben and Ha, David and Lee, Honglak and Davidson, James},
-eprint = {1811.04551},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/Hafner et al. - 2019 - Learning latent dynamics for planning from pixels(2).pdf:pdf},
-isbn = {9781510886988},
-journal = {36th International Conference on Machine Learning, ICML 2019},
-mendeley-groups = {VAE},
-pages = {4528--4547},
-title = {{Learning latent dynamics for planning from pixels}},
-volume = {2019-June},
-year = {2019}
+@inproceedings{Hafner2019,
+  title={Learning latent dynamics for planning from pixels},
+  author={Hafner, Danijar and Lillicrap, Timothy and Fischer, Ian and Villegas, Ruben and Ha, David and Lee, Honglak and Davidson, James},
+  booktitle={International conference on machine learning},
+  pages={2555--2565},
+  year={2019},
+  organization={PMLR}
 }
+
 @article{yuan2020dual,
   title={A dual-attention recurrent neural network method for deep cone thickener underflow concentration prediction},
   author={Yuan, Zhaolin and Hu, Jinlong and Wu, Di and Ban, Xiaojuan},
@@ -524,25 +520,16 @@ year = {2019}
   year={2018}
 }
 
-
-@article{Yildiz2019,
-archivePrefix = {arXiv},
-arxivId = {1905.10994},
-author = {Yildiz, {\c{C}}agatay and Heinonen, Markus and L{\"{a}}hdesm{\"{a}}ki, Harri},
-eprint = {1905.10994},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/1905.10994_副本.pdf:pdf},
-issn = {10495258},
-journal = {Advances in Neural Information Processing Systems},
-mendeley-groups = {machine learning,VAE},
-number = {NeurIPS},
-title = {{ODE2VAE: Deep generative second order ODEs with Bayesian neural networks}},
-volume = {32},
-year = {2019}
+@inproceedings{Yildiz2019,
+	author = {Yildiz, Cagatay and Heinonen, Markus and Lahdesmaki, Harri},
+	booktitle = {Advances in Neural Information Processing Systems},
+	editor = {H. Wallach and H. Larochelle and A. Beygelzimer and F. d\textquotesingle Alch\'{e}-Buc and E. Fox and R. Garnett},
+	publisher = {Curran Associates, Inc.},
+	title = {ODE2VAE: Deep generative second order ODEs with Bayesian neural networks},
+	volume = {32},
+	year = {2019}
 }
-
-
 @article{WANG2013,
-abstract = {The traditional paradigm of system identification employs prior information on system structures and environments and input/output observation data to derive system models. Extensive research and development on its methodologies, theoretical foundation, algorithms, verifications, and applications over the past half century have established a mature field with a rich literature and substantial benchmark applications. However, rapid advancement in science, technology, engineering, and social medias has ushered in a new era of systems science and control in which challenges and opportunities are abundant for system identification. In this sense, system identification remains an exciting, young, viable, and critical field that mandates new paradigms to meet such challenges. This article points out some potentially important aspects of system identification in these new paradigms, suggests some worthy areas of research focus, and most importantly opens the forum for further discussions.},
 author = {WANG, Le-Yi and ZHAO, Wen-Xiao},
 file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/wang2013.pdf:pdf},
 issn = {18741029},
@@ -671,11 +658,11 @@ pages = {6571--6583},
 year = {2018},
 publisher = {Curran Associates, Inc.},
 }
-@article{kingma2014adam,
-  title={Adam: A method for stochastic optimization},
+@inproceedings{kingma2014adam,
+  title={Adam: A Method for Stochastic Optimization},
   author={Kingma, Diederik P and Ba, Jimmy},
-  journal={arXiv preprint arXiv:1412.6980},
-  year={2014}
+  booktitle={ICLR (Poster)},
+  year={2015}
 }
 @article{Botchkarev2019,
 abstract = {Aim/Purpose The aim of this study was to analyze various performance metrics and approaches to their classification. The main goal of the study was to develop a new typology that will help to advance knowledge of metrics and facilitate their use in machine learning regression algorithms Background Performance metrics (error measures) are vital components of the evaluation frameworks in various fields. A performance metric can be defined as a logical and mathematical construct designed to measure how close are the actual results from what has been expected or predicted. A vast variety of performance metrics have been described in academic literature. The most commonly mentioned metrics in research studies are Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), etc. Knowledge about metrics properties needs to be systematized to simplify the design and use of the metrics. Methodology A qualitative study was conducted to achieve the objectives of identifying related peer-reviewed research studies, literature reviews, critical thinking and inductive reasoning. Contribution The main contribution of this paper is in ordering knowledge of performance metrics and enhancing understanding of their structure and properties by proposing a new typology, generic primary metrics mathematical formula and a visualization chart Findings Based on the analysis of the structure of numerous performance metrics, we proposed a framework of metrics which includes four (4) categories: primary metrics, extended metrics, composite metrics, and hybrid sets of metrics. The paper identified three (3) key components (dimensions) that determine the structure and properties of primary metrics: method of determining point distance, method of normalization, method of aggregation of point distances over a data set. For each component, implementation options have been identified. The suggested new typology has been shown to cover a total of over 40 commonly used primary metrics Recommendations Presented findings can be used to facilitate teaching performance metrics to for Practitioners university students and expedite metrics selection and implementation processes for practitioners Recommendations By using the proposed typology, researchers can streamline development of for Researchers new metrics with predetermined properties Impact on Society The outcomes of this study could be used for improving evaluation results in machine learning regression, forecasting and prognostics with direct or indirect positive impacts on innovation and productivity in a societal sense Future Research Future research is needed to examine the properties of the extended metrics, composite metrics, and hybrid sets of metrics. Empirical study of the metrics is needed using R Studio or Azure Machine Learning Studio, to find associations between the properties of primary metrics and their “numerical” behavior in a wide spectrum of data characteristics and business or research requirements.},
@@ -742,19 +729,12 @@ Bengio, Yoshua},
   year={2020},
   publisher={IEEE}
 }
-@article{Huang2017,
-archivePrefix = {arXiv},
-arxivId = {1608.06993},
-author = {Huang, Gao and Liu, Zhuang and {Van Der Maaten}, Laurens and Weinberger, Kilian Q.},
-eprint = {1608.06993},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/1608.06993.pdf:pdf},
-isbn = {9781538604571},
-journal = {Proceedings - 30th IEEE Conference on Computer Vision and Pattern Recognition, CVPR 2017},
-mendeley-groups = {machine learning},
-pages = {4700--4708},
-title = {{Densely connected convolutional networks}},
-volume = {2017-January},
-year = {2017}
+@inproceedings{Huang2017,
+  title={Densely connected convolutional networks},
+  author={Huang, Gao and Liu, Zhuang and Van Der Maaten, Laurens and Weinberger, Kilian Q},
+  booktitle={Proceedings of the IEEE conference on computer vision and pattern recognition},
+  pages={4700--4708},
+  year={2017}
 }
 
 
@@ -989,37 +969,34 @@ title = {{A dual-attention recurrent neural network method for deep cone thicken
 volume = {20},
 year = {2020}
 }
-
-@ARTICLE{2020arXiv200207526Y,
-       author = {{Yang}, Shuoheng and {Wang}, Yuxin and {Chu}, Xiaowen},
-        title = "{A Survey of Deep Learning Techniques for Neural Machine Translation}",
-      journal = {arXiv e-prints},
-     keywords = {Computer Science - Computation and Language},
-         year = 2020,
-        month = feb,
-          eid = {arXiv:2002.07526},
-        pages = {arXiv:2002.07526},
-archivePrefix = {arXiv},
-       eprint = {2002.07526},
- primaryClass = {cs.CL},
-      adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+@online{2020arXiv200207526Y,
+  author    = {Shuoheng Yang and
+               Yuxin Wang and
+               Xiaowen Chu},
+  title     = {A Survey of Deep Learning Techniques for Neural Machine Translation},
+  journal   = {CoRR},
+  volume    = {abs/2002.07526},
+  year      = {2020},
+  url       = {https://arxiv.org/abs/2002.07526},
+  eprinttype = {arXiv},
+  eprint    = {2002.07526},
+  timestamp = {Mon, 02 Mar 2020 16:46:06 +0100},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-2002-07526.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
-@article{Geffner2018,
-abstract = {During the 60s and 70s, AI researchers explored intuitions about intelligence by writing programs that displayed intelligent behavior. Many good ideas came out from this work but programs written by hand were not robust or general. After the 80s, research increasingly shifted to the development of learners capable of inferring behavior and functions from experience and data, and solvers capable of tackling well-defined but intractable models like SAT, classical planning, Bayesian networks, and POMDPs. The learning approach has achieved considerable success but results in black boxes that do not have the flexibility, transparency, and generality of their model-based counterparts. Model-based approaches, on the other hand, require models and scalable algorithms. Model-free learners and model-based solvers have close parallels with Systems 1 and 2 in current theories of the human mind: the first, a fast, opaque, and inflexible intuitive mind; the second, a slow, transparent, and flexible analytical mind. In this paper, I review developments in AI and draw on these theories to discuss the gap between model-free learners and model-based solvers, a gap that needs to be bridged in order to have intelligent systems that are robust and general.},
-archivePrefix = {arXiv},
-arxivId = {1806.02308},
+@inproceedings{Geffner2018,
 author = {Geffner, Hector},
-eprint = {1806.02308},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/1806.02308.pdf:pdf},
+title = {Model-Free, Model-Based, and General Intelligence},
+year = {2018},
 isbn = {9780999241127},
-issn = {10450823},
-journal = {IJCAI International Joint Conference on Artificial Intelligence},
-mendeley-groups = {RL{\_}control},
-pages = {10--17},
-title = {{Model-free, model-based, and general intelligence}},
-volume = {2018-July},
-year = {2018}
+publisher = {AAAI Press},
+booktitle = {Proceedings of the 27th International Joint Conference on Artificial Intelligence},
+pages = {10–17},
+numpages = {8},
+location = {Stockholm, Sweden},
+series = {IJCAI'18}
 }
+
 @incollection{GUIDOLIN2018113,
 title = "Chapter 4 - Unit Roots and Cointegration",
 editor = "Massimo Guidolin and Manuela Pedio",
@@ -1034,30 +1011,22 @@ abstract = "This chapter investigates the consequences of nonstationarity (in th
 }% 
 
 @article{kelly2020,
-abstract = {Differential equations parameterized by neural networks become expensive to solve numerically as training progresses. We propose a remedy that encourages learned dynamics to be easier to solve. Specifically, we introduce a differentiable surrogate for the time cost of standard numerical solvers, using higher-order derivatives of solution trajectories. These derivatives are efficient to compute with Taylor-mode automatic differentiation. Optimizing this additional objective trades model performance against the time cost of solving the learned dynamics. We demonstrate our approach by training substantially faster, while nearly as accurate, models in supervised classification, density estimation, and time-series modelling tasks.},
-archivePrefix = {arXiv},
-arxivId = {2007.04504},
-author = {Kelly, Jacob and Bettencourt, Jesse and Johnson, Matthew James and Duvenaud, David},
-eprint = {2007.04504},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/NeurIPS-2020-learning-differential-equations-that-are-easy-to-solve-Paper.pdf:pdf},
-journal = {arXiv},
-mendeley-groups = {machine learning},
-title = {{Learning differential equations that are easy to solve}},
-volume = {3},
-year = {2020}
+  title={Learning differential equations that are easy to solve},
+  author={Kelly, Jacob and Bettencourt, Jesse and Johnson, Matthew J and Duvenaud, David K},
+  journal={Advances in Neural Information Processing Systems},
+  volume={33},
+  pages={4370--4380},
+  year={2020}
 }
 @article{poli2020,
-abstract = {The infinite-depth paradigm pioneered by Neural ODEs has launched a renaissance in the search for novel dynamical system-inspired deep learning primitives; however, their utilization in problems of non-trivial size has often proved impossible due to poor computational scalability. This work paves the way for scalable Neural ODEs with time-to-prediction comparable to traditional discrete networks. We introduce hypersolvers, neural networks designed to solve ODEs with low overhead and theoretical guarantees on accuracy. The synergistic combination of hypersolvers and Neural ODEs allows for cheap inference and unlocks a new frontier for practical application of continuous-depth models. Experimental evaluations on standard benchmarks, such as sampling for continuous normalizing flows, reveal consistent pareto efficiency over classical numerical methods.},
-archivePrefix = {arXiv},
-arxivId = {2007.09601},
-author = {Poli, Michael and Massaroli, Stefano and Yamashita, Atsushi and Asama, Hajime and Park, Jinkyoo},
-eprint = {2007.09601},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/NeurIPS-2020-hypersolvers-toward-fast-continuous-depth-models-Paper.pdf:pdf},
-mendeley-groups = {machine learning},
-number = {NeurIPS},
-title = {{Hypersolvers: Toward Fast Continuous-Depth Models}},
-year = {2020}
+  title={Hypersolvers: Toward fast continuous-depth models},
+  author={Poli, Michael and Massaroli, Stefano and Yamashita, Atsushi and Asama, Hajime and Park, Jinkyoo},
+  journal={Advances in Neural Information Processing Systems},
+  volume={33},
+  pages={21105--21117},
+  year={2020}
 }
+
 @inproceedings{J2020,
   title={How to train your neural ODE},
   author={Finlay, Chris and Jacobsen, J{\"o}rn-Henrik and Nurbekyan, Levon and Oberman, Adam},
@@ -1462,49 +1431,29 @@ year = {2020}
   pages={3757--3764},
   year={2020}
 }
-@article{Zhuang2020,
-abstract = {The empirical performance of neural ordinary differential equations (NODEs) is significantly inferior to discrete-layer models on benchmark tasks (e.g. image classification). We demonstrate an explanation is the inaccuracy of existing gradient estimation methods: The adjoint method has numerical errors in reverse-mode integration; the naive method suffers from a redundantly deep computation graph. We propose the Adaptive Checkpoint Adjoint (ACA) method: ACA applies a trajectory checkpoint strategy which records the forwardmode trajectory as the reverse-mode trajectory to guarantee accuracy; ACA deletes redundant components for shallow computation graphs; and ACA supports adaptive solvers. On image classification tasks, compared with the adjoint and naive method, ACA achieves half the error rate in half the training time; NODE trained with ACA outperforms ResNet in both accuracy and test-retest reliability. On time-series modeling, ACA outperforms competing methods. Furthermore, NODE with ACA can incorporate physical knowledge to achieve better accuracy.},
-archivePrefix = {arXiv},
-arxivId = {2006.02493},
-author = {Zhuang, Juntang and Dvornek, Nicha and Li, Xiaoxiao and Tatikonda, Sekhar and Papademetris, Xenophon and Duncan, James},
-eprint = {2006.02493},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/zhuang20a.pdf:pdf},
-isbn = {9781713821120},
-journal = {37th International Conference on Machine Learning, ICML 2020},
-mendeley-groups = {ODE,DE},
-pages = {11575--11585},
-title = {{Adaptive checkpoint adjoint method for gradient estimation in neural ODE}},
-volume = {PartF16814},
-year = {2020}
+@inproceedings{Zhuang2020,
+  title={Adaptive checkpoint adjoint method for gradient estimation in neural ode},
+  author={Zhuang, Juntang and Dvornek, Nicha and Li, Xiaoxiao and Tatikonda, Sekhar and Papademetris, Xenophon and Duncan, James},
+  booktitle={International Conference on Machine Learning},
+  pages={11639--11649},
+  year={2020},
+  organization={PMLR}
 }
-@article{Oganesyan2020,
-abstract = {Stochastic regularization of neural networks (e.g. dropout) is a wide-spread technique in deep learning that allows for better generalization. Despite its success, continuous-time models, such as neural ordinary differential equation (ODE), usually rely on a completely deterministic feed-forward operation. This work provides an empirical study of stochastically regularized neural ODE on several image-classification tasks (CIFAR-10, CIFAR-100, TinyImageNet). Building upon the formalism of stochastic differential equations (SDEs), we demonstrate that neural SDE is able to outperform its deterministic counterpart. Further, we show that data augmentation during the training improves the performance of both deterministic and stochastic versions of the same model. However, the improvements obtained by the data augmentation completely eliminate the empirical gains of the stochastic regularization, making the difference in the performance of neural ODE and neural SDE negligible.},
-archivePrefix = {arXiv},
-arxivId = {2002.09779},
-author = {Oganesyan, Viktor and Volokhova, Alexandra and Vetrov, Dmitry},
-eprint = {2002.09779},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/stochasticity_in_neural_odes_an_empirical_study.pdf:pdf},
-issn = {23318422},
-journal = {arXiv},
-mendeley-groups = {SDE},
-pages = {1--9},
-title = {{Stochasticity in Neural ODEs: An Empirical Study}},
-year = {2020}
+@inproceedings{Oganesyan2020,
+  title={Stochasticity in neural odes: an empirical study},
+  author={Volokhova, Alexandra and Oganesyan, Viktor and Vetrov, Dmitry},
+  booktitle={ICLR 2020 Workshop on Integration of Deep Neural Models and Differential Equations},
+  year={2020}
+}
+@article{Ghosh2020,
+  title={Steer: Simple temporal regularization for neural ode},
+  author={Ghosh, Arnab and Behl, Harkirat and Dupont, Emilien and Torr, Philip and Namboodiri, Vinay},
+  journal={Advances in Neural Information Processing Systems},
+  volume={33},
+  pages={14831--14843},
+  year={2020}
 }
 
-@article{Ghosh2020,
-abstract = {Training Neural Ordinary Differential Equations (ODEs) is often computationally expensive. Indeed, computing the forward pass of such models involves solving an ODE which can become arbitrarily complex during training. Recent works have shown that regularizing the dynamics of the ODE can partially alleviate this. In this paper we propose a new regularization technique: randomly sampling the end time of the ODE during training. The proposed regularization is simple to implement, has negligible overhead and is effective across a wide variety of tasks. Further, the technique is orthogonal to several other methods proposed to regularize the dynamics of ODEs and as such can be used in conjunction with them. We show through experiments on normalizing flows, time series models and image recognition that the proposed regularization can significantly decrease training time and even improve performance over baseline models.},
-archivePrefix = {arXiv},
-arxivId = {2006.10711},
-author = {Ghosh, Arnab and Torr, Philip H.S. and Behl, Harkirat Singh and Namboodiri, Vinay},
-eprint = {2006.10711},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/Ghosh et al. - 2020 - STEER Simple Temporal Regularization For Neural ODEs.pdf:pdf},
-journal = {arXiv},
-mendeley-groups = {VAE},
-number = {NeurIPS},
-title = {{STEER: Simple Temporal Regularization For Neural ODEs}},
-year = {2020}
-}
 @InProceedings{OISR,
   author    = {Xiangyu He and Zitao Mo and Peisong Wang and Yang Liu and Mingyuan Yang and Jian Cheng},
   title     = {ODE-inspired Network Design for Single Image Super-Resolution},
@@ -1512,22 +1461,15 @@ year = {2020}
   month     = {July},
   year      = {2019}
 }
-
 @article{Huang2020,
-abstract = {Many real-world systems, such as moving planets, can be considered as multi-agent dynamic systems, where objects interact with each other and co-evolve along with the time. Such dynamics is usually difficult to capture, and understanding and predicting the dynamics based on observed trajectories of objects become a critical research problem in many domains. Most existing algorithms, however, assume the observations are regularly sampled and all the objects can be fully observed at each sampling time, which is impractical for many applications. In this paper, we propose to learn system dynamics from irregularly-sampled partial observations with underlying graph structure for the first time. To tackle the above challenge, we present LG-ODE, a latent ordinary differential equation generative model for modeling multi-agent dynamic system with known graph structure. It can simultaneously learn the embedding of high dimensional trajectories and infer continuous latent system dynamics. Our model employs a novel encoder parameterized by a graph neural network that can infer initial states in an unsupervised way from irregularly-sampled partial observations of structural objects and utilizes neural ODE to infer arbitrarily complex continuous-time latent dynamics. Experiments on motion capture, spring system, and charged particle datasets demonstrate the effectiveness of our approach.},
-archivePrefix = {arXiv},
-arxivId = {2011.03880},
-author = {Huang, Zijie and Sun, Yizhou and Wang, Wei},
-eprint = {2011.03880},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/2011.03880.pdf:pdf},
-issn = {23318422},
-journal = {arXiv},
-mendeley-groups = {VAE},
-number = {NeurIPS},
-pages = {1--14},
-title = {{Learning continuous system dynamics from irregularly-sampled partial observations}},
-year = {2020}
+  title={Learning continuous system dynamics from irregularly-sampled partial observations},
+  author={Huang, Zijie and Sun, Yizhou and Wang, Wei},
+  journal={Advances in Neural Information Processing Systems},
+  volume={33},
+  pages={16177--16187},
+  year={2020}
 }
+
 @inproceedings{morrill2021neural,
   title={Neural rough differential equations for long time series},
   author={Morrill, James and Salvi, Cristopher and Kidger, Patrick and Foster, James},
@@ -1555,66 +1497,62 @@ year = {2021}
   year={2020},
   organization={PMLR}
 }
-@article{morrill2021online,
+@online{morrill2021online,
   title={Neural Controlled Differential Equations for Online Prediction Tasks},
   author={Morrill, James and Kidger, Patrick and Yang, Lingyi and Lyons, Terry},
   journal={arXiv preprint arXiv:2106.11028},
+  url={https://arxiv.org/abs/2106.11028},
+  doi={,},
   year={2021}
 }
-@article{ayed2019learning,
+@online{ayed2019learning,
   title={Learning dynamical systems from partial observations},
   author={Ayed, Ibrahim and de B{\'e}zenac, Emmanuel and Pajot, Arthur and Brajard, Julien and Gallinari, Patrick},
-  journal={arXiv preprint arXiv:1902.11136},
+  publisher={arXiv preprint arXiv:1902.11136},
+  address={https://arxiv.org/abs/1902.11136},
+  doi={,},
   year={2019}
 }
-@article{lechner2020learning,
+@online{lechner2020learning,
   title={Learning long-term dependencies in irregularly-sampled time series},
   author={Lechner, Mathias and Hasani, Ramin},
   journal={arXiv preprint arXiv:2006.04418},
-  year={2020}
+  url={https://arxiv.org/abs/2006.04418},
+  year={2020},
+  doi={,},
 }
-@article{Grathwohl2019,
-abstract = {Reversible generative models map points from a simple distribution to a complex distribution through an easily invertible neural network. Likelihood-based training of these models requires restricting their architectures to allow cheap computation of Jacobian determinants. Alternatively, the Jacobian trace can be used if the transformation is specified by an ordinary differential equation. In this paper, we use Hutchinson's trace estimator to give a scalable unbiased estimate of the log-density. The result is a continuous-time invertible generative model with unbiased density estimation and one-pass sampling, while allowing unrestricted neural network architectures. We demonstrate our approach on high-dimensional density estimation, image generation, and variational inference, improving the state-of-the-art among exact likelihood methods with efficient sampling.},
-archivePrefix = {arXiv},
-arxivId = {1810.01367},
-author = {Grathwohl, Will and Chen, Ricky T.Q. and Bettencourt, Jesse and Sutskever, Ilya and Duvenaud, David},
-eprint = {1810.01367},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/Grathwohl et al. - 2019 - Ffjord Free-form continuous dynamics for scalable reversible generative models(2).pdf:pdf},
-journal = {7th International Conference on Learning Representations, ICLR 2019},
-mendeley-groups = {machine learning},
-pages = {1--13},
-title = {{Ffjord: Free-form continuous dynamics for scalable reversible generative models}},
-year = {2019}
+@inproceedings{Grathwohl2019,
+  author    = {Will Grathwohl and
+               Ricky T. Q. Chen and
+               Jesse Bettencourt and
+               Ilya Sutskever and
+               David Duvenaud},
+  title     = {{FFJORD:} Free-Form Continuous Dynamics for Scalable Reversible Generative
+               Models},
+  booktitle = {7th International Conference on Learning Representations, {ICLR} 2019,
+               New Orleans, LA, USA, May 6-9, 2019},
+  publisher = {OpenReview.net},
+  year      = {2019},
+  url       = {https://openreview.net/forum?id=rJxgknCcK7},
+  timestamp = {Thu, 25 Jul 2019 13:03:15 +0200},
+  biburl    = {https://dblp.org/rec/conf/iclr/GrathwohlCBSD19.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
-@article{Jia2019,
-abstract = {Many time series are effectively generated by a combination of deterministic continuous flows along with discrete jumps sparked by stochastic events. However, we usually do not have the equation of motion describing the flows, or how they are affected by jumps. To this end, we introduce Neural Jump Stochastic Differential Equations that provide a data-driven approach to learn continuous and discrete dynamic behavior, i.e., hybrid systems that both flow and jump. Our approach extends the framework of Neural Ordinary Differential Equations with a stochastic process term that models discrete events. We then model temporal point processes with a piecewise-continuous latent trajectory, where the discontinuities are caused by stochastic events whose conditional intensity depends on the latent state. We demonstrate the predictive capabilities of our model on a range of synthetic and real-world marked point process datasets, including classical point processes (such as Hawkes processes), awards on Stack Overflow, medical records, and earthquake monitoring.},
-archivePrefix = {arXiv},
-arxivId = {1905.10403},
-author = {Jia, Junteng and Benson, Austin R.},
-eprint = {1905.10403},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/Neural Jump Stochastic Differential Equations.pdf:pdf},
-issn = {10495258},
-journal = {Advances in Neural Information Processing Systems},
-mendeley-groups = {SDE},
-number = {2018},
-title = {{Neural jump stochastic differential equations}},
-volume = {32},
-year = {2019}
+@inproceedings{Jia2019,
+  title={Neural Jump Stochastic Differential Equations},
+  author={J. Jia and Austin R. Benson},
+  booktitle={Neural Information Processing Systems},
+  year={2019}
 }
-@article{Ainsworth2020,
-abstract = {We study the estimation of policy gradients for continuous-time systems with known dynamics. By reframing policy learning in continuous-time, we show that it is possible construct a more efficient and accurate gradient estimator. The standard back-propagation through time estimator (BPTT) computes exact gradients for a crude discretization of the continuous-time system. In contrast, we approximate continuous-time gradients in the original system. With the explicit goal of estimating continuous-time gradients, we are able to discretize adaptively and construct a more efficient policy gradient estimator which we call the Continuous-Time Policy Gradient (CTPG). We show that replacing BPTT policy gradients with more efficient CTPG estimates results in faster and more robust learning in a variety of control tasks and simulators.},
-archivePrefix = {arXiv},
-arxivId = {2012.06684},
-author = {Ainsworth, Samuel and Lowrey, Kendall and Thickstun, John and Harchaoui, Zaid and Srinivasa, Siddhartha},
-eprint = {2012.06684},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/ainsworth21a.pdf:pdf},
-keywords = {differentiable physics,neural odes,optimal control,policy,reinforcement learning},
-mendeley-groups = {DE},
-pages = {1--14},
-title = {{Faster Policy Learning with Continuous-Time Gradients}},
-volume = {144},
-year = {2020}
+@inproceedings{Ainsworth2020,
+  title={Faster Policy Learning with Continuous-Time Gradients},
+  author={Ainsworth, Samuel and Lowrey, Kendall and Thickstun, John and Harchaoui, Zaid and Srinivasa, Siddhartha},
+  booktitle={Learning for Dynamics and Control},
+  pages={1054--1067},
+  year={2021},
+  organization={PMLR}
 }
+
 @inproceedings{jia2019focnet,
   title={Focnet: A fractional optimal control network for image denoising},
   author={Jia, Xixi and Liu, Sanyang and Feng, Xiangchu and Zhang, Lei},
@@ -1628,74 +1566,49 @@ year = {2020}
   booktitle={Proc. of AAAI Conference on Aritificial Intelligence},
   year={2021}
 }
-@article{Liu2020,
-archivePrefix = {arXiv},
-arxivId = {2003.09229},
-author = {Liu, Xuanqing and Yu, Hsiang Fu and Dhillon, Inderjit S. and Hsieh, Cho Jui},
-eprint = {2003.09229},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/liu20n.pdf:pdf},
-isbn = {9781713821120},
-journal = {37th International Conference on Machine Learning, ICML 2020},
-mendeley-groups = {Transformer},
-pages = {6283--6291},
-title = {{Learning to encode position for transformer with continuous dynamical model}},
-volume = {PartF168147-9},
-year = {2020}
+@inproceedings{Liu2020,
+  title={Learning to encode position for transformer with continuous dynamical model},
+  author={Liu, Xuanqing and Yu, Hsiang-Fu and Dhillon, Inderjit and Hsieh, Cho-Jui},
+  booktitle={International conference on machine learning},
+  pages={6327--6335},
+  year={2020},
+  organization={PMLR}
 }
 @article{Vaswani2017,
-archivePrefix = {arXiv},
-arxivId = {1706.03762},
-author = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and Kaiser, {\L}ukasz and Polosukhin, Illia},
-eprint = {1706.03762},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/Vaswani et al. - 2017 - Attention is all you need.pdf:pdf},
-issn = {10495258},
-journal = {Advances in Neural Information Processing Systems},
-mendeley-groups = {machine learning,Transformer},
-number = {Nips},
-pages = {5999--6009},
-title = {{Attention is all you need}},
-volume = {2017-Decem},
-year = {2017}
+  title={Attention is all you need},
+  author={Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, {\L}ukasz and Polosukhin, Illia},
+  journal={Advances in neural information processing systems},
+  volume={30},
+  year={2017}
 }
-@article{Zhou2020,
-abstract = {Many real-world applications require the prediction of long sequence time-series, such as electricity consumption planning. Long sequence time-series forecasting (LSTF) demands a high prediction capacity of the model, which is the ability to capture precise long-range dependency coupling between output and input efficiently. Recent studies have shown the potential of Transformer to increase the prediction capacity. However, there are several severe issues with Transformer that prevent it from being directly applicable to LSTF, including quadratic time complexity, high memory usage, and inherent limitation of the encoder-decoder architecture. To address these issues, we design an efficient transformer-based model for LSTF, named Informer, with three distinctive characteristics: (i) a $ProbSparse$ self-attention mechanism, which achieves $O(L \log L)$ in time complexity and memory usage, and has comparable performance on sequences' dependency alignment. (ii) the self-attention distilling highlights dominating attention by halving cascading layer input, and efficiently handles extreme long input sequences. (iii) the generative style decoder, while conceptually simple, predicts the long time-series sequences at one forward operation rather than a step-by-step way, which drastically improves the inference speed of long-sequence predictions. Extensive experiments on four large-scale datasets demonstrate that Informer significantly outperforms existing methods and provides a new solution to the LSTF problem.},
-archivePrefix = {arXiv},
-arxivId = {2012.07436},
-author = {Zhou, Haoyi and Zhang, Shanghang and Peng, Jieqi and Zhang, Shuai and Li, Jianxin and Xiong, Hui and Zhang, Wancai},
-eprint = {2012.07436},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/Zhou et al. - 2020 - Informer Beyond Efficient Transformer for Long Sequence Time-Series Forecasting(2).pdf:pdf},
-mendeley-groups = {Transformer},
-title = {{Informer: Beyond Efficient Transformer for Long Sequence Time-Series Forecasting}},
-year = {2020}
+@inproceedings{Zhou2020,
+  title={Informer: Beyond efficient transformer for long sequence time-series forecasting},
+  author={Zhou, Haoyi and Zhang, Shanghang and Peng, Jieqi and Zhang, Shuai and Li, Jianxin and Xiong, Hui and Zhang, Wancai},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={35},
+  number={12},
+  pages={11106--11115},
+  year={2021}
 }
 @article{Wu2021,
-abstract = {Extending the forecasting time is a critical demand for real applications, such as extreme weather early warning and long-term energy consumption planning. This paper studies the \textit{long-term forecasting} problem of time series. Prior Transformer-based models adopt various self-attention mechanisms to discover the long-range dependencies. However, intricate temporal patterns of the long-term future prohibit the model from finding reliable dependencies. Also, Transformers have to adopt the sparse versions of point-wise self-attentions for long series efficiency, resulting in the information utilization bottleneck. Towards these challenges, we propose Autoformer as a novel decomposition architecture with an Auto-Correlation mechanism. We go beyond the pre-processing convention of series decomposition and renovate it as a basic inner block of deep models. This design empowers Autoformer with progressive decomposition capacities for complex time series. Further, inspired by the stochastic process theory, we design the Auto-Correlation mechanism based on the series periodicity, which conducts the dependencies discovery and representation aggregation at the sub-series level. Auto-Correlation outperforms self-attention in both efficiency and accuracy. In long-term forecasting, Autoformer yields state-of-the-art accuracy, with a 38% relative improvement on six benchmarks, covering five practical applications: energy, traffic, economics, weather and disease.},
-archivePrefix = {arXiv},
-arxivId = {2106.13008},
-author = {Wu, Haixu and Xu, Jiehui and Wang, Jianmin and Long, Mingsheng},
-eprint = {2106.13008},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/2106.13008.pdf:pdf},
-mendeley-groups = {time series,Transformer},
-pages = {1--11},
-title = {{Autoformer: Decomposition Transformers with Auto-Correlation for Long-Term Series Forecasting}},
-year = {2021}
+  title={Autoformer: Decomposition transformers with auto-correlation for long-term series forecasting},
+  author={Wu, Haixu and Xu, Jiehui and Wang, Jianmin and Long, Mingsheng},
+  journal={Advances in Neural Information Processing Systems},
+  volume={34},
+  pages={22419--22430},
+  year={2021}
+}
+@article{Ljung2020,
+  title={Deep learning and system identification},
+  author={Ljung, Lennart and Andersson, Carl and Tiels, Koen and Sch{\"o}n, Thomas B},
+  journal={IFAC-PapersOnLine},
+  volume={53},
+  number={2},
+  pages={1175--1181},
+  year={2020},
+  publisher={Elsevier}
 }
 
-@article{Ljung2020,
-abstract = {Deep learning is a topic of considerable interest today. Since it deals with estimating - or learning - models, there are connections to the area of System Identification developed in the Automatic Control community. Such connections are explored and exploited in this contribution. It is stressed that common deep nets such as feedforward and cascadeforward nets are nonlinear ARX (NARX) models, and can thus be easily incorporated in System Identification code and practice. The case of LSTM nets is an example of NonLinear State-Space (NLSS) models.},
-author = {Ljung, Lennart and Andersson, Carl and Tiels, Koen and Sch{\"{o}}n, Thomas B.},
-doi = {10.1016/j.ifacol.2020.12.1329},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/ljung2020.pdf:pdf},
-issn = {24058963},
-journal = {IFAC-PapersOnLine},
-keywords = {Bias/Variance Trade-off,Cascadeforwardnet,Deep nets,LSTM,Model structure,Model validation},
-mendeley-groups = {system_identify},
-number = {2},
-pages = {1175--1181},
-title = {{Deep learning and system identification}},
-volume = {53},
-year = {2020}
-}
 
 @article{Yin2014,
   title={Real-time implementation of fault-tolerant control systems with performance optimization},
@@ -1881,12 +1794,24 @@ year = {2020}
   publisher={Elsevier}
 }
 
-
 @article{Mnih2013,
-  title={Playing atari with deep reinforcement learning},
-  author={Mnih, Volodymyr and Kavukcuoglu, Koray and Silver, David and Graves, Alex and Antonoglou, Ioannis and Wierstra, Daan and Riedmiller, Martin},
-  journal={arXiv preprint arXiv:1312.5602},
-  year={2013}
+  author    = {Volodymyr Mnih and
+               Koray Kavukcuoglu and
+               David Silver and
+               Alex Graves and
+               Ioannis Antonoglou and
+               Daan Wierstra and
+               Martin A. Riedmiller},
+  title     = {Playing Atari with Deep Reinforcement Learning},
+  journal   = {CoRR},
+  volume    = {abs/1312.5602},
+  year      = {2013},
+  url       = {http://arxiv.org/abs/1312.5602},
+  eprinttype = {arXiv},
+  eprint    = {1312.5602},
+  timestamp = {Mon, 13 Aug 2018 16:47:42 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/MnihKSGAWR13.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
 
@@ -2019,9 +1944,7 @@ year = {2020}
   publisher={IEEE}
 }
 @article{Oulhiq2021,
-abstract = {In the mining industry, thickeners are used to increase density of slurries by removing water. When a thickener is in operation, the underflow slurry density should follow a given setpoint and stay inside a boundary layer. In general, thickeners are manually controlled. However, industrial experience has shown that manual control is not sufficient. For this reason, an advanced process control strategy is proposed in this paper. On the one hand, using historical data, a linear dynamic model of the studied thickener is developed. In this regard, data is collected, prepared, and data informativity is studied to ensure model identifiability and interpretability. On the other hand, a model predictive control is designed to control the process by manipulating the feed and the underflow slurry flowrates. The simulation results show that the method can be successfully used to control the underflow slurry density in the presence of feed variations and unmeasured disturbances.},
 author = {Oulhiq, Ridouane and Benjelloun, Khalid and Kali, Yassine and Saad, Maarouf},
-doi = {10.1109/SSD52085.2021.9429523},
 file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/Identification_and_Control_of_an_Industrial_Thickener_Using_Historical_Data.pdf:pdf},
 isbn = {9781665414937},
 journal = {18th IEEE International Multi-Conference on Systems, Signals and Devices, SSD 2021},
@@ -2031,9 +1954,7 @@ title = {{Identification and Control of an Industrial Thickener Using Historical
 year = {2021}
 }
 @article{Member2019,
-abstract = {This article presents a real implementtion of a neural network-based model predictive control scheme (NNMPC) to control an industrial paste thickener. The implementation is done over an Industrial Internet of Things (IIoT) platform designed using the seven layer reference model for IIoT systems. Modeling is achieved using an encoder-decoder with attention recurrent neural network, while MPC search is done using particle swarm optimization. An industrial evaluation is presented, which highlights the set-point tracking and disturbance rejection capabilities of the proposed NNMPC technique.},
 author = {N{\'{u}}{\~{n}}ez, Felipe and Langarica, Sa{\'{u}}l and D{\'{i}}az, Pablo and Torres, Mario and Salas, Juan Carlos},
-doi = {10.1109/TII.2019.2953275},
 file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/N{\'{u}}{\~{n}}ez et al. - 2020 - Neural Network-Based Model Predictive Control of a Paste Thickener over an Industrial Internet Platform.pdf:pdf},
 issn = {19410050},
 journal = {IEEE Transactions on Industrial Informatics},
@@ -2045,9 +1966,7 @@ volume = {16},
 year = {2020}
 }
 @article{Langlois2019,
-abstract = {The purpose of this paper is to extend existing mathematical models of tailings rheology and sedimentation to form a complete dynamic simulator. It is complete in the sense that it includes all important rheological variables for the development of multivariable control strategies and can be integrated with other stages of tailings management systems. This work extends a one-dimensional model for the dynamics of a flocculated suspension in a clarifier-thickener to include the discharge yield stress and particle size distribution in a manner that is computationally tractable. The paper also extends a static yield stress model to include the effect of particle size distribution, in a manner that is consistent with previous empirical and theoretical evidence. The dynamic simulator is validated through the simulation of a Proportional-Integral control strategy and proves to be a useful and flexible tool for the development of control strategies.},
 author = {Langlois, Juan I. and Cipriano, Aldo},
-doi = {10.1016/j.mineng.2018.11.006},
 file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/Dynamic modeling and simulation of tailing thickener units for the development of control strategies_.pdf:pdf},
 issn = {08926875},
 journal = {Minerals Engineering},
@@ -2164,22 +2083,14 @@ title = {{Modeling and Planning Under Uncertainty Using Deep Neural Networks}},
 volume = {15},
 year = {2019}
 }
-@article{Jaques2021,
-abstract = {Learning low-dimensional latent state space dynamics models has proven powerful for enabling vision-based planning and learning for control. We introduce a latent dynamics learning framework that is uniquely designed to induce proportional controlability in the latent space, thus enabling the use of simple and well-known PID controllers. We show that our learned dynamics model enables proportional control from pixels, dramatically simplifies and accelerates behavioural cloning of vision-based controllers, and provides interpretable goal discovery when applied to imitation learning of switching controllers from demonstration. Notably, such proportional controlability also allows for robust path following from visual demonstrations using Dynamic Movement Primitives in the learned latent space.},
-archivePrefix = {arXiv},
-arxivId = {2006.01959},
-author = {Jaques, Miguel and Burke, Michael and Hospedales, Timothy},
-doi = {10.1109/CVPR46437.2021.00443},
-eprint = {2006.01959},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/Jaques_NewtonianVAE_Proportional_Control_and_Goal_Identification_From_Pixels_via_Physical_CVPR_2021_paper.pdf:pdf},
-isbn = {9781665445092},
-issn = {10636919},
-journal = {Proceedings of the IEEE Computer Society Conference on Computer Vision and Pattern Recognition},
-mendeley-groups = {SEQ_VAE},
-pages = {4452--4461},
-title = {{NewtonianVAE: Proportional Control and Goal Identification from Pixels via Physical Latent Spaces}},
-year = {2021}
+@inproceedings{Jaques2021,
+  title={Newtonianvae: Proportional control and goal identification from pixels via physical latent spaces},
+  author={Jaques, Miguel and Burke, Michael and Hospedales, Timothy M},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={4454--4463},
+  year={2021}
 }
+
 @phdthesis{kidger2021,
     title={{O}n {N}eural {D}ifferential {E}quations},
     author={Patrick Kidger},
@@ -2214,27 +2125,17 @@ url = {https://ieeexplore.ieee.org/document/9732304/},
 volume = {9},
 year = {2022}
 }
-
 @article{Che2018,
-abstract = {Multivariate time series data in practical applications, such as health care, geoscience, and biology, are characterized by a variety of missing values. In time series prediction and other related tasks, it has been noted that missing values and their missing patterns are often correlated with the target labels, a.k.a., informative missingness. There is very limited work on exploiting the missing patterns for effective imputation and improving prediction performance. In this paper, we develop novel deep learning models, namely GRU-D, as one of the early attempts. GRU-D is based on Gated Recurrent Unit (GRU), a state-of-the-art recurrent neural network. It takes two representations of missing patterns, i.e., masking and time interval, and effectively incorporates them into a deep model architecture so that it not only captures the long-term temporal dependencies in time series, but also utilizes the missing patterns to achieve better prediction results. Experiments of time series classification tasks on real-world clinical datasets (MIMIC-III, PhysioNet) and synthetic datasets demonstrate that our models achieve state-of-the-art performance and provide useful insights for better understanding and utilization of missing values in time series analysis.},
-archivePrefix = {arXiv},
-arxivId = {1606.01865},
-author = {Che, Zhengping and Purushotham, Sanjay and Cho, Kyunghyun and Sontag, David and Liu, Yan},
-doi = {10.1038/s41598-018-24271-9},
-eprint = {1606.01865},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/s41598-018-24271-9.pdf:pdf},
-isbn = {4159801824271},
-issn = {20452322},
-journal = {Scientific Reports},
-number = {1},
-pages = {1--12},
-pmid = {29666385},
-publisher = {Springer US},
-title = {{Recurrent Neural Networks for Multivariate Time Series with Missing Values}},
-url = {http://dx.doi.org/10.1038/s41598-018-24271-9},
-volume = {8},
-year = {2018}
+  title={Recurrent neural networks for multivariate time series with missing values},
+  author={Che, Zhengping and Purushotham, Sanjay and Cho, Kyunghyun and Sontag, David and Liu, Yan},
+  journal={Scientific reports},
+  volume={8},
+  number={1},
+  pages={1--12},
+  year={2018},
+  publisher={Nature Publishing Group}
 }
+
 @article{Langlois2019,
 abstract = {The purpose of this paper is to extend existing mathematical models of tailings rheology and sedimentation to form a complete dynamic simulator. It is complete in the sense that it includes all important rheological variables for the development of multivariable control strategies and can be integrated with other stages of tailings management systems. This work extends a one-dimensional model for the dynamics of a flocculated suspension in a clarifier-thickener to include the discharge yield stress and particle size distribution in a manner that is computationally tractable. The paper also extends a static yield stress model to include the effect of particle size distribution, in a manner that is consistent with previous empirical and theoretical evidence. The dynamic simulator is validated through the simulation of a Proportional-Integral control strategy and proves to be a useful and flexible tool for the development of control strategies.},
 author = {Langlois, Juan I. and Cipriano, Aldo},
@@ -2263,32 +2164,13 @@ title = {{Enhanced big data approximating control of an industrial paste thicken
 volume = {53},
 year = {2020}
 }
-@article{Oulhiq2021,
-abstract = {In the mining industry, thickeners are used to increase density of slurries by removing water. When a thickener is in operation, the underflow slurry density should follow a given setpoint and stay inside a boundary layer. In general, thickeners are manually controlled. However, industrial experience has shown that manual control is not sufficient. For this reason, an advanced process control strategy is proposed in this paper. On the one hand, using historical data, a linear dynamic model of the studied thickener is developed. In this regard, data is collected, prepared, and data informativity is studied to ensure model identifiability and interpretability. On the other hand, a model predictive control is designed to control the process by manipulating the feed and the underflow slurry flowrates. The simulation results show that the method can be successfully used to control the underflow slurry density in the presence of feed variations and unmeasured disturbances.},
-author = {Oulhiq, Ridouane and Benjelloun, Khalid and Kali, Yassine and Saad, Maarouf},
-doi = {10.1109/SSD52085.2021.9429523},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/Identification_and_Control_of_an_Industrial_Thickener_Using_Historical_Data.pdf:pdf},
-isbn = {9781665414937},
-journal = {18th IEEE International Multi-Conference on Systems, Signals and Devices, SSD 2021},
-keywords = {Dynamic modeling,Historical data,Model predictive control,Thickener},
-pages = {915--920},
-title = {{Identification and Control of an Industrial Thickener Using Historical Data}},
-year = {2021}
-}
-@article{Jaques2021,
-abstract = {Learning low-dimensional latent state space dynamics models has proven powerful for enabling vision-based planning and learning for control. We introduce a latent dynamics learning framework that is uniquely designed to induce proportional controlability in the latent space, thus enabling the use of simple and well-known PID controllers. We show that our learned dynamics model enables proportional control from pixels, dramatically simplifies and accelerates behavioural cloning of vision-based controllers, and provides interpretable goal discovery when applied to imitation learning of switching controllers from demonstration. Notably, such proportional controlability also allows for robust path following from visual demonstrations using Dynamic Movement Primitives in the learned latent space.},
-archivePrefix = {arXiv},
-arxivId = {2006.01959},
-author = {Jaques, Miguel and Burke, Michael and Hospedales, Timothy},
-doi = {10.1109/CVPR46437.2021.00443},
-eprint = {2006.01959},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/Jaques_NewtonianVAE_Proportional_Control_and_Goal_Identification_From_Pixels_via_Physical_CVPR_2021_paper.pdf:pdf},
-isbn = {9781665445092},
-issn = {10636919},
-journal = {Proceedings of the IEEE Computer Society Conference on Computer Vision and Pattern Recognition},
-pages = {4452--4461},
-title = {{NewtonianVAE: Proportional Control and Goal Identification from Pixels via Physical Latent Spaces}},
-year = {2021}
+@inproceedings{Oulhiq2021,
+  title={Identification and control of an industrial thickener using historical data},
+  author={Oulhiq, Ridouane and Benjelloun, Khalid and Kali, Yassine and Saad, Maarouf},
+  booktitle={2021 18th International Multi-Conference on Systems, Signals \& Devices (SSD)},
+  pages={915--920},
+  year={2021},
+  organization={IEEE}
 }
 @article{Shin2020,
 abstract = {Over the past few decades, advanced process control (APC) such as model predictive control (MPC) has been introduced to process industry to enhance its operational efficiency. For this, a linear model has been widely used to reduce the computational burden for iterative simulation and optimization over time, but it caused high inaccuracy of the control system. In this study, an artificial neural network (ANN) model was adopted instead of using the existing linearized model in order to increase the speed of optimization and accuracy of the model. For a case study, a depropanizer was modeled using Aspen HYSYS, and all feasible operation scenarios were considered to generate massive amounts of dynamic simulation data. Then, the accumulated data was implemented to the ANN for training, and it was tested. Once the verification was completed, the model was incorporated with an optimization algorithm in MPC system. For testing its performance, set point change and introduction of disturbances were applied to the model, and efficiency of the MPC was compared with the conventional control such as PID feedback control. The analysis results showed better performance (i.e., shorter settling time and rise time) of the MPC against the PID control. This methodology can be widely used in various types of control systems in the industry.},
@@ -2325,22 +2207,14 @@ journal = {2018 IEEE 37th International Performance Computing and Communications
 title = {{Robust and Unsupervised KPI Anomaly Detection Based on Conditional Variational Autoencoder}},
 year = {2018}
 }
-@article{Xu2018,
-abstract = {To ensure undisrupted business, large Internet companies need to closely monitor various KPIs (e.g., Page Views, number of online users, and number of orders) of its Web applications, to accurately detect anomalies and trigger timely troubleshooting/mitigation. However, anomaly detection for these seasonal KPIs with various patterns and data quality has been a great challenge, especially without labels. In this paper, we proposed Donut, an unsupervised anomaly detection algorithm based on VAE. Thanks to a few of our key techniques, Donut greatly outperforms a state-of-arts supervised ensemble approach and a baseline VAE approach, and its best F-scores range from 0.75 to 0.9 for the studied KPIs from a top global Internet company. We come up with a novel KDE interpretation of reconstruction for Donut, making it the first VAE-based anomaly detection algorithm with solid theoretical explanation.},
-archivePrefix = {arXiv},
-arxivId = {1802.03903},
-author = {Xu, Haowen and Chen, Wenxiao and Zhao, Nengwen and Li, Zeyan and Bu, Jiahao and Li, Zhihan and Liu, Ying and Zhao, Youjian and Pei, Dan and Feng, Yang and Chen, Jie and Wang, Zhaogang and Qiao, Honglin},
-doi = {10.1145/3178876.3185996},
-eprint = {1802.03903},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/2018 Unsupervised Anomaly Detection via Variational Auto-Encoder for Seasonal KPIs in Web Applications.pdf:pdf},
-isbn = {9781450356398},
-journal = {The Web Conference 2018 - Proceedings of the World Wide Web Conference, WWW 2018},
-keywords = {Anomaly detection,Seasonal KPI,Variational auto-encoder},
-pages = {187--196},
-title = {{Unsupervised Anomaly Detection via Variational Auto-Encoder for Seasonal KPIs in Web Applications}},
-volume = {2},
-year = {2018}
+@inproceedings{Xu2018,
+  title={Unsupervised anomaly detection via variational auto-encoder for seasonal kpis in web applications},
+  author={Xu, Haowen and Chen, Wenxiao and Zhao, Nengwen and Li, Zeyan and Bu, Jiahao and Li, Zhihan and Liu, Ying and Zhao, Youjian and Pei, Dan and Feng, Yang and others},
+  booktitle={Proceedings of the 2018 world wide web conference},
+  pages={187--196},
+  year={2018}
 }
+
 @article{Marino2019,
 abstract = {Artificial neural networks (ANNs) have been frequently used in
 industrial applications to model complex systems. However, using
@@ -2391,31 +2265,23 @@ title = {{Random forest model predictive control for paste thickening}},
 volume = {163},
 year = {2021}
 }
-@article{Li2018a,
-abstract = {We present a VAE architecture for encoding and generating high dimensional sequential data, such as video or audio. Our deep generative model learns a latent representation of the data which is split into a static and dynamic part, allowing us to approximately disentangle latent time-dependent features (dynamics) from features which are preserved over time (content). This architecture gives us partial control over generating content and dynamics by conditioning on either one of these sets of features. In our experiments on artificially generated cartoon video clips and voice recordings, we show that we can convert the content of a given sequence into another one by such content swapping. For audio, this allows us to convert a male speaker into a female speaker and vice versa, while for video we can separately manipulate shapes and dynamics. Furthermore, we give empirical evidence for the hypothesis that stochastic RNNs as latent state models are more efficient at compressing and generating long sequences than deterministic ones, which may be relevant for applications in video compression.},
-archivePrefix = {arXiv},
-arxivId = {1803.02991},
-author = {Li, Yingzhen and Mandt, Stephan},
-eprint = {1803.02991},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/yingzhen18a.pdf:pdf},
-issn = {23318422},
-journal = {arXiv},
-title = {{Disentangled sequential autoencoder}},
-year = {2018}
+@inproceedings{Li2018a,
+  title={Disentangled sequential autoencoder},
+  author={Yingzhen, Li and Mandt, Stephan},
+  booktitle={International Conference on Machine Learning},
+  pages={5670--5679},
+  year={2018},
+  organization={PMLR}
 }
-@article{VSDN_Liu2020,
-abstract = {Learning continuous-time stochastic dynamics from sparse or irregular observations is a fundamental and essential problem for many real-world applications. However, for a given system whose latent states and observed data are high-dimensional, it is generally impossible to derive a precise continuous-time stochastic process to describe the system behaviors. To solve the above problem, we apply Variational Bayesian method and propose a flexible continuous-time framework named Variational Stochastic Differential Networks (VSDN), which can model high-dimensional nonlinear stochastic dynamics by deep neural networks. VSDN introduces latent states to modulate the estimated distribution and defines two practical methods to model the stochastic dependency between observations and the states. The first variant, which is called VSDN-VAE, incorporates sequential Variational Auto-Encoder (VAE) to efficiently model the distribution of the latent states. The second variant, called VSDN-SDE, further extends the model capacity of VSDN-VAE by learning a set of Stochastic Differential Equations (SDEs) to fully describe the state transitions. Through comprehensive experiments on symbolic MIDI and speech datasets, we show that VSDNs can accurately model the continuous-time dynamics and achieve remarkable performance on challenging tasks, including online prediction and sequence interpolation.},
-archivePrefix = {arXiv},
-arxivId = {2006.06145},
-author = {Liu, Yingru and Wang, Xin and Xing, Yucheng and Jin, Di and Yang, Xuewen and Shi, Jing},
-eprint = {2006.06145},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/2006.06145.pdf:pdf},
-issn = {23318422},
-journal = {arXiv},
-pages = {1--13},
-title = {{Learning continuous-time dynamics by Stochastic Differential Networks}},
-year = {2020}
+@inproceedings{VSDN_Liu2020,
+  title={Continuous-Time Stochastic Differential Networks for Irregular Time Series Modeling},
+  author={Liu, Yingru and Xing, Yucheng and Yang, Xuewen and Wang, Xin and Shi, Jing and Jin, Di and Chen, Zhaoyue and Wu, Jacqueline},
+  booktitle={International Conference on Neural Information Processing},
+  pages={343--351},
+  year={2021},
+  organization={Springer}
 }
+
 @article{Lee2019,
   title={Stochastic latent actor-critic: Deep reinforcement learning with a latent variable model},
   author={Lee, Alex X and Nagabandi, Anusha and Abbeel, Pieter and Levine, Sergey},
@@ -2442,14 +2308,16 @@ volume = {108},
 year = {2018}
 }
 @article{Gedon,
-archivePrefix = {arXiv},
-arxivId = {arXiv:2003.14162v3},
-author = {Gedon, Daniel and Wahlstr, Niklas},
-eprint = {arXiv:2003.14162v3},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/2003.14162.pdf:pdf},
-keywords = {black box modeling,deep learning,nonlinear system identification},
-title = {{Deep State Space Models for Nonlinear System Identification}}
+  title={Deep state space models for nonlinear system identification},
+  author={Gedon, Daniel and Wahlstr{\"o}m, Niklas and Sch{\"o}n, Thomas B and Ljung, Lennart},
+  journal={IFAC-PapersOnLine},
+  volume={54},
+  number={7},
+  pages={481--486},
+  year={2021},
+  publisher={Elsevier}
 }
+
 @article{Rubanova2019,
 abstract = {Time series with non-uniform intervals occur in many applications, and are difficult to model using standard recurrent neural networks (RNNs). We generalize RNNs to have continuous-time hidden dynamics defined by ordinary differential equations (ODEs), a model we call ODE-RNNs. Furthermore, we use ODE-RNNs to replace the recognition network of the recently-proposed Latent ODE model. Both ODE-RNNs and Latent ODEs can naturally handle arbitrary time gaps between observations, and can explicitly model the probability of observation times using Poisson processes. We show experimentally that these ODE-based models outperform their RNN-based counterparts on irregularly-sampled data.},
 archivePrefix = {arXiv},
@@ -2539,33 +2407,20 @@ Yann LeCun},
  year = {2014}
 }
 @article{Fraccaro2016,
-archivePrefix = {arXiv},
-arxivId = {1605.07571},
-author = {Fraccaro, Marco and S{\o}nderby, S{\o}ren Kaae and Paquet, Ulrich and Winther, Ole},
-eprint = {1605.07571},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/1605.07571.pdf:pdf},
-issn = {10495258},
-journal = {Advances in Neural Information Processing Systems},
-mendeley-groups = {VAE},
-pages = {2207--2215},
-title = {{Sequential neural models with stochastic layers}},
-year = {2016}
+  title={Sequential neural models with stochastic layers},
+  author={Fraccaro, Marco and S{\o}nderby, S{\o}ren Kaae and Paquet, Ulrich and Winther, Ole},
+  journal={Advances in neural information processing systems},
+  volume={29},
+  year={2016}
 }
 @article{Chung2015,
-abstract = {In this paper, we explore the inclusion of latent random variables into the hidden state of a recurrent neural network (RNN) by combining the elements of the variational autoencoder. We argue that through the use of high-level latent random variables, the variational RNN (VRNN)1 can model the kind of variability observed in highly structured sequential data such as natural speech. We empirically evaluate the proposed model against other related sequential models on four speech datasets and one handwriting dataset. Our results show the important roles that latent random variables can play in the RNN dynamics.},
-archivePrefix = {arXiv},
-arxivId = {arXiv:1506.02216v4},
-author = {Chung, Junyoung and Kastner, Kyle and Dinh, Laurent and Goel, Kratarth and Courville, Aaron and Bengio, Yoshua},
-eprint = {arXiv:1506.02216v4},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/1506.02216v4.pdf:pdf},
-issn = {10495258},
-journal = {Advances in Neural Information Processing Systems},
-mendeley-groups = {VAE},
-pages = {2980--2988},
-title = {{A recurrent latent variable model for sequential data}},
-volume = {2015-Janua},
-year = {2015}
+  title={A recurrent latent variable model for sequential data},
+  author={Chung, Junyoung and Kastner, Kyle and Dinh, Laurent and Goel, Kratarth and Courville, Aaron C and Bengio, Yoshua},
+  journal={Advances in neural information processing systems},
+  volume={28},
+  year={2015}
 }
+
 @inproceedings{Karl2017,
  author = {Maximilian Karl and
 Maximilian Soelch and
@@ -2745,10 +2600,10 @@ author = {Yewan Wang and Yiru Zhang and David Nörtershäuser and Stéphane {Le 
   pages={6138--6146},
   year={2021}
 }
-@article{li2020fourier,
-  title={Fourier neural operator for parametric partial differential equations},
-  author={Li, Zongyi and Kovachki, Nikola and Azizzadenesheli, Kamyar and Liu, Burigede and Bhattacharya, Kaushik and Stuart, Andrew and Anandkumar, Anima},
-  journal={arXiv preprint arXiv:2010.08895},
+@inproceedings{li2020fourier,
+  title={Fourier Neural Operator for Parametric Partial Differential Equations},
+  author={Li, Zongyi and Kovachki, Nikola Borislavov and Azizzadenesheli, Kamyar and Bhattacharya, Kaushik and Stuart, Andrew and Anandkumar, Anima and others},
+  booktitle={International Conference on Learning Representations},
   year={2020}
 }
 @article{jia2019neural,
@@ -2802,16 +2657,20 @@ author = {Yewan Wang and Yiru Zhang and David Nörtershäuser and Stéphane {Le 
   publisher={Cambridge University Press}
 }
 
-@article{rackauckas2020universal,
+@online{rackauckas2020universal,
   title={Universal differential equations for scientific machine learning},
   author={Rackauckas, Christopher and Ma, Yingbo and Martensen, Julius and Warner, Collin and Zubov, Kirill and Supekar, Rohit and Skinner, Dominic and Ramadhan, Ali and Edelman, Alan},
   journal={arXiv preprint arXiv:2001.04385},
+  url={https://arxiv.org/abs/2001.04385},
+  doi={,},
   year={2020}
 }
 @article{ramadhan2020capturing,
   title={Capturing missing physics in climate model parameterizations using neural differential equations},
   author={Ramadhan, Ali and Marshall, John and Souza, Andre and Wagner, Gregory LeClaire and Ponnapati, Manvitha and Rackauckas, Christopher},
   journal={arXiv preprint arXiv:2010.12559},
+  url={https://arxiv.org/abs/2010.12559},
+  doi={,},
   year={2020}
 }
 @book{powell2007approximate,
@@ -2977,10 +2836,12 @@ author = {Yewan Wang and Yiru Zhang and David Nörtershäuser and Stéphane {Le 
   author={LeCun, Yann},
   year={2022}
 }
-@article{moerland2020model,
+@online{moerland2020model,
   title={Model-based reinforcement learning: A survey},
   author={Moerland, Thomas M and Broekens, Joost and Jonker, Catholijn M},
   journal={arXiv preprint arXiv:2006.16712},
+  url={https://arxiv.org/abs/2006.16712},
+  doi={,},
   year={2020}
 }
 @INPROCEEDINGS{6859280,
@@ -3068,11 +2929,12 @@ Addis Ababa, Ethiopia, April 26-30, 2020},
  url = {https://openreview.net/forum?id=S1lOTC4tDS},
  year = {2020}
 }
-@article{lai2015giraffe,
+@online{lai2015giraffe,
  author = {Lai, Matthew},
  journal = {arXiv preprint arXiv:1509.01549},
  title = {Giraffe: Using deep reinforcement learning to play chess},
- year = {2015}
+ year = {2015},
+ doi = {,}
 }
 @inproceedings{franccois2019combined,
   title={Combined reinforcement learning via abstract representations},
@@ -3083,11 +2945,12 @@ Addis Ababa, Ethiopia, April 26-30, 2020},
   pages={3582--3589},
   year={2019}
 }
-@article{baxter1999tdleaf,
+@online{baxter1999tdleaf,
  author = {Baxter, Jonathan and Tridgell, Andrew and Weaver, Lex},
  journal = {arXiv preprint cs/9901001},
  title = {Tdleaf (lambda): Combining temporal difference learning with game-tree search},
- year = {1999}
+ year = {1999},
+ doi ={,}
 }
 @incollection{sutton1990integrated,
   title={Integrated architectures for learning, planning, and reacting based on approximating dynamic programming},
@@ -3131,4 +2994,9 @@ Addis Ababa, Ethiopia, April 26-30, 2020},
   pages={2459--2468},
   year={2017},
   organization={PMLR}
+}
+@misc{JetsonTX2,
+ title={Jetson TX2}, 
+howpublished={\url{https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-tx2/}}, 
+author={Nvidia}
 }

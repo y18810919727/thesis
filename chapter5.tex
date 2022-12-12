@@ -6,7 +6,7 @@
 
 
 \chapter{\TitlechapterIII}
-\section{本章引言}
+% \section{本章引言}
 
 在现代复杂过程工业生产中，对控制性能指标进行优化是不同控制算法、控制系统的首要任务。
 % 在冶金、采矿领域等复杂过程工业场景下，浓密机是一种被广泛应用的大型沉降工具，它通过重力沉降作用可以将低浓度的固液混合物进行浓缩形成高浓度的混合物，起到减水、浓缩的作用。
@@ -46,9 +46,9 @@ Jiang等\cite{Jiang2019}将强化学习与举升方法结合（lifting technolog
 同时，在工业场景下进行设备在线控制对算法实时性要求较高。
 上述方法对于控制量的计算均依托于表征控制策略的神经网络，而对于控制网络的训练将产生较大的时间开销。
 
-为了解决上述问题，本章提出了基于连续时间有模型强化学习的复杂工业系统优化控制方法。该方法首先使用系统离线运行数据建模被控系统的连续时间动态方程，
+为了解决上述问题，本章提出了基于连续时间有模型强化学习的复杂工业系统优化控制方法。该方法首先使用系统离线运行数据建模被控系统的连续时间动态模型，
 % 使用本文三、四、五章所述的连续时间动态系统辨识模型
-然后在在线控制场景下，采集系统实时数据并执行有模型强化学习过程以训练在线控制策略并调优动态模型。
+在线控制场景下，采集系统实时数据并执行有模型强化学习过程以训练在线控制策略并调优动态模型。
 同时，针对复杂工业系统存在运行缓慢的特性，提出基于梯度迭代优化的控制求解算法，该算法可以在不引入控制网络的情况下高效求解控制输入量，在提升控制精度的同时，避免了训练控制网络的时间消耗。
 另外，本章引入了短期经验回放技术\cite{Modares2014}\cite{Mnih2013}对短期内的系统运行轨迹数据进行回放训练，以提升局部状态评价及梯度值拟合的准确性。
 最后，实验环节分别将HCNVI控制算法应用于浓密机仿真模型及某矿山深锥浓密机系统，证实了该控制算法在解决底流浓度追踪控制问题时的有效性以及在训练效率、控制精度方面的优越性。
@@ -85,7 +85,7 @@ Jiang等\cite{Jiang2019}将强化学习与举升方法结合（lifting technolog
 本章主要贡献总结如下：
 \begin{itemize}[nosep]
 \item  提出了一种基于连续时间有模型强化学习的复杂工业系统控制算法——启发式评价网络值迭代算法
-（Heuristic critic network value iteration,HCNVI）。该算法能够利用非均匀系统采样数据在线训练连续时间域的评价网络、模型网络，并采用梯度优化算法求解系统最优控制输入。
+（Heuristic critic network value iteration，HCNVI）。该算法能够利用非均匀系统采样数据在线训练连续时间域的评价网络、模型网络，并采用梯度优化算法求解系统最优控制输入。
 % \item  一种浓密机预测网络训练方法，根据进料噪音项的概率分布，对原始离线数据进行采样构建预测网络训练集，该方法可以有效增强模型网络预测精确度，并对控制模型性能产生促进作用。
 \item  提出了一种适用于评价网络训练的短期经验回放技术。训练评价网络时，将短期内系统运行轨迹数据共同用于模型训练，该方法可以有效增强评价网络收敛速度。
 \item  通过工业系统仿真实验验证了HCNVI算法在训练时间消耗、控制精度上均优于其他对比方法。
@@ -100,7 +100,7 @@ Jiang等\cite{Jiang2019}将强化学习与举升方法结合（lifting technolog
 \secref{sec:conclusion}对本章研究工作进行总结。
 
 % \section{连续时间强化学习形式化描述}
-\section{复杂系统无模型控制形式化描述}
+\section{连续时间的无模型系统控制形式化描述}
 \label{sec:formulation}
 % Please add the following required packages to your document preamble:
 % \usepackage{graphicx}
@@ -140,10 +140,10 @@ Jiang等\cite{Jiang2019}将强化学习与举升方法结合（lifting technolog
 \end{equation}
 定义系统状态量$\b s(t)=[\b y(t), \b h(t),\b c(t)]^T$。从连续时间域角度，动态系统可以进一步写成如下形式：
 \begin{equation}
-\dot{\b{s}}(t)=\frac{d \b{s}(t)}{d t}=\b{f}(\b{s}(t), \b{u}(t))
+\dot{\b{s}}(t)=\frac{\mathrm{~d} \b{s}(t)}{\mathrm{~d} t}=\b{f}(\b{s}(t), \b{u}(t))
 \end{equation}
 函数$\mathbf{f}: \mathbb{R}^{n+m+l+d} \mapsto \mathbb{R}^{n+l+d}$描述了系统当前状态与外部输入量到系统状态导数$\boldsymbol{\dot s}(t)$的映射。
-在任意实值时间$t\in R_{+}$的系统状态依赖于初始状态$\b s_0$以及外部输入信号$\b u[0,t)$的无穷小序列。求解过程为：
+在任意实值时间$t\in R$的系统状态依赖于初始状态$\b s_0$以及外部输入信号$\b u[0,t)$的无穷小序列。求解过程为：
 \begin{equation}
 \label{equ:system_dynamic_ct}
 \mathbf{s}(t)=\mathbf{s}_{0}+\int_{0}^{t} \mathbf{f}(\mathbf{s}(\tau), \mathbf{u}(\tau)) d \tau,
@@ -206,7 +206,7 @@ $\eta$是折扣因子。
 \hat{\mathbf{s}}_{i}^{(n)} \mid\left(\mathbf{s}_{0}^{(n)}, \mathbf{u}_{0: t}^{(n)}\right)=\mathbf{s}_{0}^{(n)}+\int_{t_0}^{t_{i}} \hat{\mathbf{f}}_{\boldsymbol{\theta}}\left(\hat{\mathbf{s}}^{(n)}({\tau}), \mathbf{u}^{(n)}(\tau)\right) d \tau
 \end{equation}
 
-\equref{equ:state_traj}求解的状态轨迹完全依赖于给定的初始状态$\b s_0$以及连续时间过程的动作序列$\b u[0:T]$。由于数值积分过程可能在任意时间点对$\hat{\mathbf{f}}$进行评估，因此需要保证动作信号在时间域上是连续的。本节采用带有二次平方指数核函数的高斯过程（Gaussian Process， $\mathcal{GP}$）模型对数据集中的离散动作序列$\mathcal{D}_{\mathbf{u}}=\left\{\mathbf{u}_{0: T}^{(n)}\right\}_{n=1}^{N}$进行插值处理。
+\equref{equ:state_traj}求解的状态轨迹完全依赖于给定的初始状态$\b s_0$以及连续时间过程的动作序列$\b u[0:T]$。由于数值积分过程可能在任意时间点对$\hat{\mathbf{f}}_{\boldsymbol{\theta}}$进行评估，因此需要保证动作信号在时间域上是连续的。本节采用带有二次平方指数核函数的高斯过程（Gaussian Process， $\mathcal{GP}$）模型对数据集中的离散动作序列$\mathcal{D}_{\mathbf{u}}=\left\{\mathbf{u}_{0: T}^{(n)}\right\}_{n=1}^{N}$进行插值处理。
 
 对于给定的非均匀采样控制信号$\{(t_i, \b u _i)|i=1\cdots M\}$，定义$\b t = (t_1,t_2,\cdots,t_M)^T$，$\b U = (\b u_1,\b u_2,\cdots,\b u_M)^T$，首先，基于平方指数（Squared exponential，SE）核函数定义控制信号的协方差矩阵$\b K(\b t, \b t)\in\mathbb{R}^{M\times M}$，其中：
 \begin{equation}
@@ -332,17 +332,17 @@ $$
 对\equref{equ:goal}中定义的折扣积分奖赏，可以表示为贝尔曼方程的形式：
 % 求解理想情况下最优控制输入$\b u^*(k)$。
 \begin{equation}
-  \hat{V}^{H}\left(\mathbf{s}_{0}\right)=\int_{0}^{H} e^{-\frac{\tau}{\eta}} U(\hat{\mathbf{s}}(\tau), \hat{\mathbf{a}}(\tau)) d \tau+e^{-\frac{H}{\eta}} {V}\left(\hat{\mathbf{s}}_{H}\right)
+  \hat{V}^{H}\left(\mathbf{s}_{0}\right)=\int_{0}^{H} e^{-\frac{\tau}{\eta}} U(\hat{\mathbf{s}}(\tau), \hat{\mathbf{a}}(\tau)) \mathrm{~d} \tau+e^{-\frac{H}{\eta}} {V}\left(\hat{\mathbf{s}}_{H}\right)
   \label{equ:J_bellman}
 \end{equation}
 其中$H$为任一积分范围，$\b s_H$ 为$H$时刻的终止状态。根据贝尔曼最优原则，$\b s_0$所在时刻的最优评价值函数$V^*(s_0)$满足连续哈密顿-雅可比-贝尔曼方程：
 \begin{equation}
 \label{equ:J_star} 
-V ^ { * } \left( s_0 \right) = \min _{ \mathbf u[0:H ] } \{ \int_0^H e^{-\frac{\tau}{\eta}} U(\hat{\mathbf{s}}(\tau), \hat{\mathbf{u}}(\tau)) d\tau  + e^{-\frac{H}{\eta}} \hat{V}^*\left(\hat{\mathbf{s}}_{H}\right)\}
+V ^ { * } \left( s_0 \right) = \min _{ \mathbf u[0:H ] } \{ \int_0^H e^{-\frac{\tau}{\eta}} U(\hat{\mathbf{s}}(\tau), \hat{\mathbf{u}}(\tau)) \mathrm{~d}\tau  + e^{-\frac{H}{\eta}} \hat{V}^*\left(\hat{\mathbf{s}}_{H}\right)\}
 \end{equation}
 对于任意范围$[0:H]$，最优的控制输入$\b u^*[0:H]$可以表示为:
 \begin{equation}
-\b u^*[  0:H ] =\arg \min _ { \b u[0:H ] }\{ \int_0^H e^{-\frac{\tau}{\eta}} U(\hat{\mathbf{s}}(\tau), \hat{\mathbf{u}}(\tau))  + e^{-\frac{H}{\eta}} \hat{V}^*\left(\hat{\mathbf{s}}_{H}\right)\}
+\b u^*[  0:H ] =\arg \min _ { \b u[0:H ] }\{ \int_0^H e^{-\frac{\tau}{\eta}} U(\hat{\mathbf{s}}(\tau), \hat{\mathbf{u}}(\tau))\mathrm{~d}\tau  + e^{-\frac{H}{\eta}} \hat{V}^*\left(\hat{\mathbf{s}}_{H}\right)\}
 \label{equ:VI_u}
 \end{equation}
 % 由于\equref{equ:system_dynamic}中$f(\cdot)$是未知的，因此可以采用值迭代算法寻找最优控制策略，定义
@@ -398,7 +398,7 @@ e^{-s}}$是网络的激活函数，网络输入层包含$n+l+d$个节点，输�
 % 见\equref{equ:TDerror}。值估计$\hat{V}_\xi(\cdot)$ 近似于有限区间奖赏积分与未来奖赏的和，且都任意积分区间均成立，因此本章计算积分区间长度边缘分布下时序差分误差的期望：
 时序差分误差计算过程如\equref{equ:TDerror}所示：
 \begin{equation}
-\label{equ:TDerror} e_{c }(\b s(t_k))=\hat{V}_{\xi}(t_k)-e^{-\frac{\Delta t}{\eta}} \hat{V}_{\xi}(t_{k+1})+\int_{t_k}^{t_{k+1}}e^{-\frac{\tau-t_k}{\eta}}U(\b s(\tau), u(\tau))d \tau
+\label{equ:TDerror} e_{c }(\b s(t_k))=\hat{V}_{\xi}(t_k)-e^{-\frac{\Delta t}{\eta}} \hat{V}_{\xi}(t_{k+1})+\int_{t_k}^{t_{k+1}}e^{-\frac{\tau-t_k}{\eta}}U(\b s(\tau), u(\tau))\mathrm{~d} \tau
 \end{equation}
 其中$\Delta t=t_{k+1}-t_{k}$，
 $\hat{V}_{\xi}(t_k)=\hat{V}_{\xi}(\b s(t_k))$，
@@ -458,7 +458,7 @@ $，其中 $v_{1} \sim U(-1,1) , v_{2} \sim U(-1,1)$
     % \State 均匀采样$\b h\in \mathbb{R}^M,\quad h_i \sim \mathcal{U}(0,H)$给定$\b u[t:t+H]=\b u _i$下，预测$[t,t+h]$范围内的奖效用函数积分及：
     \State 评估积分区间为$[t_k,t_k+h_i]$下，$t_k$时刻的评价值$\hat{V}(\b s(t_k))_i$。
     \begin{equation}
-    \hat{V}(\b s(t_k))_i = \int_{t_k}^{t_k+h_i}e^{-\frac{\tau-t_k}{\eta}}U(\hat{\b s}(\tau),{\b u}(\tau))d\tau+e^{-\frac{h_i}{\eta}}\hat{V}_\xi(\b s(t_k+h_i)) 
+    \hat{V}(\b s(t_k))_i = \int_{t_k}^{t_k+h_i}e^{-\frac{\tau-t_k}{\eta}}U(\hat{\b s}(\tau),{\b u}(\tau))\mathrm{~d}\tau+e^{-\frac{h_i}{\eta}}\hat{V}_\xi(\b s(t_k+h_i)) 
     \label{equ:estimate_J_next}
     \end{equation}
     其中$\hat{\b s}(\tau)$为模型网络给出的预测轨迹，$\b u(\tau)=\b u _c$
@@ -523,7 +523,7 @@ u}(t_k)$变化的分布函数在给定的控制约束下一般为单峰函数。
 % \hat{J}(\b x(k-i)) - (U(k-i)+\gamma \hat{J}(\b x(k-i+1)))
 % \end{equation}
 \begin{equation}
-  e_{c }(t_{k+L})=\frac{1}{L}\sum_{i=0}^{L-1}[\hat{V}_{\xi}(t_{k+i})-e^{-\frac{\Delta t_i}{\eta}} \hat{V}_{\xi}(t_{k+i+1})-\int_{t_{k+i}}^{t_{k+i+1}}e^{-\frac{\tau-t_{k+i}}{\eta}}U(\b s(\tau), u(\tau))d \tau]
+  e_{c }(t_{k+L})=\frac{1}{L}\sum_{i=0}^{L-1}[\hat{V}_{\xi}(t_{k+i})-e^{-\frac{\Delta t_i}{\eta}} \hat{V}_{\xi}(t_{k+i+1})-\int_{t_{k+i}}^{t_{k+i+1}}e^{-\frac{\tau-t_{k+i}}{\eta}}U(\b s(\tau), u(\tau))\mathrm{~d} \tau]
   \label{equ:TDerror_replay}
   \end{equation}
   其中 $\Delta t_i = t_{k+i+1}-t_{k+i}$。
@@ -780,13 +780,13 @@ c_{l}(t)\left[u_{t}(t)+u_{r}(t)\right] A -c_{u}(t) u_{r}(t) A
 \end{equation}
 联立\equref{equ:mass_thickener_formula},\equref{equ:H_ca}，可得泥层高度$h(t)$与底流浓度$c_u(t)$的一阶变化率
 \begin{equation}
-\label{equ:dh_dt} \frac{d h(t)}{d t}=-\frac{W(t) \theta}{A
+\label{equ:dh_dt} \frac{\mathrm{~d} h(t)}{\mathrm{~d} t}=-\frac{W(t) \theta}{A
 c_{a}^{2}(t)}*\frac{ c_{l}(t)\left[u_{t}(t)+u_{r}(t)\right]-c_{u}(t)
 u_{r}(t)}{h(t)-c_{a}(t) \frac{W(t) \theta}{A c_{a}^{2}(t)}}
 \end{equation}
 
 \begin{equation}
-\label{equ:du_dt} \frac{d c_{u}(t)}{d
+\label{equ:du_dt} \frac{\mathrm{~d} c_{u}(t)}{\mathrm{~d}
 t}=\frac{c_{l}(t)\left[u_{t}(t)+u_{r}(t)\right]-c_{u}(t)
 u_{r}(t)}{p(h(t)-c_{a}(t) \frac{W(t) \theta}{A c_{a}^{2}(t)})}
 \end{equation}
@@ -1172,11 +1172,8 @@ ILPL & 364.397 & 135.474 & 8.289 & 2473.661 &211.615 & 35.222 \\
 %     \label{fig:noise_time_cmp}
 % \end{figure}
 \section{真实工业场景下浓密机控制算法性能评估}
-本节测试了本章提出的控制算法HCNVI在真实膏体浓密机底流浓度控制场景下的控制精度，实验对象为\secref{sec:paste_introduction}所述的膏体浓密机。
-具体地，本章分别采用HCNVI算法以及浓密机出厂控制系统中的原始规则控制算法对浓密机底流浓度进行控制。
-对比算法的控制周期为5分钟，在浓度低于目标值1\%时将出料流量的设定值降低$5m^3/h$，高于目标值1\%时出料流量的设定值增加5\%。
-由于真实工业场景下进行实验无法像仿真实验一样重现系统的外部环境噪音，因此对每种算法进行三组实验，每次实验过程持续1小时，对于每组结果，本章统计了五个指标量以评估不同算法的追踪效果以及浓度稳定效果，三组实验的实验结果以及平均值、最大值如\tabref{tab:industrial_thickening_eval}所示：
-\begin{table}[htb]
+
+\begin{table}[b]
   \centering
   \caption{真实工业场景下浓密机控制算法性能评估}
     \begin{tabular}{lccccc}
@@ -1202,14 +1199,6 @@ ILPL & 364.397 & 135.474 & 8.289 & 2473.661 &211.615 & 35.222 \\
     \end{tabular}%
   \label{tab:industrial_thickening_eval}%
 \end{table}%
-其中$|\bar{c}_{f}-{c}_{s}|$为底流浓度实际值的平均值与底流浓度设定值的差的绝对值。
-标准差和一阶差分标准差能够评估底流浓度的波动性，MAE的大小能够体现底流浓度的追踪效果
-% ， $\bar{f}_{f}-{f_{s}}$为底流流量实际值与底流流量设定值之间的差。
-从结果来看，HCNVI控制算法相比规则控制，无论在控制稳定性还是追踪效果均有明显的提升。
-% 另外，我们采集了相同设定值下智能控制和美卓控制下的数据，用于控制效果的对比，我们对底流浓度序进行了差分分析，结果如下图所示：
-% 尽管某些智能控制算法表现不佳的情况进行分析，我们发现在某些情况下，系统自身的底流流量控制精度不佳造成了底流浓度控制出现偏差。由于本项目底流浓度控制算法的输出为底流流量设定值，将该设定值写入美卓自控系统后，底流流量的控制由底层自动追踪控制系统执行。但如图中黄色标记所示，我们发现实际底流流量远大于算法给出的流量设定值，底层系统没有精确地实现底流流量追踪控制，造成了浓密机屯料过少，底流浓度远低于预期值。在底流流量控制较好的“流量控制正常组”,底流浓度控制器均起到了较好的控制效果。平均浓度偏差仅为2\%左右。
-
-另外，本节采集了相同追踪设定值下HCNVI算法和规则控制算法下的过程监测数据，计算序列的各阶差分并绘制成折线图，结果如图\ref{fig:difference}所示：
 \begin{figure}[htb]
   \centering
   % \includegraphics[width=\linewidth]{figures/chapter6/difference.pdf}
@@ -1222,9 +1211,6 @@ ILPL & 364.397 & 135.474 & 8.289 & 2473.661 &211.615 & 35.222 \\
   \caption{底流浓度控制差分对比图}
   \label{fig:difference}
 \end{figure}
-从图中可以看到，HCNVI控制下的底流浓度的上四分位点与下四分位点之间的间距明显小于规则控制的间距，说明整体追踪控制精度更佳。对于底流浓度的一阶差分序列，HCNVI控制下的四分位线间距距为0.4142，略小于规则控制的0.5331，本章方法下底流浓度的控制稳定性更优。
-
-与此同时，我们将图\ref{fig:difference}所示的底流浓度数据进行时间序列分解，比较残差项的四分位距受控制算法的影响，对比结果如图\ref{fig:decompose}所示。从图中可以看到HCNVI控制算法下，残差项序列的波动较小且更接近0，四分位居（0.4267）略小于规则控制四分位距（0.6836），
 \begin{figure}[htb]
   \centering
   \subfigure[HCNVI控制时底流浓度序列残差分解图] {
@@ -1235,6 +1221,30 @@ ILPL & 364.397 & 135.474 & 8.289 & 2473.661 &211.615 & 35.222 \\
   \caption{底流浓度序列残差分解对比图}
   \label{fig:decompose}
 \end{figure}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=\linewidth,trim=0 0 0 30,clip]{figures/chapter6/actual.png}
+  \caption{开启智能控制前后浓密机底流浓度变化对比}
+  \label{fig:actual}
+\end{figure}
+本节测试了本章提出的控制算法HCNVI在真实膏体浓密机底流浓度控制场景下的控制精度，实验对象为\secref{sec:paste_introduction}所述的膏体浓密机。
+具体地，本章分别采用HCNVI算法以及浓密机出厂控制系统中的原始规则控制算法对浓密机底流浓度进行控制。
+对比算法的控制周期为5分钟，在浓度低于目标值1\%时将出料流量的设定值降低$5m^3/h$，高于目标值1\%时出料流量的设定值增加$5m^3/h$。
+由于真实工业场景下进行实验无法像仿真实验一样重现系统的外部环境噪音，因此对每种算法进行三组实验，每次实验过程持续1小时，对于每组结果，统计了五个指标量以评估两种算法的追踪控制效果以及浓度稳定效果，三组实验的实验结果以及平均值、最大值如\tabref{tab:industrial_thickening_eval}所示：
+其中$|\bar{c}_{f}-{c}_{s}|$为底流浓度实际值的平均值与底流浓度设定值的差的绝对值。
+标准差和一阶差分标准差能够评估底流浓度的波动性，MAE的大小能够体现底流浓度的追踪效果。
+% ， $\bar{f}_{f}-{f_{s}}$为底流流量实际值与底流流量设定值之间的差。
+从结果来看，HCNVI控制算法相比规则控制，无论在控制稳定性还是追踪效果均有明显的提升。
+% 另外，我们采集了相同设定值下智能控制和美卓控制下的数据，用于控制效果的对比，我们对底流浓度序进行了差分分析，结果如下图所示：
+% 尽管某些智能控制算法表现不佳的情况进行分析，我们发现在某些情况下，系统自身的底流流量控制精度不佳造成了底流浓度控制出现偏差。由于本项目底流浓度控制算法的输出为底流流量设定值，将该设定值写入美卓自控系统后，底流流量的控制由底层自动追踪控制系统执行。但如图中黄色标记所示，我们发现实际底流流量远大于算法给出的流量设定值，底层系统没有精确地实现底流流量追踪控制，造成了浓密机屯料过少，底流浓度远低于预期值。在底流流量控制较好的“流量控制正常组”,底流浓度控制器均起到了较好的控制效果。平均浓度偏差仅为2\%左右。
+
+
+另外，本节采集了相同追踪设定值下HCNVI算法和规则控制算法下的过程监测数据，计算序列的各阶差分并绘制成折线图，结果如图\ref{fig:difference}所示：
+
+从图中可以看到，HCNVI控制下的底流浓度的上四分位点与下四分位点之间的间距明显小于规则控制的间距，说明整体追踪控制精度更佳。对于底流浓度的一阶差分序列，HCNVI控制下的四分位线间距为0.4142，略小于规则控制的0.5331，本章方法下底流浓度的控制稳定性更优。
+
+与此同时，我们将图\ref{fig:difference}所示的底流浓度数据进行时间序列分解，比较残差项的四分位距以评估浓度波动大小，对比结果如图\ref{fig:decompose}所示。从图中可以看到HCNVI控制算法下，残差项序列的波动较小且更接近0，四分位居（0.4267）小于规则控制四分位距（0.6836），
+
 % \tabref{tab:dis_decompose}对比了两种控制算法季节项和残差项的四分位距。结果说明系统在HCNVI算法的控制下的底流浓度能够整体保持稳定，且波动更小。
 % Table generated by Excel2LaTeX from sheet 'Sheet1'
 % \begin{table}[htb]
@@ -1252,15 +1262,8 @@ ILPL & 364.397 & 135.474 & 8.289 & 2473.661 &211.615 & 35.222 \\
 %   \label{tab:dis_decompose}%
 % \end{table}%
 
-另外，为了进一步说明该控制算法对于浓密机运行过程的控制能力，本节测试并观察了了控制算法在开闭前后的浓度变化情况。如图\ref{fig:actual}所示：
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=\linewidth,trim=0 0 0 2,clip]{figures/chapter6/actual.png}
-  \caption{开启智能控制前后浓密机底流浓度变化对比}
-  \label{fig:actual}
-\end{figure}
-在红色区域内，底流流量明显高于设定值，造成了浓密机屯料过少，底流浓度远低于预期值（62\%）。在绿色区域内，底流流量图中的蓝色与橙色线较为接近，说明启用了控制算法给出的流量设定值。此时底流浓度不断升高，到达设定点附近震荡。该实验充分验证了本章控制算法对于浓密机底流浓度的追踪控制是有效的。
+另外，为了进一步说明该控制算法对于浓密机运行过程的控制能力，本节测试并观察了控制算法在开闭前后的浓度变化情况。如图\ref{fig:actual}所示。
+在红色区域内，底流流量明显高于设定值，造成了浓密机屯料过少，底流浓度远低于预期值（62\%）。在绿色区域内，底流流量图中的蓝色与橙色线较为接近，说明启用了控制算法给出的流量设定值。此时底流浓度不断升高，到达设定点附近震荡。该实验充分验证了本章控制算法对于真实工业浓密机系统是有效的。
 
 
 
