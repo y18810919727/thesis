@@ -87,6 +87,16 @@
 \RequirePackage{ctex}	%中文字体
 
 \RequirePackage{listings}   %插入程序代码
+\RequirePackage[final]{pdfpages}   
+\RequirePackage{emptypage}   
+% \newcommand\myemptypage{
+%     \null
+%     \thispagestyle{empty}
+%     \addtocounter{page}{-1}
+%     \newpage
+% }
+
+
 \lstset{breaklines} %这条命令可以让LaTeX自动将长的代码行换行排版
 \lstset{extendedchars=false}    %这一条命令可以解决代码跨页时，章节标题，页眉等汉字不显示的问题
 

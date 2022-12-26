@@ -125,7 +125,7 @@ MathML},
   title={A general framework for structured learning of mechanical systems},
   author={Gupta, Jayesh K and Menda, Kunal and Manchester, Zachary and Kochenderfer, Mykel J},
   journal={arXiv preprint arXiv:1902.08705},
-  url={https://arxiv.org/abs/1902.08705},
+  address={https://arxiv.org/abs/1902.08705},
   doi={,},
   year={2019}
 }
@@ -248,7 +248,7 @@ numpages = {9}
   author={Yang, Yibo and Perdikaris, Paris},
   journal={arXiv preprint arXiv:1812.03511},
   doi={,},
-  url={https://arxiv.org/abs/1812.03511},
+  address={https://arxiv.org/abs/1812.03511},
   year={2018}
 }
 
@@ -391,7 +391,6 @@ month={Sep.},
   year={2011},
   institution={ASHRAE},
 }
-
 @article{hopcroft2001introduction,
   title={Introduction to automata theory, languages, and computation},
   author={Hopcroft, John E and Motwani, Rajeev and Ullman, Jeffrey D},
@@ -403,17 +402,18 @@ month={Sep.},
   publisher={ACM New York, NY, USA}
 }
 
-@article{Deep_state_space_model,
-abstract = {We present a novel approach to probabilistic time series forecasting that combines state space models with deep learning. By parametrizing a per-time-series linear state space model with a jointly-learned recurrent neural network, our method retains desired properties of state space models such as data efficiency and inter-pretability, while making use of the ability to learn complex patterns from raw data offered by deep learning approaches. Our method scales gracefully from regimes where little training data is available to regimes where data from large collection of time series can be leveraged to learn accurate models. We provide qualitative as well as quantitative results with the proposed method, showing that it compares favorably to the state-of-the-art.},
-author = {Deep state space models for time series forecastingRangapuram, Syama Sundar and Seeger, Matthias and Gasthaus, Jan and Stella, Lorenzo and Wang, Yuyang and Januschowski, Tim},
-file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/Paper 4852$\backslash$$\backslash$deep-state-long-version.pdf:pdf},
-issn = {10495258},
-journal = {Advances in Neural Information Processing Systems},
-number = {NeurIPS},
-pages = {7785--7794},
-title = {{Deep state space models for time series forecasting}},
-volume = {2018-Decem},
-year = {2018}
+
+@inproceedings{Deep_state_space_model,
+  author    = {Syama Sundar Rangapuram and
+               Matthias W. Seeger and
+               Jan Gasthaus and
+               Lorenzo Stella and
+               Yuyang Wang and
+               Tim Januschowski},
+  title     = {Deep State Space Models for Time Series Forecasting},
+  booktitle = {NeurIPS},
+  pages     = {7796--7805},
+  year      = {2018}
 }
 
 
@@ -423,12 +423,9 @@ year = {2018}
 	editor = {I. Guyon and U. Von Luxburg and S. Bengio and H. Wallach and R. Fergus and S. Vishwanathan and R. Garnett},
 	publisher = {Curran Associates, Inc.},
 	title = {A Disentangled Recognition and Nonlinear Dynamics Model for Unsupervised Learning},
-	url = {https://proceedings.neurips.cc/paper/2017/file/7b7a53e239400a13bd6be6c91c4f6c4e-Paper.pdf},
 	volume = {30},
-	year = {2017},
-	Bdsk-Url-1 = {https://proceedings.neurips.cc/paper/2017/file/7b7a53e239400a13bd6be6c91c4f6c4e-Paper.pdf}}
-
-
+	year = {2017}
+	}
 
 @inproceedings{Knauf2018,
 	author = {Chen, Ricky T. Q. and Rubanova, Yulia and Bettencourt, Jesse and Duvenaud, David K},
@@ -436,13 +433,12 @@ year = {2018}
 	editor = {S. Bengio and H. Wallach and H. Larochelle and K. Grauman and N. Cesa-Bianchi and R. Garnett},
 	publisher = {Curran Associates, Inc.},
 	title = {Neural Ordinary Differential Equations},
-	url = {https://proceedings.neurips.cc/paper/2018/file/69386f6bb1dfed68692a24c8686939b9-Paper.pdf},
 	volume = {31},
-	year = {2018},
-	Bdsk-Url-1 = {https://proceedings.neurips.cc/paper/2018/file/69386f6bb1dfed68692a24c8686939b9-Paper.pdf}}
+	year = {2018} 
+  }
 
 
-@article{nason2006stationary,
+@book{nason2006stationary,
   title={Stationary and non-stationary time series},
   author={Nason, Guy P},
   journal={Statistics in volcanology},
@@ -649,14 +645,6 @@ year = {1998}
   pages={403--410},
   year={2004},
   publisher={Elsevier}
-}
-@incollection{NIPS2018_7892,
-title = {Neural Ordinary Differential Equations},
-author = {Chen, Ricky T. Q. and Rubanova, Yulia and Bettencourt, Jesse and Duvenaud, David K},
-booktitle = {Advances in Neural Information Processing Systems 31},
-pages = {6571--6583},
-year = {2018},
-publisher = {Curran Associates, Inc.},
 }
 @inproceedings{kingma2014adam,
   title={Adam: A Method for Stochastic Optimization},
@@ -977,7 +965,7 @@ year = {2020}
   journal   = {CoRR},
   volume    = {abs/2002.07526},
   year      = {2020},
-  url       = {https://arxiv.org/abs/2002.07526},
+  address       = {https://arxiv.org/abs/2002.07526},
   eprinttype = {arXiv},
   eprint    = {2002.07526},
   timestamp = {Mon, 02 Mar 2020 16:46:06 +0100},
@@ -1009,22 +997,24 @@ author = "Massimo Guidolin and Manuela Pedio",
 keywords = "Nonstationarity, unit root, deterministic trend, cointegration, vector error-correction model, common stochastic trends",
 abstract = "This chapter investigates the consequences of nonstationarity (in the form of unit roots in the assumed ARMA representation of a time series) for the econometric methodologies that have been developed in Chapters 1–3. Section 4.1 defines unit root processes and explains what it means to detrend such processes. Section 4.2 gives information about problems caused by the use of nonstationary, trending series in regression analysis. Section 4.3 describes the tests that can be used to verify the presence of a unit root in a series, in particular the Dickey–Fuller and the augmented Dickey–Fuller tests, along with those proposed by Philips and Perron and by Kwiatkowski, Phillips, Schmidt, and Shin. Finally, Section 4.4 introduces the concept of cointegration; it explains how to test for the presence of cointegrated variables, and the fact that the presence of cointegration always implies a vector error-correction model representation."
 }% 
-
-@article{kelly2020,
-  title={Learning differential equations that are easy to solve},
-  author={Kelly, Jacob and Bettencourt, Jesse and Johnson, Matthew J and Duvenaud, David K},
-  journal={Advances in Neural Information Processing Systems},
-  volume={33},
-  pages={4370--4380},
-  year={2020}
+@inproceedings{kelly2020,
+  author    = {Jacob Kelly and
+               Jesse Bettencourt and
+               Matthew J. Johnson and
+               David Duvenaud},
+  title     = {Learning Differential Equations that are Easy to Solve},
+  booktitle = {NeurIPS},
+  year      = {2020}
 }
-@article{poli2020,
-  title={Hypersolvers: Toward fast continuous-depth models},
-  author={Poli, Michael and Massaroli, Stefano and Yamashita, Atsushi and Asama, Hajime and Park, Jinkyoo},
-  journal={Advances in Neural Information Processing Systems},
-  volume={33},
-  pages={21105--21117},
-  year={2020}
+@inproceedings{poli2020,
+  author    = {Michael Poli and
+               Stefano Massaroli and
+               Atsushi Yamashita and
+               Hajime Asama and
+               Jinkyoo Park},
+  title     = {Hypersolvers: Toward Fast Continuous-Depth Models},
+  booktitle = {NeurIPS},
+  year      = {2020}
 }
 
 @inproceedings{J2020,
@@ -1161,14 +1151,16 @@ abstract = {As processes involved in mineral processing operations increase thei
   school={Universiti Teknologi MARA}
 }
 
-@article{Wu2020,
-author = {Wu, Sifan and Xiao, Xi and Ding, Qianggang and Zhao, Peilin and Wei, Ying and Huang, Junzhou},
-journal = {Advances in Neural Information Processing Systems},
-number = {NeurIPS},
-pages = {17105--17115},
-title = {{Adversarial Sparse Transformer for Time Series Forecasting}},
-volume = {33},
-year = {2020}
+@inproceedings{Wu2020,
+  author    = {Sifan Wu and
+               Xi Xiao and
+               Qianggang Ding and
+               Peilin Zhao and
+               Ying Wei and
+               Junzhou Huang},
+  title     = {Adversarial Sparse Transformer for Time Series Forecasting},
+  booktitle = {NeurIPS},
+  year      = {2020}
 }
 @article{liu2017survey,
   title={A survey of deep neural network architectures and their applications},
@@ -1393,14 +1385,13 @@ year = {2020}
   publisher={IEEE}
 }
 @article{ljung2008perspectives,
-  title={Perspectives on system identification},
-  author={Ljung, Lennart},
-  journal={IFAC Proceedings Volumes},
-  volume={41},
-  number={2},
-  pages={7172--7184},
-  year={2008},
-  publisher={Elsevier}
+  author    = {Lennart Ljung},
+  title     = {Perspectives on system identification},
+  journal   = {Annu. Rev. Control.},
+  volume    = {34},
+  number    = {1},
+  pages     = {1--12},
+  year      = {2010}
 }
 @article{ljung2011four,
   title={Four encounters with system identification},
@@ -1445,13 +1436,15 @@ year = {2020}
   booktitle={ICLR 2020 Workshop on Integration of Deep Neural Models and Differential Equations},
   year={2020}
 }
-@article{Ghosh2020,
-  title={Steer: Simple temporal regularization for neural ode},
-  author={Ghosh, Arnab and Behl, Harkirat and Dupont, Emilien and Torr, Philip and Namboodiri, Vinay},
-  journal={Advances in Neural Information Processing Systems},
-  volume={33},
-  pages={14831--14843},
-  year={2020}
+@inproceedings{Ghosh2020,
+  author    = {Arnab Ghosh and
+               Harkirat S. Behl and
+               Emilien Dupont and
+               Philip H. S. Torr and
+               Vinay P. Namboodiri},
+  title     = {{STEER} : Simple Temporal Regularization For Neural {ODE}},
+  booktitle = {NeurIPS},
+  year      = {2020}
 }
 
 @InProceedings{OISR,
@@ -1461,13 +1454,14 @@ year = {2020}
   month     = {July},
   year      = {2019}
 }
-@article{Huang2020,
-  title={Learning continuous system dynamics from irregularly-sampled partial observations},
-  author={Huang, Zijie and Sun, Yizhou and Wang, Wei},
-  journal={Advances in Neural Information Processing Systems},
-  volume={33},
-  pages={16177--16187},
-  year={2020}
+@inproceedings{Huang2020,
+  author    = {Zijie Huang and
+               Yizhou Sun and
+               Wei Wang},
+  title     = {Learning Continuous System Dynamics from Irregularly-Sampled Partial
+               Observations},
+  booktitle = {NeurIPS},
+  year      = {2020}
 }
 
 @inproceedings{morrill2021neural,
@@ -1500,8 +1494,8 @@ year = {2021}
 @online{morrill2021online,
   title={Neural Controlled Differential Equations for Online Prediction Tasks},
   author={Morrill, James and Kidger, Patrick and Yang, Lingyi and Lyons, Terry},
-  journal={arXiv preprint arXiv:2106.11028},
-  url={https://arxiv.org/abs/2106.11028},
+  publisher={arXiv preprint arXiv:2106.11028},
+  address={https://arxiv.org/abs/2106.11028},
   doi={,},
   year={2021}
 }
@@ -1516,8 +1510,8 @@ year = {2021}
 @online{lechner2020learning,
   title={Learning long-term dependencies in irregularly-sampled time series},
   author={Lechner, Mathias and Hasani, Ramin},
-  journal={arXiv preprint arXiv:2006.04418},
-  url={https://arxiv.org/abs/2006.04418},
+  publisher={arXiv preprint arXiv:2006.04418},
+  address={https://arxiv.org/abs/2006.04418},
   year={2020},
   doi={,},
 }
@@ -1529,28 +1523,31 @@ year = {2021}
                David Duvenaud},
   title     = {{FFJORD:} Free-Form Continuous Dynamics for Scalable Reversible Generative
                Models},
-  booktitle = {7th International Conference on Learning Representations, {ICLR} 2019,
-               New Orleans, LA, USA, May 6-9, 2019},
+  booktitle = {7th International Conference on Learning Representations, {ICLR} 2019},
   publisher = {OpenReview.net},
   year      = {2019},
-  url       = {https://openreview.net/forum?id=rJxgknCcK7},
-  timestamp = {Thu, 25 Jul 2019 13:03:15 +0200},
-  biburl    = {https://dblp.org/rec/conf/iclr/GrathwohlCBSD19.bib},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 @inproceedings{Jia2019,
-  title={Neural Jump Stochastic Differential Equations},
-  author={J. Jia and Austin R. Benson},
-  booktitle={Neural Information Processing Systems},
-  year={2019}
+  author    = {Junteng Jia and
+               Austin R. Benson},
+  title     = {Neural Jump Stochastic Differential Equations},
+  booktitle = {NeurIPS},
+  pages     = {9843--9854},
+  year      = {2019}
 }
 @inproceedings{Ainsworth2020,
-  title={Faster Policy Learning with Continuous-Time Gradients},
-  author={Ainsworth, Samuel and Lowrey, Kendall and Thickstun, John and Harchaoui, Zaid and Srinivasa, Siddhartha},
-  booktitle={Learning for Dynamics and Control},
-  pages={1054--1067},
-  year={2021},
-  organization={PMLR}
+  author    = {Samuel K. Ainsworth and
+               Kendall Lowrey and
+               John Thickstun and
+               Za{\"{\i}}d Harchaoui and
+               Siddhartha S. Srinivasa},
+  title     = {Faster Policy Learning with Continuous-Time Gradients},
+  booktitle = {{L4DC}},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {144},
+  pages     = {1054--1067},
+  publisher = {{PMLR}},
+  year      = {2021}
 }
 
 @inproceedings{jia2019focnet,
@@ -1574,29 +1571,45 @@ year = {2021}
   year={2020},
   organization={PMLR}
 }
-@article{Vaswani2017,
-  title={Attention is all you need},
-  author={Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, {\L}ukasz and Polosukhin, Illia},
-  journal={Advances in neural information processing systems},
-  volume={30},
-  year={2017}
+@inproceedings{Vaswani2017,
+  author    = {Ashish Vaswani and
+               Noam Shazeer and
+               Niki Parmar and
+               Jakob Uszkoreit and
+               Llion Jones and
+               Aidan N. Gomez and
+               Lukasz Kaiser and
+               Illia Polosukhin},
+  title     = {Attention is All you Need},
+  booktitle = {{NIPS}},
+  pages     = {5998--6008},
+  year      = {2017}
 }
+
 @inproceedings{Zhou2020,
-  title={Informer: Beyond efficient transformer for long sequence time-series forecasting},
-  author={Zhou, Haoyi and Zhang, Shanghang and Peng, Jieqi and Zhang, Shuai and Li, Jianxin and Xiong, Hui and Zhang, Wancai},
-  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
-  volume={35},
-  number={12},
-  pages={11106--11115},
-  year={2021}
+  author    = {Haoyi Zhou and
+               Shanghang Zhang and
+               Jieqi Peng and
+               Shuai Zhang and
+               Jianxin Li and
+               Hui Xiong and
+               Wancai Zhang},
+  title     = {Informer: Beyond Efficient Transformer for Long Sequence Time-Series
+               Forecasting},
+  booktitle = {{AAAI}},
+  pages     = {11106--11115},
+  year      = {2021}
 }
-@article{Wu2021,
-  title={Autoformer: Decomposition transformers with auto-correlation for long-term series forecasting},
-  author={Wu, Haixu and Xu, Jiehui and Wang, Jianmin and Long, Mingsheng},
-  journal={Advances in Neural Information Processing Systems},
-  volume={34},
-  pages={22419--22430},
-  year={2021}
+@inproceedings{Wu2021,
+  author    = {Haixu Wu and
+               Jiehui Xu and
+               Jianmin Wang and
+               Mingsheng Long},
+  title     = {Autoformer: Decomposition Transformers with Auto-Correlation for Long-Term
+               Series Forecasting},
+  booktitle = {NeurIPS},
+  pages     = {22419--22430},
+  year      = {2021}
 }
 @article{Ljung2020,
   title={Deep learning and system identification},
@@ -1794,7 +1807,7 @@ year = {2021}
   publisher={Elsevier}
 }
 
-@article{Mnih2013,
+@online{Mnih2013,
   author    = {Volodymyr Mnih and
                Koray Kavukcuoglu and
                David Silver and
@@ -1806,12 +1819,10 @@ year = {2021}
   journal   = {CoRR},
   volume    = {abs/1312.5602},
   year      = {2013},
-  url       = {http://arxiv.org/abs/1312.5602},
+  url      = {http://arxiv.org/abs/1312.5602},
   eprinttype = {arXiv},
-  eprint    = {1312.5602},
-  timestamp = {Mon, 13 Aug 2018 16:47:42 +0200},
-  biburl    = {https://dblp.org/rec/journals/corr/MnihKSGAWR13.bib},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
+  bibsource = {dblp computer science bibliography, https://dblp.org},
+  doi={,}
 }
 
 
@@ -1988,7 +1999,6 @@ keywords = {Artificial neural networks,Model predictive control,Modeling,Optimiz
 pages = {124124},
 publisher = {Elsevier Ltd},
 title = {{Development of model predictive control system using an artificial neural network: A case study with a distillation column}},
-url = {https://doi.org/10.1016/j.jclepro.2020.124124},
 volume = {277},
 year = {2020}
 }
@@ -2098,13 +2108,6 @@ year = {2019}
     school={University of Oxford},
 }
 
-@article{chen2018neuralode,
-  title={Neural Ordinary Differential Equations},
-  author={Chen, Ricky T. Q. and Rubanova, Yulia and Bettencourt, Jesse and Duvenaud, David},
-  journal={Advances in Neural Information Processing Systems},
-  year={2018}
-}
-
 @article{politorchdyn,
   title={TorchDyn: Implicit Models and Neural Numerical Methods in PyTorch},
   author={Poli, Michael and Massaroli, Stefano and Yamashita, Atsushi and Asama, Hajime and Park, Jinkyoo and Ermon, Stefano}
@@ -2112,7 +2115,6 @@ year = {2019}
 
 @article{Yuan2022,
 author = {Yuan, Zhaolin and Li, Xiaorui and Wu, Di and Ban, Xiaojuan and Wu, Naiqi and Dai, Hong-ning and Wang, Hao},
-doi = {10.1109/JAS.2022.105464},
 file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/发表版0210.pdf:pdf},
 issn = {2329-9266},
 journal = {IEEE/CAA Journal of Automatica Sinica},
@@ -2121,7 +2123,6 @@ month = {apr},
 number = {4},
 pages = {686--698},
 title = {{Continuous-Time Prediction of Industrial Paste Thickener System With Differential ODE-Net}},
-url = {https://ieeexplore.ieee.org/document/9732304/},
 volume = {9},
 year = {2022}
 }
@@ -2183,7 +2184,6 @@ keywords = {Artificial neural networks,Model predictive control,Modeling,Optimiz
 pages = {124124},
 publisher = {Elsevier Ltd},
 title = {{Development of model predictive control system using an artificial neural network: A case study with a distillation column}},
-url = {https://doi.org/10.1016/j.jclepro.2020.124124},
 volume = {277},
 year = {2020}
 }
@@ -2319,20 +2319,15 @@ year = {2018}
 }
 
 @article{Rubanova2019,
-abstract = {Time series with non-uniform intervals occur in many applications, and are difficult to model using standard recurrent neural networks (RNNs). We generalize RNNs to have continuous-time hidden dynamics defined by ordinary differential equations (ODEs), a model we call ODE-RNNs. Furthermore, we use ODE-RNNs to replace the recognition network of the recently-proposed Latent ODE model. Both ODE-RNNs and Latent ODEs can naturally handle arbitrary time gaps between observations, and can explicitly model the probability of observation times using Poisson processes. We show experimentally that these ODE-based models outperform their RNN-based counterparts on irregularly-sampled data.},
-archivePrefix = {arXiv},
-arxivId = {1907.03907},
 author = {Rubanova, Yulia and Chen, Ricky T.Q. and Duvenaud, David},
 eprint = {1907.03907},
 file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/NeurIPS-2019-latent-ordinary-differential-equations-for-irregularly-sampled-time-series-Paper.pdf:pdf;:Users/yuanzhaolin/Documents/Mendeley Desktop/supplement_updated.pdf:pdf},
 issn = {10495258},
-journal = {Advances in Neural Information Processing Systems},
-number = {NeurIPS},
+booktitle = {Advances in Neural Information Processing Systems, 2019},
 title = {{Latent ODEs for irregularly-sampled time series}},
 volume = {32},
 year = {2019}
 }
-
 
 
 @inproceedings{Quaglino2019,
@@ -2342,12 +2337,8 @@ Jonathan Masci and
 Jan Koutn{\'{\i}}k},
  bibsource = {dblp computer science bibliography, https://dblp.org},
  biburl = {https://dblp.org/rec/conf/iclr/QuaglinoGMK20.bib},
- booktitle = {8th International Conference on Learning Representations, {ICLR} 2020,
-Addis Ababa, Ethiopia, April 26-30, 2020},
- publisher = {OpenReview.net},
- timestamp = {Thu, 07 May 2020 01:00:00 +0200},
+ booktitle = {8th International Conference on Learning Representations, {ICLR} 2020},
  title = {{SNODE:} Spectral Discretization of Neural ODEs for System Identification},
- url = {https://openreview.net/forum?id=Sye0XkBKvS},
  year = {2020}
 }
 
@@ -2396,46 +2387,43 @@ Addis Ababa, Ethiopia, April 26-30, 2020},
  author = {Diederik P. Kingma and
 Max Welling},
  bibsource = {dblp computer science bibliography, https://dblp.org},
- biburl = {https://dblp.org/rec/journals/corr/KingmaW13.bib},
- booktitle = {2nd International Conference on Learning Representations, {ICLR} 2014,
-Banff, AB, Canada, April 14-16, 2014, Conference Track Proceedings},
+ booktitle = {2nd International Conference on Learning Representations, {ICLR} 2014, Conference Track Proceedings},
  editor = {Yoshua Bengio and
 Yann LeCun},
- timestamp = {Fri, 29 Mar 2019 00:00:00 +0100},
  title = {Auto-Encoding Variational Bayes},
- url = {http://arxiv.org/abs/1312.6114},
  year = {2014}
 }
-@article{Fraccaro2016,
-  title={Sequential neural models with stochastic layers},
-  author={Fraccaro, Marco and S{\o}nderby, S{\o}ren Kaae and Paquet, Ulrich and Winther, Ole},
-  journal={Advances in neural information processing systems},
-  volume={29},
-  year={2016}
+@inproceedings{Fraccaro2016,
+  author    = {Marco Fraccaro and
+               S{\o}ren Kaae S{\o}nderby and
+               Ulrich Paquet and
+               Ole Winther},
+  title     = {Sequential Neural Models with Stochastic Layers},
+  booktitle = {{NIPS}},
+  pages     = {2199--2207},
+  year      = {2016}
 }
-@article{Chung2015,
-  title={A recurrent latent variable model for sequential data},
-  author={Chung, Junyoung and Kastner, Kyle and Dinh, Laurent and Goel, Kratarth and Courville, Aaron C and Bengio, Yoshua},
-  journal={Advances in neural information processing systems},
-  volume={28},
-  year={2015}
+@inproceedings{Chung2015,
+  author    = {Junyoung Chung and
+               Kyle Kastner and
+               Laurent Dinh and
+               Kratarth Goel and
+               Aaron C. Courville and
+               Yoshua Bengio},
+  title     = {A Recurrent Latent Variable Model for Sequential Data},
+  booktitle = {{NIPS}},
+  pages     = {2980--2988},
+  year      = {2015}
 }
-
 @inproceedings{Karl2017,
- author = {Maximilian Karl and
-Maximilian Soelch and
-Justin Bayer and
-Patrick van der Smagt},
- bibsource = {dblp computer science bibliography, https://dblp.org},
- biburl = {https://dblp.org/rec/conf/iclr/KarlSBS17.bib},
- booktitle = {5th International Conference on Learning Representations, {ICLR} 2017,
-Toulon, France, April 24-26, 2017, Conference Track Proceedings},
- publisher = {OpenReview.net},
- timestamp = {Mon, 31 Aug 2020 01:00:00 +0200},
- title = {Deep Variational Bayes Filters: Unsupervised Learning of State Space
-Models from Raw Data},
- url = {https://openreview.net/forum?id=HyTqHL5xg},
- year = {2017}
+  author    = {Maximilian Karl and
+               Maximilian Soelch and
+               Justin Bayer and
+               Patrick van der Smagt},
+  title     = {Deep Variational Bayes Filters: Unsupervised Learning of State Space
+               Models from Raw Data},
+  booktitle = {{ICLR} (Poster)},
+  year      = {2017}
 }
 @inproceedings{yildiz2021continuous,
   title={Continuous-time Model-based Reinforcement Learning},
@@ -2468,7 +2456,6 @@ Models from Raw Data},
 }
 @article{Guo2019,
 author = {Guo, Xinxin and Yan, Weisheng and Cui, Rongxin},
-doi = {10.1109/tsmc.2019.2897221},
 file = {:Users/yuanzhaolin/Documents/Mendeley Desktop/Guo, Yan, Cui - 2019 - Integral Reinforcement Learning-Based Adaptive NN Control for Continuous-Time Nonlinear MIMO Systems With Unknown.pdf:pdf},
 issn = {2168-2216},
 journal = {IEEE Transactions on Systems, Man, and Cybernetics: Systems},
@@ -2487,8 +2474,8 @@ year = {2019}
   year={2020},
   volume={16},
   number={5},
-  pages={3222-3232},
-  doi={10.1109/TII.2019.2915668}}
+  pages={3222-3232}
+  }
 @article{song2015almost,
   title={Almost sure stability of switching Markov jump linear systems},
   author={Song, Yang and Yang, Jie and Yang, Taicheng and Fei, Minrui},
@@ -2506,9 +2493,9 @@ year = {2019}
   year={2021},
   volume={17},
   number={2},
-  pages={913-921},
-  doi={10.1109/TII.2020.3016121}}
-@InProceedings{pmlr-v120-jansch-porto20a,
+  pages={913-921}
+  }
+@article{pmlr-v120-jansch-porto20a,
   title = 	 {Policy Learning of MDPs with Mixed Continuous/Discrete Variables: A Case Study on  Model-Free Control of Markovian Jump Systems},
   author =       {Jansch-Porto, Joao Paulo and Hu, Bin and Dullerud, Geir},
   booktitle = 	 {Proceedings of the 2nd Conference on Learning for Dynamics and Control},
@@ -2518,7 +2505,7 @@ year = {2019}
   volume = 	 {120},
   series = 	 {Proceedings of Machine Learning Research},
   month = 	 {10--11 Jun},
-  publisher =    {PMLR},
+  journal =    {PMLR},
 }
 
   @article{song2015almost,
@@ -2579,7 +2566,6 @@ volume = {258},
 pages = {111790},
 year = {2022},
 issn = {0378-7788},
-doi = {https://doi.org/10.1016/j.enbuild.2021.111790},
 author = {Yewan Wang and Yiru Zhang and David Nörtershäuser and Stéphane {Le Masson} and Jean-Marc Menaud},
 }
 @article{balenzuela2022parameter,
@@ -2622,12 +2608,14 @@ author = {Yewan Wang and Yiru Zhang and David Nörtershäuser and Stéphane {Le 
   year={2014},
   organization={IEEE}
 }
-@article{opper2007variational,
-  title={Variational inference for Markov jump processes},
-  author={Opper, Manfred and Sanguinetti, Guido},
-  journal={Advances in neural information processing systems},
-  volume={20},
-  year={2007}
+@inproceedings{opper2007variational,
+  author    = {Manfred Opper and
+               Guido Sanguinetti},
+  title     = {Variational inference for Markov jump processes},
+  booktitle = {{NIPS}},
+  pages     = {1105--1112},
+  publisher = {Curran Associates, Inc.},
+  year      = {2007}
 }
 @article{fang2002stabilization,
   title={Stabilization of continuous-time jump linear systems},
@@ -2660,16 +2648,16 @@ author = {Yewan Wang and Yiru Zhang and David Nörtershäuser and Stéphane {Le 
 @online{rackauckas2020universal,
   title={Universal differential equations for scientific machine learning},
   author={Rackauckas, Christopher and Ma, Yingbo and Martensen, Julius and Warner, Collin and Zubov, Kirill and Supekar, Rohit and Skinner, Dominic and Ramadhan, Ali and Edelman, Alan},
-  journal={arXiv preprint arXiv:2001.04385},
-  url={https://arxiv.org/abs/2001.04385},
+  publisher={arXiv preprint arXiv:2001.04385},
+  address={https://arxiv.org/abs/2001.04385},
   doi={,},
   year={2020}
 }
-@article{ramadhan2020capturing,
+@online{ramadhan2020capturing,
   title={Capturing missing physics in climate model parameterizations using neural differential equations},
   author={Ramadhan, Ali and Marshall, John and Souza, Andre and Wagner, Gregory LeClaire and Ponnapati, Manvitha and Rackauckas, Christopher},
   journal={arXiv preprint arXiv:2010.12559},
-  url={https://arxiv.org/abs/2010.12559},
+  address={https://arxiv.org/abs/2010.12559},
   doi={,},
   year={2020}
 }
@@ -2802,8 +2790,8 @@ author = {Yewan Wang and Yiru Zhang and David Nörtershäuser and Stéphane {Le 
   year={2017},
   volume={},
   number={},
-  pages={201-206},
-  doi={10.1109/ADCONIP.2017.7983780}}
+  pages={201-206}
+  }
 @inproceedings{yu2017deep,
   title={Deep reinforcement learning based optimal trajectory tracking control of autonomous underwater vehicle},
   author={Yu, Runsheng and Shi, Zhenyu and Huang, Chaoxing and Li, Tenglong and Ma, Qiongxiong},
@@ -2812,10 +2800,10 @@ author = {Yewan Wang and Yiru Zhang and David Nörtershäuser and Stéphane {Le 
   year={2017},
   organization={IEEE}
 }
-@article{kim2018deep,
+@inproceedings{kim2018deep,
   title={Deep reinforcement learning based finite-horizon optimal tracking control for nonlinear system},
   author={Kim, Jong Woo and Park, Byung Jun and Yoo, Haeun and Lee, Jay H and Lee, Jong Min},
-  journal={IFAC-PapersOnLine},
+  booktitle={IFAC},
   volume={51},
   number={25},
   pages={257--262},
@@ -2831,16 +2819,17 @@ author = {Yewan Wang and Yiru Zhang and David Nörtershäuser and Stéphane {Le 
   year={2020},
   publisher={Elsevier}
 }
-@article{lecun2022path,
+@online{lecun2022path,
   title={A Path Towards Autonomous Machine Intelligence Version 0.9. 2, 2022-06-27},
   author={LeCun, Yann},
-  year={2022}
+  year={2022},
+  url={https://www.infinityexplorers.com/wp-content/uploads/2022/10/a_path_towards_autonomous_mach.pdf}
 }
 @online{moerland2020model,
   title={Model-based reinforcement learning: A survey},
   author={Moerland, Thomas M and Broekens, Joost and Jonker, Catholijn M},
-  journal={arXiv preprint arXiv:2006.16712},
-  url={https://arxiv.org/abs/2006.16712},
+  publisher={arXiv preprint arXiv:2006.16712},
+  address={https://arxiv.org/abs/2006.16712},
   doi={,},
   year={2020}
 }
@@ -2867,15 +2856,16 @@ title = {{Modeling of a mechanical cooling system with variable cooling capacity
 volume = {27},
 year = {2007}
 }
-@article{Watter2015,
-author = {Watter, Manuel and Springenberg, Jost Tobias and Boedecker, Joschka and Riedmiller, Martin},
-issn = {10495258},
-journal = {Advances in Neural Information Processing Systems},
-mendeley-groups = {VAE},
-pages = {2746--2754},
-title = {{Embed to control: A locally linear latent dynamics model for control from raw images}},
-volume = {2015-Janua},
-year = {2015}
+@inproceedings{Watter2015,
+  author    = {Manuel Watter and
+               Jost Tobias Springenberg and
+               Joschka Boedecker and
+               Martin A. Riedmiller},
+  title     = {Embed to Control: {A} Locally Linear Latent Dynamics Model for Control
+               from Raw Images},
+  booktitle = {{NIPS}},
+  pages     = {2746--2754},
+  year      = {2015}
 }
 @article{song2015data,
   title={Data center energy and cost saving evaluation},
@@ -2887,20 +2877,16 @@ year = {2015}
   publisher={Elsevier}
 }
 @inproceedings{10.1145/3097983.3098060,
-author = {Hallac, David and Vare, Sagar and Boyd, Stephen and Leskovec, Jure},
-title = {Toeplitz Inverse Covariance-Based Clustering of Multivariate Time Series Data},
-year = {2017},
-isbn = {9781450348874},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3097983.3098060},
-doi = {10.1145/3097983.3098060},
-booktitle = {Proceedings of the 23rd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
-pages = {215–223},
-numpages = {9},
-keywords = {networks, alternating minimization, time series analysis, clustering, convex optimization},
-location = {Halifax, NS, Canada},
-series = {KDD '17}
+  author    = {David Hallac and
+               Sagar Vare and
+               Stephen P. Boyd and
+               Jure Leskovec},
+  title     = {Toeplitz Inverse Covariance-Based Clustering of Multivariate Time
+               Series Data},
+  booktitle = {{KDD}},
+  pages     = {215--223},
+  publisher = {{ACM}},
+  year      = {2017}
 }
 @article{LI2021109687,
 title = {A novel adaptive dynamic programming based on tracking error for nonlinear discrete-time systems},
@@ -2909,25 +2895,17 @@ volume = {129},
 pages = {109687},
 year = {2021},
 issn = {0005-1098},
-doi = {https://doi.org/10.1016/j.automatica.2021.109687},
-url = {https://www.sciencedirect.com/science/article/pii/S0005109821002077},
-author = {Chun Li and Jinliang Ding and Frank L. Lewis and Tianyou Chai},
-keywords = {Adaptive dynamic programming (ADP), Tracking problem (TP), Optimal control policy, Value iteration (VI), Policy iteration (PI)},
+author = {Chun Li and Jinliang Ding and Frank L. Lewis and Tianyou Chai}
 }
 @inproceedings{hafner2019dream,
- author = {Danijar Hafner and
-Timothy P. Lillicrap and
-Jimmy Ba and
-Mohammad Norouzi},
- bibsource = {dblp computer science bibliography, https://dblp.org},
- biburl = {https://dblp.org/rec/conf/iclr/HafnerLB020.bib},
- booktitle = {8th International Conference on Learning Representations, {ICLR} 2020,
-Addis Ababa, Ethiopia, April 26-30, 2020},
- publisher = {OpenReview.net},
- timestamp = {Thu, 07 May 2020 01:00:00 +0200},
- title = {Dream to Control: Learning Behaviors by Latent Imagination},
- url = {https://openreview.net/forum?id=S1lOTC4tDS},
- year = {2020}
+  author    = {Danijar Hafner and
+               Timothy P. Lillicrap and
+               Jimmy Ba and
+               Mohammad Norouzi},
+  title     = {Dream to Control: Learning Behaviors by Latent Imagination},
+  booktitle = {{ICLR}},
+  publisher = {OpenReview.net},
+  year      = {2020}
 }
 @online{lai2015giraffe,
  author = {Lai, Matthew},
@@ -2968,24 +2946,27 @@ Addis Ababa, Ethiopia, April 26-30, 2020},
   year={2019},
   publisher={Frontiers}
 }
-@article{de2018end,
-  title={End-to-end differentiable physics for learning and control},
-  author={de Avila Belbute-Peres, Filipe and Smith, Kevin and Allen, Kelsey and Tenenbaum, Josh and Kolter, J Zico},
-  journal={Advances in neural information processing systems},
-  volume={31},
-  year={2018}
+@inproceedings{de2018end,
+  author    = {Filipe de Avila Belbute{-}Peres and
+               Kevin A. Smith and
+               Kelsey R. Allen and
+               Josh Tenenbaum and
+               J. Zico Kolter},
+  title     = {End-to-End Differentiable Physics for Learning and Control},
+  booktitle = {NeurIPS},
+  pages     = {7178--7189},
+  year      = {2018}
 }
 
 @inproceedings{NIPS2014_6766aa27,
-	author = {Levine, Sergey and Abbeel, Pieter},
-	booktitle = {Advances in Neural Information Processing Systems},
-	editor = {Z. Ghahramani and M. Welling and C. Cortes and N. Lawrence and K.Q. Weinberger},
-	publisher = {Curran Associates, Inc.},
-	title = {Learning Neural Network Policies with Guided Policy Search under Unknown Dynamics},
-	url = {https://proceedings.neurips.cc/paper/2014/file/6766aa2750c19aad2fa1b32f36ed4aee-Paper.pdf},
-	volume = {27},
-	year = {2014},
-	Bdsk-Url-1 = {https://proceedings.neurips.cc/paper/2014/file/6766aa2750c19aad2fa1b32f36ed4aee-Paper.pdf}}
+  author    = {Sergey Levine and
+               Pieter Abbeel},
+  title     = {Learning Neural Network Policies with Guided Policy Search under Unknown
+               Dynamics},
+  booktitle = {{NIPS}},
+  pages     = {1071--1079},
+  year      = {2014}
+}
 
 @inproceedings{mishra2017prediction,
   title={Prediction and control with temporal segment models},
@@ -2994,9 +2975,4 @@ Addis Ababa, Ethiopia, April 26-30, 2020},
   pages={2459--2468},
   year={2017},
   organization={PMLR}
-}
-@misc{JetsonTX2,
- title={Jetson TX2}, 
-howpublished={\url{https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-tx2/}}, 
-author={Nvidia}
 }

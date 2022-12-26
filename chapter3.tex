@@ -219,7 +219,7 @@ $\boldsymbol Y_p^{N_y}=[\boldsymbol y(-N_y),\boldsymbol y(-N_y+1),\dots, \boldsy
 
 对于长度为$M$的待预测序列，本章在整数离散索引$[0,1，\dots,M]$和连续时间范围$[t_0\leq t_k \leq t_{M}]$之间构造双向映射。
 给定初始状态为$\boldsymbol{h}(t_0)$，每个$\boldsymbol{h}(t_k)$为ODE方程在$t=t_k$处的解。
-为了构造可学习的微分系统，本章使用可微ODE-Net~\cite{NIPS2018_7892}学习上述状态空间模型。
+为了构造可学习的微分系统，本章使用可微ODE-Net~\cite{chen2018neural}学习上述状态空间模型。
 
 对于由某一预测评价指标确定的标量损失函数$L(\cdot)$，
 其输入$\b{h}(t_k)$为ODE方程在$t=t_k$时刻的解。将ODE求解器表示为$\operatorname{ODESolve}$，我们有
@@ -234,7 +234,7 @@ L\left(\boldsymbol{h}\left(t_{k}\right)\right)&=L\left(\boldsymbol{h}\left(t_{0}
 为了训练参数$\theta _d$以最小化$L(\cdot)$，需要根据上式计算损失函数对模型参数的梯度$\partial L / \partial \theta _d$。
 此处需要引入伴随状态（Adjoint state），即损失函数对隐状态的梯度$\boldsymbol{a}(t)=\partial L / \partial \boldsymbol{h}(t)$.
 
-利用链式法则可以证明任一时刻的伴随状态可由另一ODE描述~\cite{NIPS2018_7892}:
+利用链式法则可以证明任一时刻的伴随状态可由另一ODE描述~\cite{chen2018neural}:
 \begin{equation}
 \label{equ:ode_at}
 \frac{\mathrm{~d} \boldsymbol{a}(t)}{\mathrm{~d} t}=-\boldsymbol{a}^{\top}(t) \frac{\partial \mathrm{~d}(\boldsymbol{h}(t), \boldsymbol x(t), \theta_d)}{\partial \boldsymbol{h}(t)}.
@@ -540,7 +540,7 @@ RNN序列编码器模块包含一个隐藏层，隐状态大小等于$32$（与$
 
 \subsection{不同模型预测结果对比}
 首先，本节研究了不同ODE求解器和导数模块对预测精度的影响。
-对比的ODE求解器包括五种：欧拉法（Euler）、中值法（Midpoint）、四阶龙格库塔（Runge—Kutta，RK4）、 Dormand—Prince（Dopri5）\cite{NIPS2018_7892}、以及三阶Bogacki—Shampine（Bosh）\cite{bogacki19893}。
+对比的ODE求解器包括五种：欧拉法（Euler）、中值法（Midpoint）、四阶龙格库塔（Runge—Kutta，RK4）、 Dormand—Prince（Dopri5）\cite{chen2018neural}、以及三阶Bogacki—Shampine（Bosh）\cite{bogacki19893}。
 % 微分方程求解器在设定自适应微分方程求解器参数时，由于降低近似误差的容忍度，会导致求解常微分方程的时间剧烈增加。
 为了平衡时间消耗和预测精度，实验中所有自适应求解器的相对误差限设置为$1\mathrm{e}-4$，绝对误差限设置为$1\mathrm{e}-5$。
 本节研究了上述微分方程求解器在非稳定和稳定系统两种情况下的求解性能。

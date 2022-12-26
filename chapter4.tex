@@ -340,7 +340,7 @@ p\left(\boldsymbol{h}_{t_{i}} \mid \boldsymbol{s}_{t_{i-1}}, \boldsymbol{u}_{t_{
 本章中不同时刻$t_i$与上一时刻之间的采样间隔$t_i - t_{i-1}$不是恒等的，
 % the common discrete-time sequential models are not applicable to model the evolution of latent states on varying time range. 
 一般的离散时间序列模型不适用于建模可变时间间隔下的隐状态演化。
-因此，本章受常微分方程网络模型\cite{chen2018neuralode,Rubanova2019}的启发，引入ODE-Net学习确定性隐状态$\hti$在相邻采样时间点之间的演化。
+因此，本章受常微分方程网络模型\cite{chen2018neural,Rubanova2019}的启发，引入ODE-Net学习确定性隐状态$\hti$在相邻采样时间点之间的演化。
 
 具体地，确定性隐状态$\hti$的转移过程分为两个阶段。
 在第一阶段，采用门控循环单元（Gate Recurrent Unit，GRU）建模系统输入$\utm$以及$\ztm$对当前状态$\htm$的瞬时影响，并构建中间变量$\thtm$:
@@ -1566,7 +1566,7 @@ ODE-RSSM(50\%)         & 0.575 & (0.155)        & 0.570 & (0.150)         & 0.42
 % Two of the plotted lines marked with 'Parallel' employ the proposed Interval Transformation~\eqref{equ:parallel_solver} for solving the ODEs in parallel.
 % The ones marked with 'Union' solve the batched ODEs on the ordered union set of the time differences $dT=\{t_2-t_1,\cdots, t_N-t_{N-1}\}$~\cite{yildiz2021continuous,Rubanova2019}.
 标记为“并集”的曲线代表构建时间差分的有序并集~\cite{yildiz2021continuous,Rubanova2019}，并按序求解有序集中所有时间点下ODE的解。
-线标中的rk4和dopri5是求解ODE-Net的两个经典数值近似解算器\cite{chen2018neuralode,Yuan2022}。在本文第三章已经给出了详细介绍。
+线标中的rk4和dopri5是求解ODE-Net的两个经典数值近似解算器\cite{chen2018neural,Yuan2022}。在本文第三章已经给出了详细介绍。
 
 % Rk4 and dopri5 are two classical numerical approximate solvers to solve ODE-Net\cite{chen2018neuralode,Yuan2022}.
 % When the solver rk4 is used, the number of calls on derivative net $f_\theta$ between any two adjacent time points is four, and the number of dopri5 becomes adaptive to ensure that the error of solutions is restricted in a given tolerance.

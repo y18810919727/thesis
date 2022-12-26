@@ -941,7 +941,7 @@ x(k)$的局部梯度估计有较大偏差，使得利用算法\ref{alg:find_opti
 另外本章进行了十组实验来对比HCNVI算法在时间上的优势。选取HDP算法作为参考对象。
 % 用于耗时比较的处理器型号为2.6GHz、六核Intel Core i7。
 实验用机的CPU型号为2.6GHz、六核Intel Core i7，网络均采用CPU进行训练。
-仿真时间为$T=270$，结果如图\ref{fig:time_cmp}\subref{fig:stable_time_cmp}所示。
+仿真时间为$T=270$，结果如图\ref{fig:5_time_cmp}\subref{fig:stable_time_cmp}所示。
 由于每次实验中网络初始值不同，系统运行轨迹以及模型训练过程也不同，因此每组实验中模型学习以及控制所需的累积时间略有差异。
 % 但是从多次实验结果可以看出，HDP算法利用动作网络正向计算求解控制输入量几乎是不耗时的。
 % HCNVI算法在求解控制动作时由于需要不断迭代，消耗的时间多于HDP算法。
@@ -1004,7 +1004,7 @@ u}(k)$，其控制效果与收敛速率必然优于HCNVI算法。
     % \caption{The fluctuation of noisy input}
     % \renewcommand{\figurename}{图}
   %%%%%%%%%%%%%英文标题end
-      \label{fig:time_cmp}
+      \label{fig:5_time_cmp}
   \end{figure}
 
 
@@ -1150,7 +1150,7 @@ ILPL & 364.397 & 135.474 & 8.289 & 2473.661 &211.615 & 35.222 \\
 \end{figure}
 
 为了展现在噪音持续变化条件下，HCNVI算法在时间上的优势，再次重复了十次实验对比了HCNVI算法与HDP算法的时间消耗，$T=270$。
-实验结果如图\ref{fig:time_cmp}\subref{fig:noise_time_cmp}所示。在噪音持续变化环境下，HCNVI
+实验结果如图\ref{fig:5_time_cmp}\subref{fig:noise_time_cmp}所示。在噪音持续变化环境下，HCNVI
 算法和HDP算法的总时间消耗相比于图\subref{fig:stable_time_cmp}中的结果均有增加。这是由于当外部环境存在持续扰动时，被控系统和控制模型参数不再如实验一\ref{sec:vi_hdp_stable}节中达到稳定态，而是始终处于震荡状态，被控系统轨迹数据不断变化。每轮学习过程中，为了满足评价网络的精度$e_{c}(k)^{2}<\epsilon_{c}$
 所需要的训练迭代次数增加，进而导致评价网络训练所需时间及模型总体训练时间增加。
 但通过横向对比HCNVI算法与HDP算法的总时间消耗，HCNVI算法在训练和执行控制过程中所需的总时间消耗仍明显少于HDP，说明利用算法\ref{alg:find_optimal_policy}替代动作网络所减少的时间消耗在噪音连续波动条件仍十分明显。
